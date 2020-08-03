@@ -29,7 +29,6 @@
 ## Imagens do projeto
 
 ### Versão Web
-<br>
 
 - <p>Página da home</p>
 IMAGEM AQUI
