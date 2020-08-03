@@ -36,7 +36,6 @@ IMAGEM AQUI
 IMAGEM AQUI
 
 ### Versão Mobile
-<br>
 
 - <p>Tela da home</p>
 IMAGEM AQUI
