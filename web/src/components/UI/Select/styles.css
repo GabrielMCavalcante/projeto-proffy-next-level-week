@@ -1,11 +1,13 @@
 .Select .SelectContent {
     width: 100%;
     background: var(--color-input-background);
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.8rem;
     padding: 1.2rem 0.8rem;
     margin: 0.4rem;
     cursor: pointer;
+    position: relative;
+    transition: box-shadow 300ms ease;
 }
 
 .Select label {
@@ -31,7 +33,24 @@
 .Select .SelectContent ul {
     margin-left: 0;
     list-style: none;
-    padding: 1.2rem 0;
+    padding-top: 1.2rem;
+    max-height: 20rem;
+    background: var(--color-input-background);
+    box-shadow: 0.3rem 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+    overflow: scroll;
+    position: absolute;
+    border-radius: 0 0 .8rem .8rem;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+}
+
+.Select .SelectContent ul::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.Select .SelectContent ul::-webkit-scrollbar-thumb {
+    background: var(--color-text-in-primary);
 }
 
 .Select .SelectContent ul li {
@@ -46,36 +65,14 @@
     background: #ccc;
 }
 
+.Select.Open .SelectContent {
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
 .Select.Open .SelectContent ul {
-    animation: openDropdown 300ms ease-in-out forwards;
+    display: initial;
 }
 
 .Select.Close .SelectContent ul {
-    animation: closeDropdown 300ms ease-in-out forwards;
-}
-
-@keyframes openDropdown {
-    from {
-        height: 0;
-        opacity: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-    to {
-        height: 100%;
-        opacity: 1;
-    }
-}
-
-@keyframes closeDropdown {
-    from {
-        height: 100%;
-        opacity: 1
-    }
-    to {
-        height: 0;
-        opacity: 0;
-        padding: 0;
-        overflow: hidden;
-    }
+    display: none;
 }
