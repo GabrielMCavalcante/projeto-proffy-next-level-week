@@ -42,7 +42,8 @@
     color: var(--color-text-complement);
 }
 
-#page-teacher-form main form fieldset .input-block + .input-block {
+#page-teacher-form main form fieldset .input-block + .input-block,
+#page-teacher-form main form fieldset .Select + .input-block {
     margin-top: 1.4rem;
 }
 
@@ -53,7 +54,7 @@
     margin-top: 6.4rem;
 }
 
-#page-teacher-form main form footer p {
+#page-teacher-form main form footer {
     display: flex;
     align-items: center;
     justify-content: center;
