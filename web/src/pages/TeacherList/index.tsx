@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-// import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios-config'
+import { useHistory } from 'react-router-dom'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -10,11 +11,42 @@ import Select from 'components/UI/Select'
 // CSS styles
 import './styles.css'
 
+interface ClassItem {
+    subject: string,
+    cost: number,
+    name: 'string',
+    avatar: string,
+    whatsapp: number,
+    bio_header: string,
+    bio_content: string
+}
+
 function TeacherList() {
+
+    const [classes, setClasses] = useState<ClassItem[]>([])
+    const [loading, setLoading] = useState(false)
 
     const [subject, setSubject] = useState<string | null>(null)
     const [weekDay, setWeekDay] = useState<string | null>(null)
     const [schedule, setSchedule] = useState<string | null>(null)
+
+    const history = useHistory()
+
+    useEffect(() => {
+        (function fetchClasses() {
+            setLoading(true)
+            axios.get('/classes')
+                .then(response => {
+                    setLoading(false)
+                    setClasses(response.data.search)
+                })
+                .catch(() => {
+                    setLoading(false)
+                    alert('Ocorreu um erro desconhecido ao carregar as classes.')
+                    history.replace('/')
+                })
+        })()
+    }, []) // eslint-disable-line
 
     return (
         <div id="page-teacher-list" className="container">
