@@ -7,6 +7,10 @@
     margin-top: 3.2rem;
 }
 
+#search-teachers label {
+    color: var(--color-text-in-primary);
+}
+
 #page-teacher-list main {
     margin: 3.2rem auto;
     width: 90%;
