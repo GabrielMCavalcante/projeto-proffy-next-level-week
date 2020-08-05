@@ -9,6 +9,10 @@ import Select from 'components/UI/Select'
 // Images
 import warningIcon from 'assets/images/icons/warning.svg'
 
+// Icons
+import { Icon } from '@iconify/react'
+import closeIcon from '@iconify/icons-mdi/close'
+
 // CSS styles
 import './styles.css'
 
@@ -143,7 +147,9 @@ function TeacherForm() {
                         {scheduleItems.map((scheduleItem, index) => (
                             <div
                                 key={scheduleItem.week_day.value}
-                                className="schedule-item">
+                                className="schedule-item"
+                            >
+                                <Icon icon={closeIcon} />
                                 <Select
                                     selectLabel="Dia da Semana"
                                     selected={{
