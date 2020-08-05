@@ -16,6 +16,12 @@
     width: 90%;
 }
 
+#page-teacher-list main .spinner-resizer {
+    width: 20rem;
+    height: 20rem;
+    margin: 3.4rem auto;
+}
+
 @media (min-width: 700px) {
     #page-teacher-list {
         max-width: 100%;
