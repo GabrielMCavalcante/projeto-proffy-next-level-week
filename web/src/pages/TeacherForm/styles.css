@@ -145,6 +145,11 @@
     cursor: pointer;
 }
 
+#page-teacher-form main form footer button .spinner-resizer {
+    width: 3.4rem;
+    height: 3.4rem;
+}
+
 @media (min-width: 700px) {
     #page-teacher-form {
         max-width: 100vw;
