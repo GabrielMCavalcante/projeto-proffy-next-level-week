@@ -7,16 +7,21 @@ import caretDownIcon from '@iconify/icons-mdi/caret-down'
 // CSS styles
 import './styles.css'
 
+interface SelectItem {
+    value: string, 
+    label: string
+}
+
 interface SelectProps {
     selectLabel: string,
-    selected?: string,
-    items: string[],
-    onOptionSelect: (opt: string) => void
+    selected: SelectItem,
+    items: SelectItem[],
+    onOptionSelect: (opt: SelectItem) => void
 }
 
 const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionSelect }) => {
     const [classes, setClasses] = useState(["Select", "Close"])
-    const [currentSelected, setCurrentSelected] = useState(selected)
+    const [currentSelected, setCurrentSelected] = useState({ value: selected.value, label: selected.label})
 
     function toggleSelect() {
         const newClasses = [...classes]
@@ -31,12 +36,11 @@ const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionS
         setClasses(newClasses)
     }
 
-    function setSelection(item: string) {
+    function setSelection(item: SelectItem) {
         const newClasses = [...classes]
         newClasses.pop()
         newClasses.push("Close")
         setClasses(newClasses)
-        console.log(item)
         setCurrentSelected(item)
     }
 
@@ -44,25 +48,21 @@ const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionS
         onOptionSelect(currentSelected!)
     }, [currentSelected]) //eslint-disable-line
 
-    useEffect(() => {
-        setCurrentSelected(selected)
-    }, [selected])
-
     return (
         <div className={classes.join(' ')}>
-            <p>{selectLabel}</p>
+            <label>{selectLabel}</label>
             <div className="SelectContent">
                 <div onClick={toggleSelect} className="SelectSelector">
-                    <span>{String(currentSelected)}</span>
+                    <span>{currentSelected.label}</span>
                     <Icon icon={caretDownIcon} />
                 </div>
                 <ul>{
                     items.map((item, i) => (
                         <li
-                            className={item === currentSelected ? 'Selected' : ''}
+                            className={item.value === currentSelected.value ? 'Selected' : ''}
                             key={i}
                             onClick={() => setSelection(item)}
-                        >{item}</li>
+                        >{item.label}</li>
                     ))
                 }</ul>
             </div>
