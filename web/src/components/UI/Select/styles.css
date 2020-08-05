@@ -1,0 +1,77 @@
+.Select .SelectContent {
+    width: 100%;
+    background: var(--color-input-background);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 1.2rem 0.8rem;
+    margin: 0.4rem;
+    cursor: pointer;
+}
+
+.Select .SelectContent .SelectSelector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Select .SelectContent .SelectSelector span {
+    color: var(--primary-theme-dark);
+    width: 100%;
+    line-height: 1;
+}
+
+.Select .SelectContent .SelectSelector svg {
+    font-size: 2.4rem;
+}
+
+.Select .SelectContent ul {
+    margin-left: 0;
+    list-style: none;
+    padding: 1.2rem 0;
+}
+
+.Select .SelectContent ul li {
+    padding: 0.8rem;
+}
+
+.Select .SelectContent ul li:not(.Selected):hover {
+    background: var(--color-line-in-white);
+}
+
+.Select .SelectContent ul .Selected {
+    background: #ccc;
+}
+
+.Select.Open .SelectContent ul {
+    animation: openDropdown 300ms ease-in-out forwards;
+}
+
+.Select.Close .SelectContent ul {
+    animation: closeDropdown 300ms ease-in-out forwards;
+}
+
+@keyframes openDropdown {
+    from {
+        height: 0;
+        opacity: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    to {
+        height: 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes closeDropdown {
+    from {
+        height: 100%;
+        opacity: 1
+    }
+    to {
+        height: 0;
+        opacity: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+}
