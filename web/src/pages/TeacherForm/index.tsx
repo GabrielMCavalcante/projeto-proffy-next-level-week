@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import axios from 'axios-config'
 
 // Components
@@ -56,6 +57,8 @@ function TeacherForm() {
         { value: "5", label: "Sexta-feira" },
         { value: "6", label: "Sábado" }
     ])
+
+    const history = useHistory()
 
     function updateSchedule(
         scheduleIndex: number,
@@ -154,11 +157,12 @@ function TeacherForm() {
         })
         .then(() => {
             setLoading(false)
-            alert('Success!')
+            alert('Cadastro realizado com sucesso!')
+            history.replace('/')
         })
-        .catch(err => {
+        .catch(() => {
             setLoading(false)
-            alert('Error! ' + err.message)
+            alert('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
         })
     }
 
