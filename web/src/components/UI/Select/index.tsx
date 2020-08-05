@@ -29,13 +29,15 @@ const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionS
                 el.classList.remove('Open')
                 el.classList.add('Close')
             })
-        let newClasses = []
-        if (classes.includes("Open"))
-            newClasses = ["Select", "Close"]
-        else {
-            newClasses = ["Select", "Open"]
+        if (items.length !== 0) {
+            let newClasses = []
+            if (classes.includes("Open"))
+                newClasses = ["Select", "Close"]
+            else {
+                newClasses = ["Select", "Open"]
+            }
+            setClasses(newClasses)
         }
-        setClasses(newClasses)
     }
 
     function setSelection(item: SelectItem) {
@@ -56,7 +58,7 @@ const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionS
             <div onClick={toggleSelect} className="SelectContent">
                 <div className="SelectSelector">
                     <span>{currentSelected.label}</span>
-                    <Icon icon={caretDownIcon} />
+                    {items.length !== 0 && <Icon icon={caretDownIcon} />}
                 </div>
                 <ul>{
                     items.map((item, i) => (
