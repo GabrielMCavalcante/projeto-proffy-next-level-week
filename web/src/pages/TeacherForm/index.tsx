@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -28,6 +28,16 @@ interface ScheduleItem {
 }
 
 function TeacherForm() {
+
+    const [formValid, setFormValid] = useState(false)
+
+    const [name, setName] = useState('')
+    const [avatar, setAvatar] = useState('')
+    const [whatsapp, setWhatsapp] = useState('')
+    const [bioHeader, setBioHeader] = useState('')
+    const [bioContent, setBioContent] = useState('')
+
+    const [cost, setCost] = useState('')
 
     const [subject, setSubject] = useState<string | null>(null)
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
@@ -109,6 +119,21 @@ function TeacherForm() {
         setScheduleItems(schedules)
     }
 
+    useEffect(() => {
+        const fields = [name, avatar, whatsapp, bioHeader, bioContent, cost]
+
+        let valid = true
+
+        fields.forEach(field => {
+            if (valid) valid = field ? true : false
+        })
+
+        if (valid)
+            valid = (!isNaN(Number(cost)) && Number(cost) >= 10 && Number(cost) <= 9999)
+
+        if (valid !== formValid) setFormValid(valid)
+    }, [name, avatar, whatsapp, bioHeader, bioContent, cost]) // eslint-disable-line
+
     return (
         <div id="page-teacher-form" className="container">
             <PageHeader
@@ -120,11 +145,36 @@ function TeacherForm() {
                 <form>
                     <fieldset>
                         <legend>Seus dados</legend>
-                        <Input inputId="name" inputLabel="Nome completo" />
-                        <Input inputId="avatar" inputLabel="Avatar" />
-                        <Input inputId="whatsapp" inputLabel="WhatsApp" />
-                        <Input inputId="bio-header" inputLabel="Título da biografia" />
-                        <Textarea textareaId="bio-content" textareaLabel="Biografia" />
+                        <Input
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            inputId="name"
+                            inputLabel="Nome completo"
+                        />
+                        <Input
+                            value={avatar}
+                            onChange={e => setAvatar(e.target.value)}
+                            inputId="avatar"
+                            inputLabel="Avatar"
+                        />
+                        <Input
+                            value={whatsapp}
+                            onChange={e => setWhatsapp(e.target.value)}
+                            inputId="whatsapp"
+                            inputLabel="WhatsApp"
+                        />
+                        <Input
+                            value={bioHeader}
+                            onChange={e => setBioHeader(e.target.value)}
+                            inputId="bio-header"
+                            inputLabel="Título da biografia"
+                        />
+                        <Textarea
+                            value={bioContent}
+                            onChange={e => setBioContent(e.target.value)}
+                            textareaId="bio-content"
+                            textareaLabel="Biografia"
+                        />
                     </fieldset>
 
                     <fieldset>
@@ -148,7 +198,15 @@ function TeacherForm() {
                             ]}
                             onOptionSelect={selected => setSubject(selected.value)}
                         />
-                        <Input inputId="cost" inputLabel="Custo da sua aula por hora" />
+                        <Input
+                            value={cost}
+                            onChange={e => setCost(e.target.value)}
+                            inputId="cost"
+                            type="number"
+                            min="10"
+                            max="9999"
+                            inputLabel="Custo da sua aula por hora"
+                        />
                     </fieldset>
 
                     <fieldset>
@@ -166,9 +224,9 @@ function TeacherForm() {
                                 key={scheduleItem.week_day.value}
                                 className="schedule-item"
                             >
-                                {scheduleItems.length > 1 && <div 
-                                    className="remove-schedule" 
-                                    onClick={()=>removeSchedule(index)}
+                                {scheduleItems.length > 1 && <div
+                                    className="remove-schedule"
+                                    onClick={() => removeSchedule(index)}
                                 >
                                     <Icon icon={closeIcon} />
                                 </div>}
@@ -208,7 +266,7 @@ function TeacherForm() {
                             </div>
                         </p>
 
-                        <button type="button">Salvar cadastro</button>
+                        <button type="button" disabled={!formValid}>Salvar cadastro</button>
                     </footer>
                 </form>
             </main>
