@@ -8,7 +8,7 @@ import caretDownIcon from '@iconify/icons-mdi/caret-down'
 import './styles.css'
 
 interface SelectItem {
-    value: string, 
+    value: string,
     label: string
 }
 
@@ -21,17 +21,19 @@ interface SelectProps {
 
 const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionSelect }) => {
     const [classes, setClasses] = useState(["Select", "Close"])
-    const [currentSelected, setCurrentSelected] = useState({ value: selected.value, label: selected.label})
+    const [currentSelected, setCurrentSelected] = useState({ value: selected.value, label: selected.label })
 
     function toggleSelect() {
-        const newClasses = [...classes]
-        if (newClasses.includes("Open")) {
-            newClasses.pop()
-            newClasses.push("Close")
-        }
+        document.querySelectorAll('div.Select.Open')
+            .forEach(el => {
+                el.classList.remove('Open')
+                el.classList.add('Close')
+            })
+        let newClasses = []
+        if (classes.includes("Open"))
+            newClasses = ["Select", "Close"]
         else {
-            newClasses.pop()
-            newClasses.push("Open")
+            newClasses = ["Select", "Open"]
         }
         setClasses(newClasses)
     }
