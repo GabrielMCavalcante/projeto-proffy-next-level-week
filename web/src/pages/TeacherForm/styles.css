@@ -117,11 +117,20 @@
     margin-top: 1.4rem;
 }
 
-#page-teacher-form main form fieldset .schedule-item > svg {
+#page-teacher-form main form fieldset .schedule-item .remove-schedule {
     position: absolute;
     top: 1rem;
     right: 1rem;
     font-size: 2rem;
+    width: 2.4rem;
+    text-align: center;
+    height: 2.4rem;
+    z-index: 98;
+}
+
+#page-teacher-form main form fieldset .schedule-item .remove-schedule,
+#page-teacher-form main form fieldset .schedule-item .remove-schedule svg {
+    cursor: pointer;
 }
 
 @media (min-width: 700px) {
