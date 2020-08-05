@@ -20,7 +20,6 @@
     #page-teacher-list {
         max-width: 100%;
     }
-    
     #search-teachers {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -31,7 +30,18 @@
         transform: translateX(-50%);
         width: 100%;
     }
-
+    .Select .SelectContent {
+        width: auto;
+        height: 5.6rem;
+    }
+    .Select .SelectContent .SelectSelector {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .input-block input {
+        margin-top: 0.5rem;
+    }
     #page-teacher-list main {
         padding: 3.2rem 0;
         max-width: 740px;
