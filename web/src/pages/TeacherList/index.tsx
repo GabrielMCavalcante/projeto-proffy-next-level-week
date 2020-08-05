@@ -13,6 +13,8 @@ import './styles.css'
 function TeacherList() {
 
     const [subject, setSubject] = useState<string | null>(null)
+    const [weekDay, setWeekDay] = useState<string | null>(null)
+    const [schedule, setSchedule] = useState<string | null>(null)
 
     return (
         <div id="page-teacher-list" className="container">
@@ -51,10 +53,14 @@ function TeacherList() {
                             { value: "6", label: "Sábado" },
                             { value: "0", label: "Domingo" },
                         ]}
-                        onOptionSelect={selected => setSubject(selected.value)}
+                        onOptionSelect={selected => setWeekDay(selected.value)}
                     />
-                    {/* <Input inputId="week-day" inputLabel="Dia da Semana" /> */}
-                    <Input inputId="schedule" inputLabel="Horário" type="time" />
+                    <Input 
+                        inputId="schedule" 
+                        inputLabel="Horário" 
+                        type="time"
+                        onChange={e => setSchedule(e.target.value)} 
+                    />
                 </form>
             </PageHeader>
 
