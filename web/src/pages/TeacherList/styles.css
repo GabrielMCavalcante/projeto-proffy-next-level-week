@@ -7,57 +7,9 @@
     margin-top: 3.2rem;
 }
 
-#search-teachers .input-block {
-    position: relative;
-}
-
-#search-teachers .input-block+.input-block {
-    margin-top: 1.4rem;
-}
-
-#search-teachers .input-block label {
-    font-size: 1.4rem;
-    color: var(--color-text-in-primary);
-}
-
-#search-teachers .input-block input {
-    width: 100%;
-    height: 5.6rem;
-    margin-top: 0.8rem;
-    border-radius: 0.8rem;
-    background: var(--color-input-background);
-    border: 1px solid var(--color-line-in-white);
-    outline: 0;
-    padding: 0 1.6rem;
-    font: 1.6rem Archivo;
-}
-
-#search-teachers .input-block:focus-within::after {
-    animation: inputFocus 200ms ease forwards;
-    height: 2px;
-    content: '';
-    background: var(--color-primary-light);
-    position: absolute;
-    left: 1.6rem;
-    right: 1.6rem;
-    bottom: 0;
-    transform: scale(0);
-}
-
 #page-teacher-list main {
     margin: 3.2rem auto;
     width: 90%;
-}
-
-@keyframes inputFocus {
-    from {
-        width: 0;
-        transform: scale(0);
-    }
-    to {
-        width: calc(100% - 3.2rem);
-        transform: scale(1);
-    }
 }
 
 @media (min-width: 700px) {
@@ -74,10 +26,6 @@
         left: 50%;
         transform: translateX(-50%);
         width: 100%;
-    }
-    
-    #search-teachers .input-block+.input-block {
-        margin-top: 0;
     }
 
     #page-teacher-list main {
