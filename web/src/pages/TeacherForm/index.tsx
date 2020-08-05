@@ -15,6 +15,9 @@ import './styles.css'
 function TeacherForm() {
 
     const [subject, setSubject] = useState<string | null>(null)
+    const [weekDay, setWeekDay] = useState<string | null>(null)
+    const [from, setFrom] = useState<string | null>(null)
+    const [to, setTo] = useState<string | null>(null)
 
     return (
         <div id="page-teacher-form" className="container">
@@ -59,8 +62,40 @@ function TeacherForm() {
                     </fieldset>
 
                     <fieldset>
-                        <legend>Horários disponíveis</legend>
+                        <legend>
+                            Horários disponíveis
+                            <button type="button">+ Novo Horário</button>
+                        </legend>
 
+                        <div className="schedule-item">
+                            <Select
+                                selectLabel="Dia da Semana"
+                                selected={{ value: "", label: "Todos os dias" }}
+                                items={[
+                                    { value: "", label: "Todos os dias" },
+                                    { value: "1", label: "Segunda-feira" },
+                                    { value: "2", label: "Terça-feira" },
+                                    { value: "3", label: "Quarta-feira" },
+                                    { value: "4", label: "Quinta-feira" },
+                                    { value: "5", label: "Sexta-feira" },
+                                    { value: "6", label: "Sábado" },
+                                    { value: "0", label: "Domingo" },
+                                ]}
+                                onOptionSelect={selected => setWeekDay(selected.value)}
+                            />
+                            <Input 
+                                onChange={e => setFrom(e.target.value)} 
+                                inputId="from" 
+                                inputLabel="Das" 
+                                type="time"
+                            />
+                            <Input 
+                                onChange={e => setTo(e.target.value)} 
+                                inputId="to" 
+                                inputLabel="Até" 
+                                type="time"
+                            />
+                        </div>
                     </fieldset>
 
                     <footer>
