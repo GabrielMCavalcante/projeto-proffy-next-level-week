@@ -7,6 +7,7 @@ import PageHeader from 'components/PageHeader'
 import TeacherItem from 'components/TeacherItem'
 import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
+import Spinner from 'components/UI/Spinner'
 
 // CSS styles
 import './styles.css'
@@ -87,61 +88,31 @@ function TeacherList() {
                         ]}
                         onOptionSelect={selected => setWeekDay(selected.value)}
                     />
-                    <Input 
-                        inputId="schedule" 
-                        inputLabel="Horário" 
+                    <Input
+                        inputId="schedule"
+                        inputLabel="Horário"
                         type="time"
-                        onChange={e => setSchedule(e.target.value)} 
+                        onChange={e => setSchedule(e.target.value)}
                     />
                 </form>
             </PageHeader>
 
             <main>
-                <TeacherItem
-                    teacherPhotoURL="https://avatars0.githubusercontent.com/u/56729382?s=400&v=4"
-                    teacherName="Gabriel Melo Cavalcante"
-                    teacherSubject="Química"
-                    teacherDescriptionHeader="Entusiasta das melhores tecnologias de química avançada."
-                    teacherDescriptionContent="Apaixonado por explodir coisas em laboratório e por mudar a vida
-                    das pessoas através de experiências."
-                    teacherPrice={80}
-                />
-                <TeacherItem
-                    teacherPhotoURL="https://avatars0.githubusercontent.com/u/56729382?s=400&v=4"
-                    teacherName="Gabriel Melo Cavalcante"
-                    teacherSubject="Química"
-                    teacherDescriptionHeader="Entusiasta das melhores tecnologias de química avançada."
-                    teacherDescriptionContent="Apaixonado por explodir coisas em laboratório e por mudar a vida
-                    das pessoas através de experiências."
-                    teacherPrice={80}
-                />
-                <TeacherItem
-                    teacherPhotoURL="https://avatars0.githubusercontent.com/u/56729382?s=400&v=4"
-                    teacherName="Gabriel Melo Cavalcante"
-                    teacherSubject="Química"
-                    teacherDescriptionHeader="Entusiasta das melhores tecnologias de química avançada."
-                    teacherDescriptionContent="Apaixonado por explodir coisas em laboratório e por mudar a vida
-                    das pessoas através de experiências."
-                    teacherPrice={80}
-                />
-                <TeacherItem
-                    teacherPhotoURL="https://avatars0.githubusercontent.com/u/56729382?s=400&v=4"
-                    teacherName="Gabriel Melo Cavalcante"
-                    teacherSubject="Química"
-                    teacherDescriptionHeader="Entusiasta das melhores tecnologias de química avançada."
-                    teacherDescriptionContent="Apaixonado por explodir coisas em laboratório e por mudar a vida
-                    das pessoas através de experiências."
-                    teacherPrice={80}
-                />
-                <TeacherItem
-                    teacherPhotoURL="https://avatars0.githubusercontent.com/u/56729382?s=400&v=4"
-                    teacherName="Gabriel Melo Cavalcante"
-                    teacherSubject="Química"
-                    teacherDescriptionHeader="Entusiasta das melhores tecnologias de química avançada."
-                    teacherDescriptionContent="Apaixonado por explodir coisas em laboratório e por mudar a vida
-                    das pessoas através de experiências."
-                    teacherPrice={80}
-                />
+                {
+                    loading
+                        ? <div className="spinner-resizer"><Spinner /></div>
+                        : classes.map((currentClass, index) => (
+                            <TeacherItem
+                                key={index}
+                                teacherPhotoURL={currentClass.avatar}
+                                teacherName={currentClass.name}
+                                teacherSubject={currentClass.subject}
+                                teacherDescriptionHeader={currentClass.bio_header}
+                                teacherDescriptionContent={currentClass.bio_content}
+                                teacherPrice={currentClass.cost}
+                            />
+                        ))
+                }
             </main>
         </div>
     )
