@@ -13,12 +13,8 @@ import './styles.css'
 import Select from 'components/UI/Select'
 
 function TeacherForm() {
-    
-    const [subject, setSubject] = useState<string|null>(null)
 
-    useEffect(() => {
-        console.log(subject)
-    }, [subject])
+    const [subject, setSubject] = useState<string | null>(null)
 
     return (
         <div id="page-teacher-form" className="container">
@@ -34,20 +30,28 @@ function TeacherForm() {
                         <Input inputId="name" inputLabel="Nome completo" />
                         <Input inputId="avatar" inputLabel="Avatar" />
                         <Input inputId="whatsapp" inputLabel="WhatsApp" />
-                        <Input inputId="bio-header" inputLabel="Título da biografia"/>
-                        <Textarea textareaId="bio-content" textareaLabel="Biografia"/>
+                        <Input inputId="bio-header" inputLabel="Título da biografia" />
+                        <Textarea textareaId="bio-content" textareaLabel="Biografia" />
                     </fieldset>
 
                     <fieldset>
                         <legend>Sobre a aula</legend>
-                        <Select 
+                        <Select
                             selectLabel="Matéria"
-                            selected={{value: "Química", label: "Química"}}
-                            items = {[
-                                { value: "Química", label: "Química" }, 
-                                { value: "Física", label: "Física" }, 
-                                { value: "Matemática", label: "Matemática" }, 
-                                { value: "História", label: "História" }
+                            selected={{ value: "Artes", label: "Artes" }}
+                            items={[
+                                { value: "Artes", label: "Artes" },
+                                { value: "Biologia", label: "Biologia" },
+                                { value: "Educação Física", label: "Educação Física" },
+                                { value: "Espanhol", label: "Espanhol" },
+                                { value: "Física", label: "Física" },
+                                { value: "Geografia", label: "Geografia" },
+                                { value: "História", label: "História" },
+                                { value: "Inglês", label: "Inglês" },
+                                { value: "Literatura", label: "Literatura" },
+                                { value: "Matemática", label: "Matemática" },
+                                { value: "Português", label: "Português" },
+                                { value: "Química", label: "Química" }
                             ]}
                             onOptionSelect={selected => setSubject(selected.value)}
                         />
@@ -61,7 +65,7 @@ function TeacherForm() {
 
                     <footer>
                         <p>
-                            <img src={warningIcon} alt="Aviso importante"/>
+                            <img src={warningIcon} alt="Aviso importante" />
                             Importante! <br />
                             Preencha todos os dados
                         </p>
