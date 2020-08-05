@@ -48,7 +48,12 @@
     outline: 0;
 }
 
-#page-teacher-form main form fieldset legend button:hover {
+#page-teacher-form main form fieldset legend button:disabled {
+    cursor: not-allowed;
+    color: var(--color-text-complement);
+}
+
+#page-teacher-form main form fieldset legend button:not(:disabled):hover {
    color: var(--color-primary-dark);
 }
 
