@@ -42,9 +42,14 @@ function TeacherForm() {
                         <legend>Sobre a aula</legend>
                         <Select 
                             selectLabel="Matéria"
-                            selected="Química"
-                            items={["Química", "Física", "Matemática", "História"]}
-                            onOptionSelect={selected => setSubject(selected)}
+                            selected={{value: "Química", label: "Química"}}
+                            items = {[
+                                { value: "Química", label: "Química" }, 
+                                { value: "Física", label: "Física" }, 
+                                { value: "Matemática", label: "Matemática" }, 
+                                { value: "História", label: "História" }
+                            ]}
+                            onOptionSelect={selected => setSubject(selected.value)}
                         />
                         <Input inputId="cost" inputLabel="Custo da sua aula por hora" />
                     </fieldset>
