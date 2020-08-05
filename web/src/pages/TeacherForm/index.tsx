@@ -3,6 +3,7 @@ import React from 'react'
 // Components
 import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
+import Textarea from 'components/UI/Textarea'
 
 // Images
 import warningIcon from 'assets/images/icons/warning.svg'
@@ -25,6 +26,8 @@ function TeacherForm() {
                         <Input inputId="name" inputLabel="Nome completo" />
                         <Input inputId="avatar" inputLabel="Avatar" />
                         <Input inputId="whatsapp" inputLabel="WhatsApp" />
+                        <Input inputId="bio-header" inputLabel="Título da biografia"/>
+                        <Textarea textareaId="bio-content" textareaLabel="Biografia"/>
                     </fieldset>
 
                     <fieldset>
