@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -10,8 +10,16 @@ import warningIcon from 'assets/images/icons/warning.svg'
 
 // CSS styles
 import './styles.css'
+import Select from 'components/UI/Select'
 
 function TeacherForm() {
+    
+    const [subject, setSubject] = useState<string|null>(null)
+
+    useEffect(() => {
+        console.log(subject)
+    }, [subject])
+
     return (
         <div id="page-teacher-form" className="container">
             <PageHeader
@@ -32,8 +40,18 @@ function TeacherForm() {
 
                     <fieldset>
                         <legend>Sobre a aula</legend>
-                        <Input inputId="subject" inputLabel="Matéria" />
+                        <Select 
+                            selectLabel="Matéria"
+                            selected="Química"
+                            items={["Química", "Física", "Matemática", "História"]}
+                            onOptionSelect={selected => setSubject(selected)}
+                        />
                         <Input inputId="cost" inputLabel="Custo da sua aula por hora" />
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Horários disponíveis</legend>
+
                     </fieldset>
 
                     <footer>
