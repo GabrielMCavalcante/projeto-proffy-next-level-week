@@ -133,8 +133,8 @@ function TeacherForm() {
                     <fieldset>
                         <legend>
                             Horários disponíveis
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={addSchedule}
                                 disabled={availableDays.length === 0}
                             >+ Novo Horário</button>
@@ -174,8 +174,10 @@ function TeacherForm() {
                     <footer>
                         <p>
                             <img src={warningIcon} alt="Aviso importante" />
-                            Importante! <br />
-                            Preencha todos os dados
+                            <div>
+                                <p>Importante!</p>
+                                <p>Preencha todos os dados</p>
+                            </div>
                         </p>
 
                         <button type="button">Salvar cadastro</button>
