@@ -92,6 +92,23 @@ function TeacherForm() {
         setScheduleItems(schedules)
     }
 
+    function removeSchedule(scheduleIndex: number) {
+        const removedDay = scheduleItems[scheduleIndex].week_day
+        const schedules = scheduleItems.filter((_, index) => index !== scheduleIndex)
+
+        const newAvailableDays = [...availableDays]
+        newAvailableDays.push(removedDay)
+
+        newAvailableDays.sort((a, b) => {
+            if (a.value > b.value) return 1
+            if (a.value < b.value) return -1
+            else return 0
+        })
+
+        setAvailableDays(newAvailableDays)
+        setScheduleItems(schedules)
+    }
+
     return (
         <div id="page-teacher-form" className="container">
             <PageHeader
@@ -149,7 +166,12 @@ function TeacherForm() {
                                 key={scheduleItem.week_day.value}
                                 className="schedule-item"
                             >
-                                <Icon icon={closeIcon} />
+                                {scheduleItems.length > 1 && <div 
+                                    className="remove-schedule" 
+                                    onClick={()=>removeSchedule(index)}
+                                >
+                                    <Icon icon={closeIcon} />
+                                </div>}
                                 <Select
                                     selectLabel="Dia da Semana"
                                     selected={{
