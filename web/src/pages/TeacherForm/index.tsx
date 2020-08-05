@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios-config'
 
 // Components
 import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
 import Textarea from 'components/UI/Textarea'
 import Select from 'components/UI/Select'
+import Spinner from 'components/UI/Spinner'
 
 // Images
 import warningIcon from 'assets/images/icons/warning.svg'
@@ -30,6 +32,7 @@ interface ScheduleItem {
 function TeacherForm() {
 
     const [formValid, setFormValid] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const [name, setName] = useState('')
     const [avatar, setAvatar] = useState('')
@@ -134,6 +137,31 @@ function TeacherForm() {
         if (valid !== formValid) setFormValid(valid)
     }, [name, avatar, whatsapp, bioHeader, bioContent, cost]) // eslint-disable-line
 
+    function registerClass(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        setLoading(true)
+        axios.post('/classes', {
+            name,
+            avatar,
+            whatsapp,
+            bio: {
+                bio_header: bioHeader, 
+                bio_content: bioContent
+            },
+            subject,
+            cost,
+            schedule: scheduleItems
+        })
+        .then(() => {
+            setLoading(false)
+            alert('Success!')
+        })
+        .catch(err => {
+            setLoading(false)
+            alert('Error! ' + err.message)
+        })
+    }
+
     return (
         <div id="page-teacher-form" className="container">
             <PageHeader
@@ -142,7 +170,7 @@ function TeacherForm() {
             />
 
             <main>
-                <form>
+                <form onSubmit={e => registerClass(e)}>
                     <fieldset>
                         <legend>Seus dados</legend>
                         <Input
@@ -260,13 +288,15 @@ function TeacherForm() {
                     <footer>
                         <p>
                             <img src={warningIcon} alt="Aviso importante" />
-                            <div>
-                                <p>Importante!</p>
-                                <p>Preencha todos os dados</p>
-                            </div>
+                            <span>
+                                Importante! <br />
+                                Preencha todos os dados
+                            </span>
                         </p>
 
-                        <button type="button" disabled={!formValid}>Salvar cadastro</button>
+                        <button type="submit" disabled={!formValid || loading}>
+                            {loading ? <div className="spinner-resizer"><Spinner /></div> : "Salvar cadastro"}
+                        </button>
                     </footer>
                 </form>
             </main>
