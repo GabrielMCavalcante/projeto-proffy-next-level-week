@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios-config'
 
 // Images
 import logo from 'assets/images/logo.svg'
@@ -12,6 +13,16 @@ import purpleHeartIcon from 'assets/images/icons/purple-heart.svg'
 import './styles.css'
 
 function Landing() {
+
+    const [totalConnections, setTotalConnections] = useState(0)
+
+    useEffect(() => {
+        (async function fetchConnections() {
+            const connections = (await axios.get('/connections')).data.total
+            setTotalConnections(connections)
+        })()
+    }, [])
+
     return (
         <div id="page-landing"> 
             <div id="page-landing-content" className="container">
@@ -35,7 +46,10 @@ function Landing() {
                 </div>
 
                 <span className="total-connections">
-                    Total de 200 conexões já realizadas 
+                    Total de&nbsp;
+                    {totalConnections}&nbsp; 
+                    {totalConnections === 1 ? "conexão" : "conexões"}&nbsp;já&nbsp; 
+                    {totalConnections === 1 ? "realizada" : "realizadas"} 
                     <img src={purpleHeartIcon} alt="Coração roxo"/>
                 </span>
             </div>
