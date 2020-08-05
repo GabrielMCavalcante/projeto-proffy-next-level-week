@@ -3,6 +3,9 @@ import React from 'react'
 // Components
 import PageHeader from 'components/PageHeader'
 
+// CSS styles
+import './styles.css'
+
 function TeacherForm() {
     return (
         <div id="page-teacher-form" className="container">
