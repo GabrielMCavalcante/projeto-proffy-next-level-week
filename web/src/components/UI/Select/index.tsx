@@ -51,8 +51,8 @@ const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionS
     return (
         <div className={classes.join(' ')}>
             <label>{selectLabel}</label>
-            <div className="SelectContent">
-                <div onClick={toggleSelect} className="SelectSelector">
+            <div onClick={toggleSelect} className="SelectContent">
+                <div className="SelectSelector">
                     <span>{currentSelected.label}</span>
                     <Icon icon={caretDownIcon} />
                 </div>
