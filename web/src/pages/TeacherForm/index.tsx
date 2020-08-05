@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 // Components
 import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
 import Textarea from 'components/UI/Textarea'
+import Select from 'components/UI/Select'
 
 // Images
 import warningIcon from 'assets/images/icons/warning.svg'
 
 // CSS styles
 import './styles.css'
-import Select from 'components/UI/Select'
 
 function TeacherForm() {
 
