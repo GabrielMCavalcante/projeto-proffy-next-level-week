@@ -15,7 +15,7 @@ import styles from './styles'
 
 function Landing() {
 
-    const navigation = useNavigation()
+    const { navigate } = useNavigation()
 
     return (
         <View style={styles.container}>
@@ -30,7 +30,7 @@ function Landing() {
             <View style={styles.buttonsContainer}>
                 <TouchableOpacity 
                     style={[styles.button, styles.buttonPrimary]}
-                    onPress={() => navigation.navigate("TeacherList")}
+                    onPress={() => navigate("TeacherList")}
                 >
                     <Image source={studyImg}/>
                     <Text style={styles.buttonText}>Estudar</Text>
@@ -38,7 +38,7 @@ function Landing() {
 
                 <TouchableOpacity 
                     style={[styles.button, styles.buttonSecondary]}
-                    onPress={() => navigation.navigate("GiveClasses")}
+                    onPress={() => navigate("GiveClasses")}
                 >
                     <Image source={teachImg}/>
                     <Text style={styles.buttonText}>Ensinar</Text>
