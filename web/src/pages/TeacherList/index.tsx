@@ -9,6 +9,10 @@ import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
 
+// Icons
+import { Icon } from '@iconify/react'
+import searchIcon from '@iconify/icons-mdi/magnify'
+
 // CSS styles
 import './styles.css'
 
@@ -54,7 +58,8 @@ function TeacherList() {
         })()
     }, [reFetch]) // eslint-disable-line
 
-    useEffect(() => {
+    function filterClasses(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
         const query = `?subject=${subject}&week_day=${weekDay}&from=${from}&to=${to}`
         setLoading(true)
         axios.get('/classes' + query)
@@ -71,12 +76,12 @@ function TeacherList() {
                 setTo(null)
                 setReFetch(true)
             })
-    }, [subject, weekDay, from, to])
+    }
 
     return (
         <div id="page-teacher-list" className="container">
             <PageHeader title="Estes são os proffys disponíveis.">
-                <form id="search-teachers">
+                <form id="search-teachers" onSubmit={filterClasses}>
                     <Select
                         selectLabel="Matéria"
                         selected={{ value: "", label: "Todas as matérias" }}
@@ -124,6 +129,10 @@ function TeacherList() {
                         type="time"
                         onChange={e => setTo(e.target.value)}
                     />
+                    <button type="submit">
+                        <Icon icon={searchIcon} />
+                        Buscar 
+                    </button>
                 </form>
             </PageHeader>
 
