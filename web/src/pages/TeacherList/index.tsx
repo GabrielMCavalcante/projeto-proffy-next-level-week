@@ -26,28 +26,52 @@ function TeacherList() {
 
     const [classes, setClasses] = useState<ClassItem[]>([])
     const [loading, setLoading] = useState(false)
+    const [reFetch, setReFetch] = useState(true)
 
     const [subject, setSubject] = useState<string | null>(null)
     const [weekDay, setWeekDay] = useState<string | null>(null)
-    const [schedule, setSchedule] = useState<string | null>(null)
+    const [from, setFrom] = useState<string | null>(null)
+    const [to, setTo] = useState<string | null>(null)
 
     const history = useHistory()
 
     useEffect(() => {
         (function fetchClasses() {
-            setLoading(true)
-            axios.get('/classes')
-                .then(response => {
-                    setLoading(false)
-                    setClasses(response.data.search)
-                })
-                .catch(() => {
-                    setLoading(false)
-                    alert('Ocorreu um erro desconhecido ao carregar as classes.')
-                    history.replace('/')
-                })
+            if (reFetch) {
+                setReFetch(false)
+                setLoading(true)
+                axios.get('/classes')
+                    .then(response => {
+                        setLoading(false)
+                        setClasses(response.data.search)
+                    })
+                    .catch(() => {
+                        setLoading(false)
+                        alert('Ocorreu um erro desconhecido ao carregar as classes.')
+                        history.replace('/')
+                    })
+            }
         })()
-    }, []) // eslint-disable-line
+    }, [reFetch]) // eslint-disable-line
+
+    useEffect(() => {
+        const query = `?subject=${subject}&week_day=${weekDay}&from=${from}&to=${to}`
+        setLoading(true)
+        axios.get('/classes' + query)
+            .then(response => {
+                setLoading(false)
+                setClasses(response.data.search)
+            })
+            .catch(() => {
+                setLoading(false)
+                alert('Erro ao aplicar filtros. Mostrando todos os resultados.')
+                setSubject(null)
+                setWeekDay(null)
+                setFrom(null)
+                setTo(null)
+                setReFetch(true)
+            })
+    }, [subject, weekDay, from, to])
 
     return (
         <div id="page-teacher-list" className="container">
@@ -89,10 +113,16 @@ function TeacherList() {
                         onOptionSelect={selected => setWeekDay(selected.value)}
                     />
                     <Input
-                        inputId="schedule"
-                        inputLabel="Horário"
+                        inputId="schedule-from"
+                        inputLabel="Das"
                         type="time"
-                        onChange={e => setSchedule(e.target.value)}
+                        onChange={e => setFrom(e.target.value)}
+                    />
+                    <Input
+                        inputId="schedule-to"
+                        inputLabel="Até"
+                        type="time"
+                        onChange={e => setTo(e.target.value)}
                     />
                 </form>
             </PageHeader>
