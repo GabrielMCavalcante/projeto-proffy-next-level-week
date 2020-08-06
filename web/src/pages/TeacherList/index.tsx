@@ -159,6 +159,7 @@ function TeacherList() {
                                     teacherDescriptionHeader={currentClass.bio_header}
                                     teacherDescriptionContent={currentClass.bio_content}
                                     teacherPrice={currentClass.cost}
+                                    teacherWhatsapp={currentClass.whatsapp}
                                 />
                             ))
                             : (
