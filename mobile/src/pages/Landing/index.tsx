@@ -2,8 +2,7 @@ import React from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 
 // Navigation
-import { StackHeaderProps } from '@react-navigation/stack'
-
+import { useNavigation } from '@react-navigation/native'
 
 // Images
 import landingImg from 'assets/images/landing.png'
@@ -14,7 +13,10 @@ import heartImg from 'assets/images/icons/heart.png'
 // Styles
 import styles from './styles'
 
-const Landing: React.FC<StackHeaderProps> = ({ navigation }) => {
+function Landing() {
+
+    const navigation = useNavigation()
+
     return (
         <View style={styles.container}>
             <Image style={styles.banner} source={landingImg} />
