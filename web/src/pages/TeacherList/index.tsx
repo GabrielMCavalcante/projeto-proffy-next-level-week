@@ -20,6 +20,7 @@ import searchIcon from '@iconify/icons-mdi/magnify'
 import './styles.css'
 
 interface ClassItem {
+    id: number,
     subject: string,
     cost: number,
     name: 'string',
@@ -153,6 +154,7 @@ function TeacherList() {
                             ? classes.map((currentClass, index) => (
                                 <TeacherItem
                                     key={index}
+                                    teacherId={currentClass.id}
                                     teacherPhotoURL={currentClass.avatar}
                                     teacherName={currentClass.name}
                                     teacherSubject={currentClass.subject}
