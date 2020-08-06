@@ -3,7 +3,7 @@ import db from '../database/connection'
 import convertHourToMinutes from '../utils/convertHourToMinutes'
 
 interface ScheduleItem {
-    week_day: number,
+    week_day: { value: number },
     from: string,
     to: string
 }
@@ -21,8 +21,8 @@ export default class ClassesController {
                     .from('class_schedule')
                     .whereRaw('`class_schedule`.`class_id` = `classes`.`id`')
                     .where('week_day', 'like', week_day ? week_day : '%' as any)
-                    .where('from', '>=', from ? timeFrom : 0)
-                    .where('to', '<=', to ? timeTo : 1440)
+                    .where('from', '>=', from ? from !== 'null' ? timeFrom : 0 : 0)
+                    .where('to', '<=', to ? to !== 'null' ? timeTo : 1440 : 1440)
             })
             .join('users', 'users.id', '=', 'user_id')
             .select('*')
@@ -65,7 +65,7 @@ export default class ClassesController {
 
             const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
                 return {
-                    week_day: scheduleItem.week_day,
+                    week_day: scheduleItem.week_day.value,
                     from: convertHourToMinutes(scheduleItem.from),
                     to: convertHourToMinutes(scheduleItem.to),
                     class_id
