@@ -1,21 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { StyleSheet } from 'react-native'
+
+// Expo
+import { AppLoading } from 'expo'
+import { StatusBar } from 'expo-status-bar'
+
+// Routes
+import AppStack from 'routes/AppStack'
+
+// Fonts
+import {
+  useFonts,
+  Archivo_400Regular,
+  Archivo_700Bold
+} from '@expo-google-fonts/archivo'
+import { Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello NLW!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  const [fontsLoaded] = useFonts({
+    Archivo_400Regular,
+    Archivo_700Bold,
+    Poppins_400Regular,
+    Poppins_600SemiBold
+  })
+
+  if (!fontsLoaded) return <AppLoading />
+  else return (
+    <>
+      <StatusBar style="light" />
+      <AppStack />
+    </>
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+})
