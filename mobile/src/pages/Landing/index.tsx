@@ -1,6 +1,10 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 
+// Navigation
+import { StackHeaderProps } from '@react-navigation/stack'
+
+
 // Images
 import landingImg from 'assets/images/landing.png'
 import studyImg from 'assets/images/icons/study.png'
@@ -10,7 +14,7 @@ import heartImg from 'assets/images/icons/heart.png'
 // Styles
 import styles from './styles'
 
-function Landing() {
+const Landing: React.FC<StackHeaderProps> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Image style={styles.banner} source={landingImg} />
@@ -22,12 +26,18 @@ function Landing() {
             </Text>
 
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={[styles.button, styles.buttonPrimary]}>
+                <TouchableOpacity 
+                    style={[styles.button, styles.buttonPrimary]}
+                    onPress={() => navigation.navigate("TeacherList")}
+                >
                     <Image source={studyImg}/>
                     <Text style={styles.buttonText}>Estudar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.button, styles.buttonSecondary]}>
+                <TouchableOpacity 
+                    style={[styles.button, styles.buttonSecondary]}
+                    onPress={() => navigation.navigate("GiveClasses")}
+                >
                     <Image source={teachImg}/>
                     <Text style={styles.buttonText}>Ensinar</Text>
                 </TouchableOpacity>
