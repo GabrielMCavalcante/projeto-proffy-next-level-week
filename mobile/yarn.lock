@@ -3868,6 +3868,11 @@ mkdirp@^0.5.1:
   dependencies:
     minimist "^1.2.5"
 
+module-resolver@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/module-resolver/-/module-resolver-1.0.0.tgz#d412c0b66e08588cd39347a60c3c818bc9119fb5"
+  integrity sha1-1BLAtm4IWIzTk0emDDyBi8kRn7U=
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
