@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios-config'
 
 // Images
 import whatsappIcon from 'assets/images/icons/whatsapp.svg'
@@ -7,6 +8,7 @@ import whatsappIcon from 'assets/images/icons/whatsapp.svg'
 import './styles.css'
 
 interface TeacherItemProps {
+    teacherId: number,
     teacherPhotoURL: string,
     teacherName: string,
     teacherSubject: string,
@@ -17,6 +19,11 @@ interface TeacherItemProps {
 }
 
 const TeacherItem: React.FC<TeacherItemProps> = props => {
+
+    function createConnection() {
+        axios.post('/connections', { user_id: props.teacherId })
+    }
+
     return (
         <article className="teacher-item">
             <header>
@@ -45,6 +52,7 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
                     target="_blank" 
                     rel="noopener noreferrer" 
                     href={`https://wa.me/${props.teacherWhatsapp}`}
+                    onClick={createConnection}
                 >
                     <img src={whatsappIcon} alt="Ícone do Whatsapp" />
                     Entrar em contato
