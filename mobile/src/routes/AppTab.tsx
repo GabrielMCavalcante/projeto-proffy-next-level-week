@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Image } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
 // Navigation
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -12,9 +12,47 @@ const Tab = createBottomTabNavigator()
 
 function AppTab() {
     return (
-        <Tab.Navigator initialRouteName="Proffys">
-            <Tab.Screen name="Proffys" component={TeacherList} />
-            <Tab.Screen name="Favoritos" component={Favourites} />
+        <Tab.Navigator 
+            initialRouteName="Proffys"
+            tabBarOptions={{
+                style: {
+                    elevation: 0,
+                    shadowOpacity: 0,
+                    height: 64
+                },
+                tabStyle: {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                },
+                iconStyle: {
+                    flex: 0,
+                    width: 20,
+                    height: 20
+                },
+                labelStyle: {
+                    fontFamily: 'Archivo_700Bold',
+                    fontSize: 13,
+                    marginLeft: 16
+                },
+                activeBackgroundColor: '#EBEBF5',
+                inactiveBackgroundColor: '#fafafc',
+                activeTintColor: '#9871F5',
+                inactiveTintColor: '#C1BCCC'
+            }}
+        >
+            <Tab.Screen name="Proffys" component={TeacherList} options={{
+                tabBarLabel: 'Proffys',
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="ios-easel" size={size} color={color}/>
+                )
+            }}/>
+            <Tab.Screen name="Favoritos" component={Favourites} options={{
+                tabBarLabel: 'Favoritos',
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="ios-heart" size={size} color={color}/>
+                )
+            }}/>
         </Tab.Navigator>
     )
 }
