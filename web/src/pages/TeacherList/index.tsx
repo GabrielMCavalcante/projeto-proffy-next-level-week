@@ -9,6 +9,9 @@ import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
 
+// Images
+import notFoundIcon from 'assets/images/icons/not-found.svg'
+
 // Icons
 import { Icon } from '@iconify/react'
 import searchIcon from '@iconify/icons-mdi/magnify'
@@ -60,9 +63,15 @@ function TeacherList() {
 
     function filterClasses(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        const query = `?subject=${subject}&week_day=${weekDay}&from=${from}&to=${to}`
         setLoading(true)
-        axios.get('/classes' + query)
+        axios.get('/classes', {
+            params: {
+                subject,
+                week_day: weekDay,
+                from,
+                to
+            }
+        })
             .then(response => {
                 setLoading(false)
                 setClasses(response.data.search)
@@ -131,7 +140,7 @@ function TeacherList() {
                     />
                     <button type="submit">
                         <Icon icon={searchIcon} />
-                        Buscar 
+                        Buscar
                     </button>
                 </form>
             </PageHeader>
@@ -140,17 +149,28 @@ function TeacherList() {
                 {
                     loading
                         ? <div className="spinner-resizer"><Spinner /></div>
-                        : classes.map((currentClass, index) => (
-                            <TeacherItem
-                                key={index}
-                                teacherPhotoURL={currentClass.avatar}
-                                teacherName={currentClass.name}
-                                teacherSubject={currentClass.subject}
-                                teacherDescriptionHeader={currentClass.bio_header}
-                                teacherDescriptionContent={currentClass.bio_content}
-                                teacherPrice={currentClass.cost}
-                            />
-                        ))
+                        : classes.length > 0
+                            ? classes.map((currentClass, index) => (
+                                <TeacherItem
+                                    key={index}
+                                    teacherPhotoURL={currentClass.avatar}
+                                    teacherName={currentClass.name}
+                                    teacherSubject={currentClass.subject}
+                                    teacherDescriptionHeader={currentClass.bio_header}
+                                    teacherDescriptionContent={currentClass.bio_content}
+                                    teacherPrice={currentClass.cost}
+                                />
+                            ))
+                            : (
+                                <section className="no-classes-found">
+                                    <header>
+                                        Oops! Parece que não foi encontrada nenhuma classe <br />
+                                        disponível. Tente alterar os filtros.
+                                    </header>
+
+                                    <img src={notFoundIcon} alt="Nenhuma classe encontrada"/>
+                                </section>
+                            )
                 }
             </main>
         </div>
