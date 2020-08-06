@@ -12,7 +12,8 @@ interface TeacherItemProps {
     teacherSubject: string,
     teacherDescriptionHeader: string,
     teacherDescriptionContent: string,
-    teacherPrice: number
+    teacherPrice: number,
+    teacherWhatsapp: number
 }
 
 const TeacherItem: React.FC<TeacherItemProps> = props => {
@@ -40,10 +41,14 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
                         }).format(props.teacherPrice)
                     }</strong>
                 </p>
-                <button>
+                <a 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    href={`https://wa.me/${props.teacherWhatsapp}`}
+                >
                     <img src={whatsappIcon} alt="Ícone do Whatsapp" />
                     Entrar em contato
-                </button>
+                </a>
             </footer>
         </article>
     )
