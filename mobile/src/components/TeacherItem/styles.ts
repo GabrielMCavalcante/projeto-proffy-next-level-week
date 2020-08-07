@@ -94,6 +94,10 @@ export default StyleSheet.create({
         marginRight: 8
     },
 
+    favourited: {
+        backgroundColor: '#E33D3D'
+    },
+
     contactButton: {
         backgroundColor: '#04D361',
         alignItems: 'center',
