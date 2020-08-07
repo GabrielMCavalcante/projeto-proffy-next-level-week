@@ -17,10 +17,16 @@ import styles from './styles'
 
 interface PageHeaderProps {
     title: string,
-    description?: string
+    description?: string,
+    onToggleFilters: (...params: any[]) => void,
+    showingFilters: boolean
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, children }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ 
+    title, 
+    onToggleFilters, 
+    showingFilters,
+    children }) => {
 
     const { navigate } = useNavigation()
 
@@ -38,11 +44,14 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, children }) => {
                 <Text style={styles.title}>{title}</Text>
                 <View style={styles.filtersContainer}>
                     <View style={styles.toggleFiltersButtonWrapper}>
-                        <RectButton style={styles.toggleFiltersButton}>
+                        <RectButton onPress={onToggleFilters} style={styles.toggleFiltersButton}>
                             <Text style={styles.toggleFiltersButtonText}>
                                 Filtrar por dia, hora e matéria
                             </Text>
-                            <Ionicons name="md-arrow-down" color="#F0F0F4"/>
+                            <Ionicons 
+                                name={showingFilters ? "md-arrow-up" : "md-arrow-down"} 
+                                color="#F0F0F4"
+                            />
                         </RectButton>
                     </View>
 
