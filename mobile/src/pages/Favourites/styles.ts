@@ -7,6 +7,6 @@ export default StyleSheet.create({
     },
 
     favourites: {
-        marginTop: -60
+        marginTop: -40
     }
 })
