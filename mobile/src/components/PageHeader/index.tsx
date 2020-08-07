@@ -1,6 +1,9 @@
 import React from 'react'
 import { View, Text, Image } from 'react-native'
-import { BorderlessButton } from 'react-native-gesture-handler'
+import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
+
+// Icons
+import { Ionicons } from '@expo/vector-icons'
 
 // Navigation
 import { useNavigation } from '@react-navigation/native'
@@ -17,7 +20,7 @@ interface PageHeaderProps {
     description?: string
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ title, children }) => {
 
     const { navigate } = useNavigation()
 
@@ -33,6 +36,20 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
 
             <View>
                 <Text style={styles.title}>{title}</Text>
+                <View style={styles.filtersContainer}>
+                    <View style={styles.toggleFiltersButtonWrapper}>
+                        <RectButton style={styles.toggleFiltersButton}>
+                            <Text style={styles.toggleFiltersButtonText}>
+                                Filtrar por dia, hora e matéria
+                            </Text>
+                            <Ionicons name="md-arrow-down" color="#F0F0F4"/>
+                        </RectButton>
+                    </View>
+
+                    <View style={styles.filtersInput}>
+                        { children }
+                    </View>
+                </View>
             </View>
         </View>
     )
