@@ -30,15 +30,24 @@ for (let i = 0; i <= 59; i++)
 
 function TeacherList() {
 
+    const [showFilters, setShowFilters] = useState(false)
     const [subject, setSubject] = useState('Artes')
     const [weekDay, setWeekDay] = useState('1')
     const [from, setFrom] = useState({ hours: '23', minutes: '59' })
     const [to, setTo] = useState({ hours: '23', minutes: '59' })
 
+    function applyFilters() {
+        setShowFilters(false)
+    }
+
     return (
         <View style={styles.container}>
-            <PageHeader title="Proffys Disponíveis">
-                <ScrollView style={styles.searchForm}>
+            <PageHeader 
+                onToggleFilters={() => setShowFilters(!showFilters)}
+                showingFilters={showFilters} 
+                title="Proffys Disponíveis"
+            >
+                <ScrollView style={[styles.searchForm, !showFilters && {display: 'none'}]}>
                     <Text style={styles.label}>Matéria</Text>
                     <DropDownPicker
                         items={[
@@ -153,7 +162,7 @@ function TeacherList() {
                         </View>
                     </View>
 
-                    <RectButton style={styles.filterButton}>
+                    <RectButton onPress={applyFilters} style={styles.filterButton}>
                         <Ionicons style={styles.filterButtonIcon} name="ios-search" />
                         <Text style={styles.filterButtonText}>Buscar</Text>
                     </RectButton>
