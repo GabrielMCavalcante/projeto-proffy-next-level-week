@@ -56,11 +56,9 @@ const TeacherItem: React.FC<Teacher> = props => {
                     const favouritedTeachers: Teacher[] = JSON.parse(response).teachers
                     let parsedTeachers: Teacher[] = []
                     if (isFavourited) {
-                        // console.log('estou favoritado')
                         parsedTeachers = favouritedTeachers
                             .filter(teacher => teacher.teacherId !== teacherId)
                     } else {
-                        // console.log('nao estou favoritado')
                         parsedTeachers = [...favouritedTeachers, {
                             teacherId,
                             teacherName,
