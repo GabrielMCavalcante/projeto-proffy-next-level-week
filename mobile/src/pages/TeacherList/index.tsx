@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, Picker } from 'react-native'
 import { ScrollView, RectButton } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
-
+import axios from '../../axios-config'
 
 // Icons
 import { Ionicons } from '@expo/vector-icons'
@@ -28,31 +28,98 @@ for (let i = 0; i <= 59; i++)
         value: String(i).padStart(2, '0')
     })
 
+interface Teacher {
+    id: number,
+    subject: string,
+    cost: number,
+    name: 'string',
+    avatar: string,
+    whatsapp: number,
+    bio_header: string,
+    bio_content: string
+}
+
 function TeacherList() {
 
+    const [teachers, setTeachers] = useState<Teacher[]>([])
+    const [reFetch, setReFetch] = useState(true)
     const [showFilters, setShowFilters] = useState(false)
-    const [subject, setSubject] = useState('Artes')
-    const [weekDay, setWeekDay] = useState('1')
-    const [from, setFrom] = useState({ hours: '23', minutes: '59' })
-    const [to, setTo] = useState({ hours: '23', minutes: '59' })
+    const [subject, setSubject] = useState<string | null>(null)
+    const [weekDay, setWeekDay] = useState<string | null>(null)
+    const [from, setFrom] = useState<{ hours: string, minutes: string } | null>(null)
+    const [to, setTo] = useState<{ hours: string, minutes: string } | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        (function fetchClasses() {
+            if (reFetch) {
+                setReFetch(false)
+                setLoading(true)
+                axios.get('/classes')
+                    .then(response => {
+                        setLoading(false)
+                        setTeachers(response.data.search)
+                    })
+                    .catch(() => {
+                        setLoading(false)
+
+
+                    })
+            }
+        })()
+    }, [reFetch]) // eslint-disable-line
 
     function applyFilters() {
         setShowFilters(false)
+        setLoading(true)
+        const fromParam = from ? `${from.hours}:${from.minutes}` : null
+        const toParam = to ? `${to.hours}:${to.minutes}` : null
+        axios.get('/classes', {
+            params: {
+                subject,
+                week_day: weekDay,
+                from: fromParam,
+                to: toParam
+            }
+        })
+            .then(response => {
+                setLoading(false)
+                setTeachers(response.data.search)
+            })
+            .catch(() => {
+                setLoading(false)
+                setSubject(null)
+                setWeekDay(null)
+                setFrom(null)
+                setTo(null)
+                setReFetch(true)
+            })
     }
 
     return (
         <View style={styles.container}>
-            <PageHeader 
+            <PageHeader
                 onToggleFilters={() => setShowFilters(!showFilters)}
-                showingFilters={showFilters} 
+                showingFilters={showFilters}
                 title="Proffys Disponíveis"
             >
-                <ScrollView style={[styles.searchForm, !showFilters && {display: 'none'}]}>
+                <ScrollView style={[styles.searchForm, !showFilters && { display: 'none' }]}>
                     <Text style={styles.label}>Matéria</Text>
                     <DropDownPicker
                         items={[
-                            { label: 'Artes', value: 'Artes' },
-                            { label: 'Biologia', value: 'Biologia' },
+                            { label: 'Todas as Matérias', value: null },
+                            { value: "Artes", label: "Artes" },
+                            { value: "Biologia", label: "Biologia" },
+                            { value: "Educação Física", label: "Educação Física" },
+                            { value: "Espanhol", label: "Espanhol" },
+                            { value: "Física", label: "Física" },
+                            { value: "Geografia", label: "Geografia" },
+                            { value: "História", label: "História" },
+                            { value: "Inglês", label: "Inglês" },
+                            { value: "Literatura", label: "Literatura" },
+                            { value: "Matemática", label: "Matemática" },
+                            { value: "Português", label: "Português" },
+                            { value: "Química", label: "Química" }
                         ]}
                         defaultValue={subject}
                         containerStyle={{ height: 40 }}
@@ -67,8 +134,14 @@ function TeacherList() {
                     <Text style={styles.label}>Dia da Semana</Text>
                     <DropDownPicker
                         items={[
-                            { label: 'Segunda-feira', value: '1' },
-                            { label: 'Terça-feira', value: '2' },
+                            { label: 'Todos os Dias', value: null },
+                            { value: "1", label: "Segunda-feira" },
+                            { value: "2", label: "Terça-feira" },
+                            { value: "3", label: "Quarta-feira" },
+                            { value: "4", label: "Quinta-feira" },
+                            { value: "5", label: "Sexta-feira" },
+                            { value: "6", label: "Sábado" },
+                            { value: "0", label: "Domingo" }
                         ]}
                         defaultValue={weekDay}
                         containerStyle={{ height: 40 }}
@@ -85,11 +158,11 @@ function TeacherList() {
                             <Text style={styles.label}>Das</Text>
                             <View style={styles.timeContainer}>
                                 <Picker
-                                    selectedValue={from.hours}
+                                    selectedValue={from ? from.hours : '01'}
                                     prompt="Selecione as horas"
                                     style={styles.timeDisplay}
-                                    onValueChange={itemValue => 
-                                        setFrom({ ...from, hours: itemValue })
+                                    onValueChange={itemValue =>
+                                        setFrom({ ...from, hours: itemValue } as any)
                                     }
                                 >
                                     {
@@ -103,10 +176,10 @@ function TeacherList() {
                                     }
                                 </Picker>
                                 <Picker
-                                    selectedValue={from.minutes}
+                                    selectedValue={from ? from.minutes : '00'}
                                     prompt="Selecione os minutos"
                                     style={styles.timeDisplay}
-                                    onValueChange={itemValue => setFrom({ ...from, minutes: itemValue })}
+                                    onValueChange={itemValue => setFrom({ ...from, minutes: itemValue } as any)}
                                 >
                                     {
                                         fullMinutes.map(m => (
@@ -125,11 +198,11 @@ function TeacherList() {
                             <Text style={styles.label}>Até</Text>
                             <View style={styles.timeContainer}>
                                 <Picker
-                                    selectedValue={to.hours}
+                                    selectedValue={to ? to.hours : '23'}
                                     prompt="Selecione as horas"
                                     style={styles.timeDisplay}
-                                    onValueChange={itemValue => 
-                                        setTo({ ...to, hours: itemValue })
+                                    onValueChange={itemValue =>
+                                        setTo({ ...to, hours: itemValue } as any)
                                     }
                                 >
                                     {
@@ -143,10 +216,10 @@ function TeacherList() {
                                     }
                                 </Picker>
                                 <Picker
-                                    selectedValue={to.minutes}
+                                    selectedValue={to ? to.minutes : '59'}
                                     prompt="Selecione os minutos"
                                     style={styles.timeDisplay}
-                                    onValueChange={itemValue => setTo({ ...to, minutes: itemValue })}
+                                    onValueChange={itemValue => setTo({ ...to, minutes: itemValue } as any)}
                                 >
                                     {
                                         fullMinutes.map(h => (
@@ -175,10 +248,21 @@ function TeacherList() {
                     paddingBottom: 16
                 }}
             >
-                <TeacherItem />
-                <TeacherItem />
-                <TeacherItem />
-                <TeacherItem />
+                {
+                    teachers.map((teacher, i) => (
+                        <TeacherItem
+                            key={i}
+                            teacherId={teacher.id}
+                            teacherPhotoURL={teacher.avatar}
+                            teacherName={teacher.name}
+                            teacherSubject={teacher.subject}
+                            teacherDescriptionHeader={teacher.bio_header}
+                            teacherDescriptionContent={teacher.bio_content}
+                            teacherPrice={teacher.cost}
+                            teacherWhatsapp={teacher.whatsapp}
+                        />
+                    ))
+                }
             </ScrollView>
         </View>
     )
