@@ -18,47 +18,52 @@ import styles from './styles'
 interface PageHeaderProps {
     title: string,
     description?: string,
-    onToggleFilters: (...params: any[]) => void,
-    showingFilters: boolean
+    filters?: boolean,
+    onToggleFilters?: (...params: any[]) => void,
+    showingFilters?: boolean
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ 
-    title, 
-    onToggleFilters, 
+const PageHeader: React.FC<PageHeaderProps> = ({
+    title,
+    onToggleFilters,
     showingFilters,
-    children }) => {
+    children,
+    filters }) => {
 
     const { navigate } = useNavigation()
 
     return (
         <View style={styles.container}>
             <View style={styles.topBar}>
-                <BorderlessButton onPress={() => navigate("Landing")}>
-                    <Image source={goBackImg} resizeMode="contain" />
+                <BorderlessButton style={{width: 30, height: 30}} onPress={() => navigate("Landing")}>
+                    <Image style={{width: 30, height: 30}} source={goBackImg} resizeMode="contain" />
                 </BorderlessButton>
 
-                <Image source={logoImg} resizeMode="contain" />
+                <Image source={logoImg} style={{width: 60, height: 30}} resizeMode="contain" />
             </View>
 
             <View>
                 <Text style={styles.title}>{title}</Text>
-                <View style={styles.filtersContainer}>
-                    <View style={styles.toggleFiltersButtonWrapper}>
-                        <RectButton onPress={onToggleFilters} style={styles.toggleFiltersButton}>
-                            <Text style={styles.toggleFiltersButtonText}>
-                                Filtrar por dia, hora e matéria
+                {
+                    filters &&
+                    <View style={styles.filtersContainer}>
+                        <View style={styles.toggleFiltersButtonWrapper}>
+                            <RectButton onPress={onToggleFilters} style={styles.toggleFiltersButton}>
+                                <Text style={styles.toggleFiltersButtonText}>
+                                    Filtrar por dia, hora e matéria
                             </Text>
-                            <Ionicons 
-                                name={showingFilters ? "md-arrow-up" : "md-arrow-down"} 
-                                color="#F0F0F4"
-                            />
-                        </RectButton>
-                    </View>
+                                <Ionicons
+                                    name={showingFilters ? "md-arrow-up" : "md-arrow-down"}
+                                    color="#F0F0F4"
+                                />
+                            </RectButton>
+                        </View>
 
-                    <View style={styles.filtersInput}>
-                        { children }
+                        <View style={styles.filtersInput}>
+                            {children}
+                        </View>
                     </View>
-                </View>
+                }
             </View>
         </View>
     )
