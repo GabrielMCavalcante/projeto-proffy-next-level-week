@@ -3,6 +3,7 @@ import { View, Text, Picker } from 'react-native'
 import { ScrollView, RectButton } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 import axios from '../../axios-config'
+import AsyncStorage from '@react-native-community/async-storage'
 
 // Icons
 import { Ionicons } from '@expo/vector-icons'
@@ -39,9 +40,10 @@ interface Teacher {
     bio_content: string
 }
 
-function TeacherList() {
+function TeacherList(props: { navigation: any }) {
 
     const [teachers, setTeachers] = useState<Teacher[]>([])
+    const [favourites, setFavourites] = useState<number[]>([])
     const [reFetch, setReFetch] = useState(true)
     const [showFilters, setShowFilters] = useState(false)
     const [subject, setSubject] = useState<string | null>(null)
@@ -62,12 +64,28 @@ function TeacherList() {
                     })
                     .catch(() => {
                         setLoading(false)
-
-
                     })
             }
         })()
     }, [reFetch]) // eslint-disable-line
+
+    useEffect(() => {
+        return props.navigation.addListener('focus', () => {
+            AsyncStorage.getItem('favourites')
+                .then(response => {
+                    if (response) {
+                        const fetchedFavourites: { teacherId: number }[] =
+                            JSON.parse(response).teachers
+
+                        setFavourites([
+                            ...fetchedFavourites.map(
+                                fetchedFavourite => fetchedFavourite.teacherId
+                            )
+                        ])
+                    }
+                })
+        })
+    }, [props.navigation])
 
     function applyFilters() {
         setShowFilters(false)
@@ -121,7 +139,6 @@ function TeacherList() {
                             { value: "Português", label: "Português" },
                             { value: "Química", label: "Química" }
                         ]}
-                        defaultValue={subject}
                         containerStyle={{ height: 40 }}
                         style={{ backgroundColor: '#fafafa' }}
                         itemStyle={{
@@ -143,7 +160,6 @@ function TeacherList() {
                             { value: "6", label: "Sábado" },
                             { value: "0", label: "Domingo" }
                         ]}
-                        defaultValue={weekDay}
                         containerStyle={{ height: 40 }}
                         style={{ backgroundColor: '#fafafa' }}
                         itemStyle={{
@@ -249,9 +265,9 @@ function TeacherList() {
                 }}
             >
                 {
-                    teachers.map((teacher, i) => (
+                    teachers.map(teacher => (
                         <TeacherItem
-                            key={i}
+                            key={Math.random()}
                             teacherId={teacher.id}
                             teacherPhotoURL={teacher.avatar}
                             teacherName={teacher.name}
@@ -260,6 +276,7 @@ function TeacherList() {
                             teacherDescriptionContent={teacher.bio_content}
                             teacherPrice={teacher.cost}
                             teacherWhatsapp={teacher.whatsapp}
+                            isFavourited={favourites.includes(teacher.id)}
                         />
                     ))
                 }
