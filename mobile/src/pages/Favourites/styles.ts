@@ -8,5 +8,10 @@ export default StyleSheet.create({
 
     favourites: {
         marginTop: -40
+    },
+
+    spinner: {
+        transform: [{ scale: 2 }],
+        flex: 1
     }
 })
