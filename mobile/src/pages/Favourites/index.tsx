@@ -20,19 +20,18 @@ function Favourites(props: { navigation: any }) {
     useEffect(() => {
         const unsubscribe = props.navigation.addListener('focus', () => {
             AsyncStorage.getItem('favourites')
-            .then(response => {
-                if(response) {
-                    setFavourites(JSON.parse(response).teachers)
-                }
-            })
+                .then(response => {
+                    if (response) 
+                        setFavourites(JSON.parse(response).teachers)
+                })
         })
-    
+
         return unsubscribe
-      }, [props.navigation])
+    }, [props.navigation])
 
     return (
         <View style={styles.container}>
-            <PageHeader title="Meus Proffys Favoritos" showingFilters={false} onToggleFilters={() => { }} />
+            <PageHeader title="Meus Proffys Favoritos" filters={false}/>
 
             <ScrollView
                 style={styles.favourites}
@@ -42,9 +41,9 @@ function Favourites(props: { navigation: any }) {
                 }}
             >
                 {
-                    favourites.map((favourite, i) => (
+                    favourites.map(favourite => (
                         <TeacherItem
-                            key={i}
+                            key={Math.random()}
                             teacherId={favourite.teacherId}
                             teacherPhotoURL={favourite.teacherPhotoURL}
                             teacherName={favourite.teacherName}
