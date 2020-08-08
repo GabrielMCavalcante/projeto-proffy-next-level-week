@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, Image, Linking } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import { SvgUri } from 'react-native-svg'
+import AsyncStorage from '@react-native-community/async-storage'
 import axios from '../../axios-config'
 
 // Images
@@ -12,7 +13,7 @@ import whatsappImg from 'assets/images/icons/whatsapp.png'
 // Styles
 import styles from './styles'
 
-interface TeacherItemProps {
+export interface Teacher {
     teacherId: number,
     teacherPhotoURL: string,
     teacherName: string,
@@ -20,13 +21,62 @@ interface TeacherItemProps {
     teacherDescriptionHeader: string,
     teacherDescriptionContent: string,
     teacherPrice: number,
-    teacherWhatsapp: number
+    teacherWhatsapp: number,
+    isFavourited: boolean
 }
 
-const TeacherItem: React.FC<TeacherItemProps> = props => {
+const TeacherItem: React.FC<Teacher> = props => {
+
+    const {
+        teacherId,
+        teacherName,
+        teacherSubject,
+        teacherPhotoURL,
+        teacherDescriptionHeader,
+        teacherDescriptionContent,
+        teacherWhatsapp,
+        teacherPrice
+    } = props
+
+    const [isFavourited, setIsFavourited] = useState(props.isFavourited)
+
+    useEffect(() => {
+        setIsFavourited(props.isFavourited)
+    }, [props.isFavourited])
+
     function openWhatsapp() {
-        Linking.openURL(`whatsapp://send?phone=${props.teacherWhatsapp}`)
-        axios.post('/connections', { user_id: props.teacherId })
+        Linking.openURL(`whatsapp://send?phone=${teacherWhatsapp}`)
+        axios.post('/connections', { user_id: teacherId })
+    }
+
+    function toggleFavourite() {
+        AsyncStorage.getItem('favourites')
+            .then(response => {
+                if (response) {
+                    const favouritedTeachers: Teacher[] = JSON.parse(response).teachers
+                    let parsedTeachers: Teacher[] = []
+                    if (isFavourited) {
+                        // console.log('estou favoritado')
+                        parsedTeachers = favouritedTeachers
+                            .filter(teacher => teacher.teacherId !== teacherId)
+                    } else {
+                        // console.log('nao estou favoritado')
+                        parsedTeachers = [...favouritedTeachers, {
+                            teacherId,
+                            teacherName,
+                            teacherSubject,
+                            teacherPhotoURL,
+                            teacherDescriptionHeader,
+                            teacherDescriptionContent,
+                            teacherWhatsapp,
+                            teacherPrice,
+                            isFavourited: true
+                        }]
+                    }
+                    AsyncStorage.setItem('favourites', JSON.stringify({ teachers: parsedTeachers }))
+                        .then(() => setIsFavourited(!isFavourited))
+                }
+            })
     }
 
     return (
@@ -34,43 +84,51 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
             <View style={styles.profile}>
                 <View style={styles.profileHeader}>
                     {
-                        props.teacherPhotoURL.endsWith('.png')
+                        teacherPhotoURL.endsWith('.png')
                             ? (
                                 <Image
                                     style={styles.avatar}
-                                    source={{ uri: props.teacherPhotoURL }}
+                                    source={{ uri: teacherPhotoURL }}
                                 />
-                            ) 
+                            )
                             : (
                                 <SvgUri
                                     style={styles.avatar}
-                                    uri={props.teacherPhotoURL}
+                                    uri={teacherPhotoURL}
                                 />
                             )
                     }
 
                     <View style={styles.profileInfo}>
-                        <Text style={styles.name}>{props.teacherName}</Text>
-                        <Text style={styles.subject}>{props.teacherSubject}</Text>
+                        <Text style={styles.name}>{teacherName}</Text>
+                        <Text style={styles.subject}>{teacherSubject}</Text>
                     </View>
                 </View>
 
-                <Text style={styles.bioHeader}>{props.teacherDescriptionHeader}</Text>
-                <Text style={styles.bioContent}>{props.teacherDescriptionContent}</Text>
+                <Text style={styles.bioHeader}>{teacherDescriptionHeader}</Text>
+                <Text style={styles.bioContent}>{teacherDescriptionContent}</Text>
             </View>
 
             <View style={styles.footer}>
                 <Text style={styles.price}>
                     Preço/hora {'   '}
                     <Text style={styles.priceValue}>R$ {
-                        props.teacherPrice.toFixed(2).replace('.', ',')
+                        teacherPrice.toFixed(2).replace('.', ',')
                     }</Text>
                 </Text>
 
                 <View style={styles.buttonsContainer}>
-                    <RectButton style={[styles.favouriteButton, styles.favourited]}>
-                        {/* <Image source={favouriteHeartImg}/> */}
-                        <Image source={unfavouriteHeartImg} />
+                    <RectButton
+                        onPress={toggleFavourite}
+                        style={[styles.favouriteButton, isFavourited && styles.favourited]}
+                    >
+                        <Image
+                            source={
+                                isFavourited
+                                    ? unfavouriteHeartImg
+                                    : favouriteHeartImg
+                            }
+                        />
                     </RectButton>
 
                     <RectButton onPress={openWhatsapp} style={styles.contactButton}>
