@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, Image } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import axios from '../../axios-config'
+import AsyncStorage from '@react-native-community/async-storage'
 
 // Navigation
 import { useNavigation } from '@react-navigation/native'
@@ -20,16 +21,19 @@ function Landing() {
     const { navigate } = useNavigation()
 
     const [feedback, setFeedback] = useState('Carregando conexões...')
-    const [error, setError] = useState(true)
 
     useEffect(() => {
         (function fetchConnections() {
+            AsyncStorage.getItem('favourites')
+                .then(response => {
+                    if (!response)
+                        AsyncStorage.setItem('favourites', JSON.stringify({ teachers: [] }))
+                })
+
             axios.get('/connections').then(response => {
                 const totalConnections = response.data.total
-                setError(false)
                 setFeedback(`Total de ${totalConnections} ${totalConnections === 1 ? "conexão" : "conexões"} já ${totalConnections === 1 ? "realizada" : "realizadas"}`)
             }).catch(() => {
-                setError(true)
                 setFeedback('Não foi possível recuperar o total de conexões :(')
             })
         })()
