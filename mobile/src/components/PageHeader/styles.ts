@@ -16,9 +16,7 @@ export default StyleSheet.create({
         fontFamily: 'Archivo_700Bold',
         color: '#fff',
         fontSize: 24,
-        lineHeight: 32,
-        maxWidth: 160,
-        marginVertical: 40
+        marginVertical: 30
     },
 
     filtersContainer: {
@@ -33,8 +31,8 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         borderRadius: 8,
-        borderColor: 'black',
-        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.15)',
+        borderWidth: 1.5,
         borderStyle: 'dashed'
     },
 
