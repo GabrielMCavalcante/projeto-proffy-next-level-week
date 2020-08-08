@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Picker } from 'react-native'
+import { View, Text, Picker, ActivityIndicator } from 'react-native'
 import { ScrollView, RectButton } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 import axios from '../../axios-config'
 import AsyncStorage from '@react-native-community/async-storage'
+
+// Utils
+import { fullHours, fullMinutes } from '../../utils/getHoursMinutes'
 
 // Icons
 import { Ionicons } from '@expo/vector-icons'
@@ -14,20 +17,6 @@ import TeacherItem from 'components/TeacherItem'
 
 // Styles
 import styles from './styles'
-
-const fullHours: { label: string, value: string }[] = []
-const fullMinutes: { label: string, value: string }[] = []
-
-for (let i = 1; i <= 23; i++)
-    fullHours.push({
-        label: String(i).padStart(2, '0'),
-        value: String(i).padStart(2, '0')
-    })
-for (let i = 0; i <= 59; i++)
-    fullMinutes.push({
-        label: String(i).padStart(2, '0'),
-        value: String(i).padStart(2, '0')
-    })
 
 interface Teacher {
     id: number,
@@ -120,6 +109,7 @@ function TeacherList(props: { navigation: any }) {
                 onToggleFilters={() => setShowFilters(!showFilters)}
                 showingFilters={showFilters}
                 title="Proffys Disponíveis"
+                filters
             >
                 <ScrollView style={[styles.searchForm, !showFilters && { display: 'none' }]}>
                     <Text style={styles.label}>Matéria</Text>
@@ -257,30 +247,36 @@ function TeacherList(props: { navigation: any }) {
                     </RectButton>
                 </ScrollView>
             </PageHeader>
-            <ScrollView
-                style={styles.teacherList}
-                contentContainerStyle={{
-                    paddingHorizontal: 16,
-                    paddingBottom: 16
-                }}
-            >
-                {
-                    teachers.map(teacher => (
-                        <TeacherItem
-                            key={Math.random()}
-                            teacherId={teacher.id}
-                            teacherPhotoURL={teacher.avatar}
-                            teacherName={teacher.name}
-                            teacherSubject={teacher.subject}
-                            teacherDescriptionHeader={teacher.bio_header}
-                            teacherDescriptionContent={teacher.bio_content}
-                            teacherPrice={teacher.cost}
-                            teacherWhatsapp={teacher.whatsapp}
-                            isFavourited={favourites.includes(teacher.id)}
-                        />
-                    ))
-                }
-            </ScrollView>
+            {
+                loading
+                    ? <ActivityIndicator size="large" style={styles.spinner} color="#8257E5" />
+                    : (
+                        <ScrollView
+                            style={styles.teacherList}
+                            contentContainerStyle={{
+                                paddingHorizontal: 16,
+                                paddingBottom: 16
+                            }}
+                        >
+                            {
+                                teachers.map(teacher => (
+                                    <TeacherItem
+                                        key={Math.random()}
+                                        teacherId={teacher.id}
+                                        teacherPhotoURL={teacher.avatar}
+                                        teacherName={teacher.name}
+                                        teacherSubject={teacher.subject}
+                                        teacherDescriptionHeader={teacher.bio_header}
+                                        teacherDescriptionContent={teacher.bio_content}
+                                        teacherPrice={teacher.cost}
+                                        teacherWhatsapp={teacher.whatsapp}
+                                        isFavourited={favourites.includes(teacher.id)}
+                                    />
+                                ))
+                            }
+                        </ScrollView>
+                    )
+            }
         </View>
     )
 }
