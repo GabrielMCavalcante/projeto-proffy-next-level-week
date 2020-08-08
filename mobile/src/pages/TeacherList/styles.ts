@@ -34,7 +34,6 @@ export default StyleSheet.create({
     },
 
     inputGroup: {
-        // flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
     },
@@ -57,7 +56,6 @@ export default StyleSheet.create({
     },
 
     filterButton: {
-        // display: 'none',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -76,5 +74,10 @@ export default StyleSheet.create({
     filterButtonText: {
         color: '#F0F0F4',
         fontFamily: 'Archivo_700Bold'
+    },
+
+    spinner: {
+        transform: [{ scale: 2 }],
+        flex: 1
     }
 })
