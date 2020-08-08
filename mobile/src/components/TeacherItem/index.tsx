@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { View, Text, Image } from 'react-native'
+import React from 'react'
+import { View, Text, Image, Linking } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import { SvgUri } from 'react-native-svg'
 import axios from '../../axios-config'
@@ -24,8 +24,8 @@ interface TeacherItemProps {
 }
 
 const TeacherItem: React.FC<TeacherItemProps> = props => {
-
-    function createConnection() {
+    function openWhatsapp() {
+        Linking.openURL(`whatsapp://send?phone=${props.teacherWhatsapp}`)
         axios.post('/connections', { user_id: props.teacherId })
     }
 
@@ -73,7 +73,7 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
                         <Image source={unfavouriteHeartImg} />
                     </RectButton>
 
-                    <RectButton style={styles.contactButton}>
+                    <RectButton onPress={openWhatsapp} style={styles.contactButton}>
                         <Image source={whatsappImg} />
                         <Text style={styles.contactButtonText}>
                             Entrar em contato
