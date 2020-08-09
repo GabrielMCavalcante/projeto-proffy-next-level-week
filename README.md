@@ -67,7 +67,7 @@ Para fazer isso, siga os passos a seguir:
 1. Na pasta `mobile`, acesse o arquivo localizado em `src/axios-config.ts`;
 1. Dentro do arquivo, altere o endereço ip antes da porta 3333 para o seu endereço ip.
 
-[Voltar ao sumário](#sumário)
+[Voltar ao sumário](#sumário) <br/>
 [Voltar ao topo](#projeto-proffy)
 
 ## Imagens do projeto
@@ -90,7 +90,7 @@ IMAGEM AQUI
 - <p>Tela de detalhes do ponto de coleta selecionado</p>
 IMAGEM AQUI
 
-[Voltar ao sumário](#sumário)
+[Voltar ao sumário](#sumário) <br/>
 [Voltar ao topo](#projeto-proffy)
 
 
@@ -100,5 +100,5 @@ IMAGEM AQUI
 
 - LinkedIn - [Gabriel Cavalcante](https://linkedin.com/in/gabrielmcavalcante)
 
-[Voltar ao sumário](#sumário)
+[Voltar ao sumário](#sumário) <br/>
 [Voltar ao topo](#projeto-proffy)
