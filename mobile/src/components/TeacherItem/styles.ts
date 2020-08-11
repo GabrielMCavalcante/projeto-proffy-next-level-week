@@ -43,16 +43,7 @@ export default StyleSheet.create({
         marginTop: 4
     },
 
-    bioHeader: {
-        marginHorizontal: 10,
-        marginVertical: 20,
-        fontSize: 14,
-        lineHeight: 24,
-        color: '#6A6180',
-        fontFamily: 'Poppins_600SemiBold'
-    },
-
-    bioContent: {
+    bio: {
         marginHorizontal: 10,
         marginTop: 0,
         fontFamily: 'Poppins_400Regular',
