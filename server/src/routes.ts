@@ -1,8 +1,13 @@
 import express from 'express'
 import cors from 'cors'
+
+// Controllers
 import ClassesController from './controllers/ClassesController'
 import ConnectionsController from './controllers/ConnectionsController'
 import AuthenticationController from './controllers/AuthenticationController'
+
+// Middlewares
+import AuthMiddleware from './middlewares/auth'
 
 const routes = express.Router()
 
@@ -14,11 +19,11 @@ routes.post('/auth/signup', AuthenticationController.signup)
 routes.post('/auth/signin', AuthenticationController.signin)
 
 // Classes
-routes.get('/classes', ClassesController.index)
-routes.post('/classes', ClassesController.create)
+routes.get('/classes', AuthMiddleware, ClassesController.index)
+routes.post('/classes', AuthMiddleware, ClassesController.create)
 
 // Connections
-routes.get('/connections', ConnectionsController.index)
-routes.post('/connections', ConnectionsController.create)
+routes.get('/connections', AuthMiddleware, ConnectionsController.index)
+routes.post('/connections', AuthMiddleware, ConnectionsController.create)
 
 export default routes
