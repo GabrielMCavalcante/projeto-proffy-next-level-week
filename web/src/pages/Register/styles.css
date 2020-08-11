@@ -31,3 +31,26 @@
 #page-register-content {
     flex: 2;
 }
+
+
+@media (min-width: 1000px) {
+    #page-register {
+        flex-direction: row;
+    }
+
+    #page-register.signup {
+        flex-direction: row-reverse;
+    }
+
+    #page-register-header {
+        flex: 3;
+    }
+
+    #page-register-content {
+        flex: 2.5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}

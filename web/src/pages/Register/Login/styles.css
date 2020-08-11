@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 1.5rem;
+    position: relative;
 }
 
 #page-register-login h2 {
@@ -71,6 +72,7 @@ input:-internal-autofill-selected {
     grid-template-columns: 1fr 1fr;
     margin-top: 2.5rem;
     row-gap: 1.5rem;
+    width: 75%;
 }
 
 #page-register-login #user-actions label {
@@ -135,6 +137,7 @@ input:-internal-autofill-selected {
     text-decoration: none;
     color: var(--color-text-in-base);
     transition: brightness 300ms ease;
+    text-align: right
 }
 
 #page-register-login #user-actions #forgot-password:hover {
@@ -167,18 +170,25 @@ input:-internal-autofill-selected {
     background-color: var(--color-secundary-dark);
 }
 
-#page-register-login #user-actions #no-account a {
+#page-register-login footer {
+    display: flex;
+    justify-content: space-between;
+    width: 75%;
+    margin-top: 2.5rem;
+}
+
+#page-register-login footer #no-account a {
     text-decoration: underline;
     color: var(--color-primary);
     font-weight: 600;
 }
 
-#page-register-login #user-actions p {
+#page-register-login footer p {
     text-align: right;
     color: var(--color-text-complement);
 }
 
-#page-register-login #user-actions p img {
+#page-register-login footer p img {
     filter: brightness(130%);
 }
 
@@ -188,5 +198,42 @@ input:-internal-autofill-selected {
     }
     to {
         height: 4rem;
+    }
+}
+
+@media (max-width: 500px) {
+    #page-register-login #user-actions label, 
+    #page-register-login #user-actions #forgot-password {
+        grid-column: 1 / 3;
+    }
+
+    #page-register-login #user-actions label {
+        justify-content: center;
+    }
+
+    #page-register-login #user-actions #forgot-password {
+        text-align: center;
+    }
+
+    #page-register-login #user-actions button {
+        margin-top: 0.5rem;
+        margin-bottom: 0.2rem;
+    }
+}
+
+@media (min-width: 1000px) {
+    #page-register-login form {
+        width: 100%;
+    }
+    #page-register-login h2 {
+        position: absolute;
+        top: -3.5rem;
+        left: 0;
+    }
+    #page-register-login #user-actions {
+        width: 100%;
+    }
+    #page-register-login footer {
+        width: 100%;
     }
 }
