@@ -26,8 +26,7 @@ interface ClassItem {
     name: 'string',
     avatar: string,
     whatsapp: number,
-    bio_header: string,
-    bio_content: string
+    bio: string
 }
 
 function TeacherList() {
@@ -158,8 +157,7 @@ function TeacherList() {
                                     teacherPhotoURL={currentClass.avatar}
                                     teacherName={currentClass.name}
                                     teacherSubject={currentClass.subject}
-                                    teacherDescriptionHeader={currentClass.bio_header}
-                                    teacherDescriptionContent={currentClass.bio_content}
+                                    teacherBio={currentClass.bio}
                                     teacherPrice={currentClass.cost}
                                     teacherWhatsapp={currentClass.whatsapp}
                                 />

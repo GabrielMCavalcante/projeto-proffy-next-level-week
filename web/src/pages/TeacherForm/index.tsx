@@ -38,8 +38,7 @@ function TeacherForm() {
     const [name, setName] = useState('')
     const [avatar, setAvatar] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
-    const [bioHeader, setBioHeader] = useState('')
-    const [bioContent, setBioContent] = useState('')
+    const [bio, setBio] = useState('')
 
     const [cost, setCost] = useState('')
 
@@ -126,7 +125,7 @@ function TeacherForm() {
     }
 
     useEffect(() => {
-        const fields = [name, avatar, whatsapp, bioHeader, bioContent, cost]
+        const fields = [name, avatar, whatsapp, bio, cost]
 
         let valid = true
 
@@ -138,7 +137,7 @@ function TeacherForm() {
             valid = (!isNaN(Number(cost)) && Number(cost) >= 10 && Number(cost) <= 9999)
 
         if (valid !== formValid) setFormValid(valid)
-    }, [name, avatar, whatsapp, bioHeader, bioContent, cost]) // eslint-disable-line
+    }, [name, avatar, whatsapp, bio, cost]) // eslint-disable-line
 
     function registerClass(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -147,10 +146,7 @@ function TeacherForm() {
             name,
             avatar,
             whatsapp,
-            bio: {
-                bio_header: bioHeader, 
-                bio_content: bioContent
-            },
+            bio,
             subject,
             cost,
             schedule: scheduleItems
@@ -195,16 +191,10 @@ function TeacherForm() {
                             inputId="whatsapp"
                             inputLabel="WhatsApp"
                         />
-                        <Input
-                            value={bioHeader}
-                            onChange={e => setBioHeader(e.target.value)}
-                            inputId="bio-header"
-                            inputLabel="Título da biografia"
-                        />
                         <Textarea
-                            value={bioContent}
-                            onChange={e => setBioContent(e.target.value)}
-                            textareaId="bio-content"
+                            value={bio}
+                            onChange={e => setBio(e.target.value)}
+                            textareaId="bio"
                             textareaLabel="Biografia"
                         />
                     </fieldset>

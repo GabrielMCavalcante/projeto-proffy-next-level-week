@@ -25,8 +25,7 @@ interface Teacher {
     name: 'string',
     avatar: string,
     whatsapp: number,
-    bio_header: string,
-    bio_content: string
+    bio: string
 }
 
 function TeacherList(props: { navigation: any }) {
@@ -266,8 +265,7 @@ function TeacherList(props: { navigation: any }) {
                                         teacherPhotoURL={teacher.avatar}
                                         teacherName={teacher.name}
                                         teacherSubject={teacher.subject}
-                                        teacherDescriptionHeader={teacher.bio_header}
-                                        teacherDescriptionContent={teacher.bio_content}
+                                        teacherBio={teacher.bio}
                                         teacherPrice={teacher.cost}
                                         teacherWhatsapp={teacher.whatsapp}
                                         isFavourited={favourites.includes(teacher.id)}

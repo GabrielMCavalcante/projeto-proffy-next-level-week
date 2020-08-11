@@ -48,8 +48,7 @@ function Favourites(props: { navigation: any }) {
                             teacherPhotoURL={favourite.teacherPhotoURL}
                             teacherName={favourite.teacherName}
                             teacherSubject={favourite.teacherSubject}
-                            teacherDescriptionHeader={favourite.teacherDescriptionHeader}
-                            teacherDescriptionContent={favourite.teacherDescriptionContent}
+                            teacherBio={favourite.teacherBio}
                             teacherPrice={favourite.teacherPrice}
                             teacherWhatsapp={favourite.teacherWhatsapp}
                             isFavourited={favourite.isFavourited}

@@ -12,8 +12,7 @@ interface TeacherItemProps {
     teacherPhotoURL: string,
     teacherName: string,
     teacherSubject: string,
-    teacherDescriptionHeader: string,
-    teacherDescriptionContent: string,
+    teacherBio: string
     teacherPrice: number,
     teacherWhatsapp: number
 }
@@ -34,9 +33,7 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
                 </div>
             </header>
             <p>
-                {props.teacherDescriptionHeader}
-                <br /><br />
-                {props.teacherDescriptionContent}
+                {props.teacherBio}
             </p>
             <footer>
                 <p>

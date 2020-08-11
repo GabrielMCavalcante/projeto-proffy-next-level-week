@@ -18,8 +18,7 @@ export interface Teacher {
     teacherPhotoURL: string,
     teacherName: string,
     teacherSubject: string,
-    teacherDescriptionHeader: string,
-    teacherDescriptionContent: string,
+    teacherBio: string
     teacherPrice: number,
     teacherWhatsapp: number,
     isFavourited: boolean
@@ -32,8 +31,7 @@ const TeacherItem: React.FC<Teacher> = props => {
         teacherName,
         teacherSubject,
         teacherPhotoURL,
-        teacherDescriptionHeader,
-        teacherDescriptionContent,
+        teacherBio,
         teacherWhatsapp,
         teacherPrice
     } = props
@@ -64,8 +62,7 @@ const TeacherItem: React.FC<Teacher> = props => {
                             teacherName,
                             teacherSubject,
                             teacherPhotoURL,
-                            teacherDescriptionHeader,
-                            teacherDescriptionContent,
+                            teacherBio,
                             teacherWhatsapp,
                             teacherPrice,
                             isFavourited: true
@@ -103,8 +100,7 @@ const TeacherItem: React.FC<Teacher> = props => {
                     </View>
                 </View>
 
-                <Text style={styles.bioHeader}>{teacherDescriptionHeader}</Text>
-                <Text style={styles.bioContent}>{teacherDescriptionContent}</Text>
+                <Text style={styles.bio}>{teacherBio}</Text>
             </View>
 
             <View style={styles.footer}>
