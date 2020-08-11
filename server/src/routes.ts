@@ -10,7 +10,8 @@ routes.use(express.json())
 routes.use(cors())
 
 // Users
-routes.post('/auth/signup', AuthenticationController.create)
+routes.post('/auth/signup', AuthenticationController.signup)
+routes.post('/auth/signin', AuthenticationController.signin)
 
 // Classes
 routes.get('/classes', ClassesController.index)
