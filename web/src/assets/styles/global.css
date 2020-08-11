@@ -50,6 +50,13 @@ textarea {
     color: var(--color-text-base);
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+    box-shadow: 0 0 0 30px var(--color-input-background) inset !important;
+}
+
 .container {
     width: 90vw;
     max-width: 700px;
