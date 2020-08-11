@@ -1,0 +1,33 @@
+#page-register {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#page-register-header {
+    flex: 0.75;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--color-line-in-white);
+    font-size: 1.2rem;
+    font-family: 'Poppins', sans-serif;
+    background: url('../../assets/images/main-background.svg') var(--color-primary) center center no-repeat;
+    background-size: contain;
+}
+
+#page-register-header img {
+    width: 60%;
+    margin: 0 auto;
+}
+
+#page-register-header h2 {
+    margin-top: 2.25rem;
+}
+
+#page-register-content {
+    flex: 2;
+}
