@@ -5,9 +5,7 @@ import db from '../database/connection'
 import authConfig from '../config/auth'
 
 function generateToken(id: string, expiresIn = 86400) {
-    return jwt.sign({ id }, authConfig.secret, {
-        expiresIn
-    })
+    return jwt.sign({ id }, authConfig.secret, { expiresIn })
 }
 
 export default class AuthenticationController {
@@ -86,7 +84,7 @@ export default class AuthenticationController {
                     
                     const token = generateToken(user.__id)
 
-                    return res.status(200).json({ user, token})
+                    return res.status(200).json({ user, token })
                 }
             })
         }
