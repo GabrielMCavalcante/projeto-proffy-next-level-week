@@ -6,9 +6,9 @@ export async function up(knex: Knex) {
         table.string('subject').notNullable()
         table.decimal('cost').notNullable()
         
-        table.integer('user_id')
+        table.string('__user_id')
             .notNullable()
-            .references('id')
+            .references('__id')
             .inTable('users')
             .onDelete('CASCADE')
             .onUpdate('CASCADE')
