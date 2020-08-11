@@ -1,4 +1,8 @@
+<p align="center"><img src="github/proffy-icon.png" width="100" height=100 alt="App Logo"/></p>
+
 # Projeto Proffy
+
+![Imagem principal - Proffy](github/web-landingpage.png)
 
 ## Objetivo
 
@@ -74,21 +78,41 @@ Para fazer isso, siga os passos a seguir:
 
 ### Versão Web
 
-- <p>Página da home</p>
-IMAGEM AQUI
-- <p>Página de cadastro</p>
-IMAGEM AQUI
+#### Página da home
+  <img src="github/web-landingpage.png" alt="Página da home" />
+
+
+#### Página de cadastro
+  <img src="github/web-teacherform.png" alt="Página de cadastro" />
+
+
+#### Página de listagem de proffys
+  <img src="github/web-list.png" alt="Página de listagem de proffys" />
+
+
+#### Cartão proffy
+  <img src="github/web-card.png" alt="Cartão proffy" />
 
 ### Versão Mobile
 
-- <p>Tela da home</p>
-IMAGEM AQUI
+#### Tela da home
+  <img src="github/mobile-landingpage.jpeg" alt="Tela da home" width=300/>
 
-- <p>Tela do mapa de pontos de coleta</p>
-IMAGEM AQUI
 
-- <p>Tela de detalhes do ponto de coleta selecionado</p>
-IMAGEM AQUI
+#### Tela para proffys
+  <img src="github/mobile-teachpage.jpeg" alt="Tela para proffys" width=300/>
+
+
+#### Tela de listagem de proffys
+  <img src="github/mobile-teacherslist.jpeg" alt="Tela de listagem de proffys" width=300/>
+
+
+#### Tela de listagem de proffys favoritos
+  <img src="github/mobile-favourites.jpeg" alt="Tela de listagem de proffys favoritos" width=300/>
+
+
+#### Cartão proffy
+  <img src="github/mobile-card.jpeg" alt="Cartão proffy" width=300/>
 
 [Voltar ao sumário](#sumário) <br/>
 [Voltar ao topo](#projeto-proffy)
