@@ -38,14 +38,16 @@ function Login() {
                 <a id="forgot-password" href="/auth/login">Esqueci minha senha</a>
 
                 <button>Entrar</button>
+            </div>
 
+            <footer> 
                 <div id="no-account">
                     Não tem conta? <br />
                     <Link to="/auth/cadastro">Cadastre-se</Link>
                 </div>
 
                 <p>É de graça <img src={purpleHeartImg} alt="Coração roxo" /></p>
-            </div>
+            </footer>
         </div>
     )
 }
