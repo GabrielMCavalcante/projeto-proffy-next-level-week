@@ -2,11 +2,15 @@ import express from 'express'
 import cors from 'cors'
 import ClassesController from './controllers/ClassesController'
 import ConnectionsController from './controllers/ConnectionsController'
+import AuthenticationController from './controllers/AuthenticationController'
 
 const routes = express.Router()
 
 routes.use(express.json())
 routes.use(cors())
+
+// Users
+routes.post('/auth/signup', AuthenticationController.create)
 
 // Classes
 routes.get('/classes', ClassesController.index)
