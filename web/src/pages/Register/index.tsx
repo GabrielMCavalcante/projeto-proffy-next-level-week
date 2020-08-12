@@ -18,7 +18,7 @@ function Register() {
     const [registerMethod, setRegisterMethod] = useState('login')
 
     useEffect(() => {
-        if(history.location.pathname === '/auth/login')
+        if(history.location.pathname === '/auth/login' || history.location.pathname === '/auth')
             setRegisterMethod('login')
         else if(history.location.pathname === '/auth/cadastro') setRegisterMethod('signup')
         else if(history.location.pathname === '/auth/cadastro/sucesso') setRegisterMethod('success')
@@ -37,8 +37,8 @@ function Register() {
             <div id="page-register-content">
                 <Switch>
                     <Route path="/auth/login" component={Login} />
-                    <Route exact path="/auth/cadastro" component={Signup} />
                     <Route path="/auth/cadastro/sucesso" component={SignupComplete} />
+                    <Route path="/auth/cadastro" component={Signup} />
                     <Redirect to="/auth/login"/>
                 </Switch>
             </div>
