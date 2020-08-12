@@ -133,7 +133,8 @@
     text-decoration: none;
     color: var(--color-text-in-base);
     transition: brightness 300ms ease;
-    text-align: right
+    text-align: right;
+    user-select: none;
 }
 
 #page-register-login #user-actions #forgot-password:hover {
@@ -154,6 +155,7 @@
     cursor: not-allowed;
     transition: background-color 300ms ease;
     margin: 2rem 0 0.5rem;
+    user-select: none;
 }
 
 #page-register-login #user-actions button:enabled {
