@@ -36,10 +36,6 @@
     background-color: var(--color-input-background);
 }
 
-input:-internal-autofill-selected {
-    background-color: transparent !important;
-}
-
 #page-register-login form .input-group:first-child {
     margin-top: 1.2rem;
     border-radius: 0.8rem 0.8rem 0 0;
