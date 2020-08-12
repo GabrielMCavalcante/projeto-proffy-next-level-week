@@ -1,0 +1,69 @@
+#signup-complete {
+    width: 100vw;
+    height: 100%;
+    background: var(--color-primary) url('../../../../assets/images/main-background.svg') center center no-repeat;
+    background-size: contain;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#signup-complete h1 {
+    font-family: 'Archivo', sans-serif;
+    font-size: 3.4rem;
+    font-weight: 700;
+    color: var(--color-title-in-primary);
+    text-align: center;
+}
+
+#signup-complete p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    max-width: 35rem;
+    text-align: center;
+    line-height: 2.4rem;
+    font-weight: 400;
+    color: var(--color-text-in-primary);
+    margin-bottom: 1.5rem;
+}
+
+#signup-complete button {
+    width: 50%;
+    outline: none;
+    border: none;
+    border-radius: 0.8rem;
+    background-color: var( --color-secundary);
+    color: var(--color-button-text);
+    height: 5rem;
+    font-weight: 600;
+    font-family: Archivo, sans-serif;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: background-color 300ms ease;
+    user-select: none;
+}
+
+#signup-complete button:hover {
+    background-color: var(--color-secundary-dark);
+}
+
+@media (min-width: 700px) {
+    #signup-complete {
+        background-image: url('../../../../assets/images/success-background.svg')
+    }
+
+    #signup-complete h1 {
+        font-size: 4.5rem;
+    }
+
+    #signup-complete p {
+        font-size: 2rem;
+        max-width: 50rem;
+    }
+
+    #signup-complete button {
+        width: 30%;
+    }
+}
