@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import axios from 'axios-config'
 
 // Icons
 import { Icon } from '@iconify/react'
@@ -13,6 +12,9 @@ import InputInfo from 'components/InputInfo'
 
 // Images
 import goBackImg from 'assets/images/icons/back.svg'
+
+// Contexts
+import { useAuth } from 'contexts/auth'
 
 // CSS styles
 import './styles.css'
@@ -61,11 +63,21 @@ function Signup() {
     const [showPassword, setShowPassword] = useState(false)
     const [fields, setFields] = useState<FormFields>(initialFields as FormFields)
     const [formValid, setFormValid] = useState(false)
+    const authContext = useAuth()
 
-
-    function signupUser(e: React.FormEvent<HTMLFormElement>) {
+    async function signupUser(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
 
+        const userData = {
+            name: fields.name.value,
+            surname: fields.surname.value,
+            email: fields.email.value,
+            password: fields.password.value
+        }
+
+        const response = await authContext.signUp(userData)
+        if (typeof response === 'string') alert(response)
+        else history.replace('/auth/cadastro/sucesso')   
     }
 
     function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -200,7 +212,10 @@ function Signup() {
                     <InputInfo show={fields.password.showInfo} info={fields.password.info} />
                 </div>
 
-                <button type="submit" disabled={!formValid}>Concluir cadastro</button>
+                <button
+                    type="submit"
+                    disabled={!formValid || authContext.loading}
+                >Concluir cadastro</button>
             </form>
         </div>
     )
