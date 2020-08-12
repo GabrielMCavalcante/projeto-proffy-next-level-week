@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // Components
 import InputInfo from 'components/InputInfo'
 
@@ -43,6 +46,8 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false)
     const [fields, setFields] = useState<FormFields>(initialFields as FormFields)
     const [formValid, setFormValid] = useState(false)
+    const [rememberUser, setRememberUser] = useState(false)
+    const authContext = useAuth()
 
     function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {
         const inputIdentifier = e.target.id
@@ -62,7 +67,7 @@ function Login() {
         } else isFormValid = false
 
         if (isFormValid !== formValid)
-            setFormValid(isFormValid) 
+            setFormValid(isFormValid)
 
         setFields({
             ...fields,
@@ -73,6 +78,15 @@ function Login() {
                 valid: isInputValid
             }
         })
+    }
+
+    async function signIn() {
+        const userAccount = {
+            email: fields.email.value,
+            password: fields.password.value
+        }
+        const response = await authContext.signIn(userAccount, rememberUser)
+        if (typeof response === 'string') alert(response)
     }
 
     function onInfoHover(inputIdentifier: string) {
@@ -104,12 +118,12 @@ function Login() {
             <h2>Fazer login</h2>
             <form>
                 <div className={setInputClasses('email')}>
-                    <input 
+                    <input
                         value={fields.email.value}
                         onChange={onInputValueChange}
-                        type="email" 
-                        id="email" 
-                        placeholder="E-mail" 
+                        type="email"
+                        id="email"
+                        placeholder="E-mail"
                     />
                     <div
                         onMouseEnter={() => onInfoHover('email')}
@@ -127,15 +141,15 @@ function Login() {
                         id="password"
                         placeholder="Senha"
                     />
-                    <div 
-                        style={{cursor: 'pointer'}} 
+                    <div
+                        style={{ cursor: 'pointer' }}
                         onClick={() => setShowPassword(!showPassword)}
                         onMouseEnter={() => onInfoHover('password')}
                         onMouseLeave={() => onInfoLeave('password')}
                     >
-                        <Icon 
-                            color={showPassword ? '#8257E5' : '#6A6180'} 
-                            icon={showPassword ? hidePasswordIcon : showPasswordIcon} 
+                        <Icon
+                            color={showPassword ? '#8257E5' : '#6A6180'}
+                            icon={showPassword ? hidePasswordIcon : showPasswordIcon}
                         />
                     </div>
                     <InputInfo show={fields.password.showInfo} info={fields.password.info} />
@@ -145,17 +159,20 @@ function Login() {
             <div id="user-actions">
 
                 <label htmlFor="rememberMe">
-                    <input type="checkbox" id="rememberMe" />
+                    <input type="checkbox" id="rememberMe" onClick={() => setRememberUser(!rememberUser)}/>
                     <span id="checkmark"></span>
                     Lembrar-me
                 </label>
 
                 <a id="forgot-password" href="/auth/login">Esqueci minha senha</a>
 
-                <button>Entrar</button>
+                <button
+                    disabled={!formValid || authContext.loading}
+                    onClick={signIn}
+                >Entrar</button>
             </div>
 
-            <footer> 
+            <footer>
                 <div id="no-account">
                     Não tem conta? <br />
                     <Link to="/auth/cadastro">Cadastre-se</Link>
