@@ -8,29 +8,17 @@ import showPasswordIcon from '@iconify/icons-mdi/eye'
 import hidePasswordIcon from '@iconify/icons-mdi/eye-off'
 import infoIcon from '@iconify/icons-mdi/information-outline'
 
+// Components
+import InputInfo from 'components/InputInfo'
+
 // Images
 import goBackImg from 'assets/images/icons/back.svg'
 
 // CSS styles
 import './styles.css'
-import InputInfo from 'components/InputInfo'
 
-interface FormField {
-    value: string,
-    validation: RegExp,
-    valid: boolean,
-    info: string,
-    showInfo: boolean,
-    touched: boolean
-}
-
-interface FormFields {
-    name: FormField,
-    surname: FormField,
-    email: FormField,
-    password: FormField,
-    [key: string]: FormField
-}
+// Interfaces
+import { FormFields } from 'interfaces/forms'
 
 const initialFields = {
     name: {
@@ -38,7 +26,7 @@ const initialFields = {
         validation: /^[a-z]{3,20}$/i,
         valid: false,
         info: 'O nome precisa ter entre 3 a 20 caracteres.',
-        showInfo: false,
+        showInfo: "initial",
         touched: false
     },
     surname: {
@@ -46,7 +34,7 @@ const initialFields = {
         validation: /^[a-z]{5,30}$/i,
         valid: false,
         info: 'O sobrenome precisa ter entre 5 a 30 caracteres',
-        showInfo: false,
+        showInfo: "initial",
         touched: false
     },
     email: {
@@ -54,7 +42,7 @@ const initialFields = {
         validation: /^[a-z-_\d.]{3,}@[a-z]{3,}(\.com|\.br|\.com\.br)$/i,
         valid: false,
         info: 'O email precisa estar no formato adequado: exemplo@dominio.com',
-        showInfo: false,
+        showInfo: "initial",
         touched: false
     },
     password: {
@@ -62,7 +50,7 @@ const initialFields = {
         validation: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,30}$/,
         valid: false,
         info: 'A senha precisa conter entre 8 a 30 caracteres e conter 1 ou mais letras maiúsculas e números.',
-        showInfo: false,
+        showInfo: "initial",
         touched: false
     }
 }
@@ -71,7 +59,7 @@ function Signup() {
 
     const history = useHistory()
     const [showPassword, setShowPassword] = useState(false)
-    const [fields, setFields] = useState<FormFields>(initialFields)
+    const [fields, setFields] = useState<FormFields>(initialFields as FormFields)
     const [formValid, setFormValid] = useState(false)
 
 
@@ -116,7 +104,7 @@ function Signup() {
             ...fields,
             [inputIdentifier]: {
                 ...fields[inputIdentifier],
-                showInfo: true
+                showInfo: "show"
             }
         })
     }
@@ -126,7 +114,7 @@ function Signup() {
             ...fields,
             [inputIdentifier]: {
                 ...fields[inputIdentifier],
-                showInfo: false
+                showInfo: "hide"
             }
         })
     }
