@@ -7,7 +7,6 @@ import authConfig from '../config/auth'
 function generateToken(id: string, expiresIn = 86400) {
     return jwt.sign({ id }, authConfig.secret, { expiresIn })
 }
-
 export default class AuthenticationController {
     static async signup(req: Request, res: Response) {
         const { name, surname, email, password } = req.body
@@ -49,13 +48,11 @@ export default class AuthenticationController {
                         password: hashPassword
                     }
 
-                    const token = generateToken(newUser.__id)
-
                     // Register user on database
                     const registerUser = await db('users').insert(newUser)
 
-                    if (registerUser) res.status(200).json({ newUser, token })
-                    else res.status(400).json({ error: 'Um erro desconhecido ocorreu ao cadastrar o usuário. Tente novamente mais tarde.' })
+                    if (registerUser) return res.status(200).send()
+                    else return res.status(400).json({ error: 'Um erro desconhecido ocorreu ao cadastrar o usuário. Tente novamente mais tarde.' })
                 })
             })
         }
@@ -80,7 +77,10 @@ export default class AuthenticationController {
                 else if (!same) return res.status(400).json({ error: 'Senha incorreta. Tente novamente' })
                 else {
                     // Passwords are equal, proceeding to signin user
-                    const user = await db('users').select('*').where('email', '=', email).first()
+                    const user = await 
+                        db('users')
+                        .select('__id', 'name', 'avatar', 'email', 'whatsapp', 'bio')
+                        .where('email', '=', email).first()
                     
                     const token = generateToken(user.__id)
 
