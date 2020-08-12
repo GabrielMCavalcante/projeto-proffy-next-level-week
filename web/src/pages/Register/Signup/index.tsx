@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 // Icons
 import { Icon } from '@iconify/react'
 import showPasswordIcon from '@iconify/icons-mdi/eye'
-// import hidePasswordIcon from '@iconify/icons-mdi/eye-off'
+import hidePasswordIcon from '@iconify/icons-mdi/eye-off'
 
 // Images
 import goBackImg from 'assets/images/icons/back.svg'
@@ -15,6 +15,7 @@ import './styles.css'
 function Signup() {
 
     const history = useHistory()
+    const [showPassword, setShowPassword] = useState(false)
 
     function signupUser(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -28,7 +29,7 @@ function Signup() {
                 src={goBackImg} 
                 alt="Go back arrow-left"
             />
-            <h2>Fazer cadastro</h2>
+            <h2>Cadastro</h2>
             <p>Preencha os dados abaixo para começar.</p>
             <form onSubmit={signupUser}>
                 <div className="input-group">
@@ -44,11 +45,24 @@ function Signup() {
                 </div>
 
                 <div className="input-group">
-                    <input maxLength={30} type="password" id="password" placeholder="Senha" />
-                    <Icon icon={showPasswordIcon} />
+                <input 
+                        maxLength={30} 
+                        type={showPassword ? "text" : "password"} 
+                        id="password" 
+                        placeholder="Senha" 
+                    />
+                    <div 
+                        style={{cursor: 'pointer'}} 
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        <Icon 
+                            color={showPassword ? '#8257E5' : '#6A6180'} 
+                            icon={showPassword ? hidePasswordIcon : showPasswordIcon} 
+                        />
+                    </div>
                 </div>
 
-                <button type="submit">Entrar</button>
+                <button type="submit">Concluir cadastro</button>
             </form>
         </div>
     )
