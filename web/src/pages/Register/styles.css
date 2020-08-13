@@ -33,6 +33,25 @@
     flex: 2;
 }
 
+#page-register-content form .input-group .icon-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 34%;
+    right: 4%;
+}
+
+#page-register-content form .icon-group svg {
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+#page-register-content form .icon-group svg:nth-child(odd) {
+    margin-left: 1rem;
+}
+
 
 @media (min-width: 1000px) {
     #page-register {
