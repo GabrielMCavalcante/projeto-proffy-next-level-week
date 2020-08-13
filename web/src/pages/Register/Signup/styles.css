@@ -81,6 +81,12 @@
     color: var(--color-primary);
 }
 
+#page-register-signup #signup-feedback {
+    color: crimson;
+    text-align: center;
+    margin-top: inherit;
+}
+
 #page-register-signup form button {
     width: 100%;
     outline: none;
