@@ -145,16 +145,20 @@ function Login() {
                         id="password"
                         placeholder="Senha"
                     />
-                    <div
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setShowPassword(!showPassword)}
-                        onMouseEnter={() => onInfoHover('password')}
-                        onMouseLeave={() => onInfoLeave('password')}
-                    >
-                        <Icon
-                            color={showPassword ? '#8257E5' : '#6A6180'}
-                            icon={showPassword ? hidePasswordIcon : showPasswordIcon}
-                        />
+                    <div className="icon-group">
+                        <div
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            <Icon
+                                color={showPassword ? '#8257E5' : '#6A6180'}
+                                icon={showPassword ? hidePasswordIcon : showPasswordIcon}
+                            />
+                        </div>
+                        <div
+                            onMouseEnter={() => onInfoHover('password')}
+                            onMouseLeave={() => onInfoLeave('password')}
+                        ><Icon icon={infoIcon} /></div>
                     </div>
                     <InputInfo show={fields.password.showInfo} info={fields.password.info} />
                 </div>
