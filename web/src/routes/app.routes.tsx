@@ -1,5 +1,5 @@
-import React from 'routes/node_modules/react'
-import { Route, Redirect } from 'routes/node_modules/react-router-dom'
+import React from 'react'
+import { Route, Redirect } from 'react-router-dom'
 
 // Pages
 import Menu from 'pages/Menu' 
