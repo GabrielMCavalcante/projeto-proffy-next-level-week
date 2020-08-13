@@ -47,6 +47,7 @@ function Login() {
     const [fields, setFields] = useState<FormFields>(initialFields as FormFields)
     const [formValid, setFormValid] = useState(false)
     const [rememberUser, setRememberUser] = useState(false)
+    const [feedback, setFeedback] = useState('')
     const authContext = useAuth()
 
     function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -69,6 +70,8 @@ function Login() {
         if (isFormValid !== formValid)
             setFormValid(isFormValid)
 
+        if (feedback) setFeedback('')
+
         setFields({
             ...fields,
             [inputIdentifier]: {
@@ -81,12 +84,13 @@ function Login() {
     }
 
     async function signIn() {
+        if (feedback) setFeedback('')
         const userAccount = {
             email: fields.email.value,
             password: fields.password.value
         }
         const response = await authContext.signIn(userAccount, rememberUser)
-        if (typeof response === 'string') alert(response)
+        if (typeof response === 'string') setFeedback(response)
     }
 
     function onInfoHover(inputIdentifier: string) {
@@ -159,12 +163,14 @@ function Login() {
             <div id="user-actions">
 
                 <label htmlFor="rememberMe">
-                    <input type="checkbox" id="rememberMe" onClick={() => setRememberUser(!rememberUser)}/>
+                    <input type="checkbox" id="rememberMe" onClick={() => setRememberUser(!rememberUser)} />
                     <span id="checkmark"></span>
                     Lembrar-me
                 </label>
 
                 <a id="forgot-password" href="/auth/login">Esqueci minha senha</a>
+
+                {feedback && <p id="signin-feedback">{feedback}</p>}
 
                 <button
                     disabled={!formValid || authContext.loading}

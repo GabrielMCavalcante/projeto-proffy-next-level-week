@@ -63,10 +63,12 @@ function Signup() {
     const [showPassword, setShowPassword] = useState(false)
     const [fields, setFields] = useState<FormFields>(initialFields as FormFields)
     const [formValid, setFormValid] = useState(false)
+    const [feedback, setFeedback] = useState('')
     const authContext = useAuth()
 
     async function signupUser(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        if(feedback) setFeedback('')
 
         const userData = {
             name: fields.name.value,
@@ -76,8 +78,8 @@ function Signup() {
         }
 
         const response = await authContext.signUp(userData)
-        if (typeof response === 'string') alert(response)
-        else history.replace('/auth/cadastro/sucesso')   
+        if (typeof response === 'string') setFeedback(response)
+        else history.replace('/auth/cadastro/sucesso')
     }
 
     function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -99,6 +101,8 @@ function Signup() {
 
         if (isFormValid !== formValid)
             setFormValid(isFormValid)
+
+        if(feedback) setFeedback('')
 
         setFields({
             ...fields,
@@ -211,7 +215,7 @@ function Signup() {
                     </div>
                     <InputInfo show={fields.password.showInfo} info={fields.password.info} />
                 </div>
-
+                {feedback && <p id="signup-feedback">{feedback}</p>}
                 <button
                     type="submit"
                     disabled={!formValid || authContext.loading}
