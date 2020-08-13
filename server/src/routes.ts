@@ -17,6 +17,7 @@ routes.use(cors())
 // Users
 routes.post('/auth/signup', AuthenticationController.signup)
 routes.post('/auth/signin', AuthenticationController.signin)
+routes.put('/auth/password/reset', AuthenticationController.resetPassword)
 
 // Classes
 routes.get('/classes', AuthMiddleware, ClassesController.index)
