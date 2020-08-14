@@ -1,9 +1,13 @@
-import { createTransport } from 'nodemailer'
-import dotenv from 'dotenv'
+import nodemailer from 'nodemailer'
 
-dotenv.config()
+declare const process: {
+    env: {
+        MAIL_USER: string,
+        MAIL_PASS: string
+    }
+}
 
-const transport = createTransport({
+const transport = nodemailer.createTransport({
     host: "smtp.office365.com",
     port: 587,
     secure: false,
@@ -20,7 +24,7 @@ export default async function sendMail(receiverMail: string, token: string) {
         subject: "Proffy - Recuperação de senha",
         text: `Você recebeu este email para acessar o link de recuperação de sua senha no 
         Proffy. Para recuperar sua senha, acesse o link a seguir: 
-        http://192.168.100.12:3000/auth/password/reset/${token}
+        http://192.168.100.12:3000/auth/password-reset/${token}
         Não foi você? Apenas ignore este email.
         `,
         html: `
@@ -29,11 +33,14 @@ export default async function sendMail(receiverMail: string, token: string) {
             Proffy.</p>
 
             <p>Para recuperar sua senha, acesse o link abaixo:</p>
-            <p>http://192.168.100.12:3000/auth/password/reset/${token}</p> 
+            <a 
+                target="_blank"  
+                href="http://192.168.100.12:3000/auth/password-reset/${token}"
+            >Link para recuperação de senha</a> 
             
-            <span>Não foi você? Apenas ignore este email.</span>
+            <p>Não foi você? Apenas ignore este email.</p>
         `
     }
 
-    return await transport.sendMail(message)
+    return transport.sendMail(message)
 }
