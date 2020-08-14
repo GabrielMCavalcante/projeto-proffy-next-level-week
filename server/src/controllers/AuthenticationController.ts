@@ -8,6 +8,9 @@ import sendMail from '../services/mail/sendmail'
 function generateToken(id: string, expiresIn = 86400) {
     return jwt.sign({ id }, authConfig.secret, { expiresIn })
 }
+
+let tokenTimer: NodeJS.Timeout
+
 export default class AuthenticationController {
     static async signup(req: Request, res: Response) {
         const { name, surname, email, password } = req.body
@@ -53,7 +56,7 @@ export default class AuthenticationController {
                         // Register user on database
                         const registerUser = await db('users').insert(newUser)
 
-                        if (registerUser) return res.status(200).send()
+                        if (registerUser) return res.status(200).json({ status: 'OK' })
                         else return res.status(400).json({ error: 'Um erro desconhecido ocorreu ao cadastrar o usuário. Tente novamente mais tarde.' })
                     })
                 })
@@ -104,20 +107,41 @@ export default class AuthenticationController {
 
     static async resetPassword(req: Request, res: Response) {
         const { email } = req.body
-        
+
         try {
             // Verifying if user exists
-            const user = await db('users')
+            const user_id = await db('users')
                 .select('__id').where('email', '=', email).first()
 
-            if (!user)
+            if (!user_id)
                 return res.status(400)
                     .json({ error: 'Nenhum usuário com este email foi encontrado.' })
-            
-            const recoveryToken = generateToken(email, 90)
 
+            const userId = user_id.__id
+
+            const recoveryToken = generateToken(email, 3600)
+
+            const ref_user = await db('recovery_tokens')
+                .select('user_id')
+                .where('user_id', '=', userId)
+                .first()
+
+            if (ref_user) await db('recovery_tokens')
+                .update({ token: recoveryToken })
+                .where('user_id', '=', userId)
+            else await db('recovery_tokens')
+                .insert({ user_id: userId, token: recoveryToken })
+
+            if (tokenTimer) clearTimeout(tokenTimer)
+
+            tokenTimer = setTimeout(async () =>
+                await db('recovery_tokens')
+                    .delete('*')
+                    .where('user_id', '=', userId),
+                3600000)
+            
             sendMail(email, recoveryToken)
-                .then(() => res.status(200).send())
+                .then(() => res.status(200).json({ status: 'OK' }))
                 .catch(err => res.status(400).json({ error: 'Um erro interno ocorreu: ' + err }))
         } catch (err) {
             return res.status(400).json({ error: 'Um erro interno ocorreu: ' + err })
@@ -125,6 +149,43 @@ export default class AuthenticationController {
     }
 
     static async updatePassword(req: Request, res: Response) {
-        
+        const { token, new_password } = req.body
+        try {
+            // Verifying if there is a recovery token in database
+            const ref_user = await db('recovery_tokens')
+                .select('*')
+                .where('token', '=', token)
+                .first()
+
+            if (ref_user) {
+                // Verifying if given token is valid
+                jwt.verify(token, authConfig.secret, async (err: any) => {
+                    if (err)
+                        return res.status(401).json({ error: 'Token inválido: ' + err })
+
+                    const user_id = ref_user.user_id
+
+                    // Encrypting password
+                    bcrypt.genSalt(10, async (_, salt) => {
+                        const hashPassword = await bcrypt.hash(new_password, salt)
+
+                        // Updating user password
+                        await db('users')
+                            .where('__id', '=', user_id)
+                            .update({
+                                password: hashPassword
+                            })
+
+                        await db('recovery_tokens')
+                            .delete('*')
+                            .where('user_id', '=', user_id)
+
+                        return res.status(200).json({ status: 'OK' })
+                    })
+                })
+            } else return res.status(400).json({ error: 'Token de recuperação não encontrado.' })
+        } catch (err) {
+            return res.status(400).json({ error: 'Um erro interno ocorreu: ' + err })
+        }
     }
 }
