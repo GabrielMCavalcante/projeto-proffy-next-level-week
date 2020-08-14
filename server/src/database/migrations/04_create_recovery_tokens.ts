@@ -2,6 +2,7 @@ import Knex from 'knex'
 
 export async function up(knex: Knex) {
     await knex.schema.createTable('recovery_tokens', table => {
+        table.increments()
         table.integer('user_id')
             .notNullable()
             .references('__id')
