@@ -37,7 +37,7 @@ function Menu() {
                 setFeedback('Não foi possível recuperar o total de conexões :(')
             })
         })()
-    }, [])
+    }, []) // eslint-disable-line
 
     return (
         <div id="page-menu">
