@@ -24,7 +24,7 @@ export default async function sendMail(receiverMail: string, token: string) {
         subject: "Proffy - Recuperação de senha",
         text: `Você recebeu este email para acessar o link de recuperação de sua senha no 
         Proffy. Para recuperar sua senha, acesse o link a seguir: 
-        http://192.168.100.12:3000/auth/password-reset/${token}
+        http://192.168.100.12:3000/auth/recuperar-senha/usuario/${token}
         Não foi você? Apenas ignore este email.
         `,
         html: `
@@ -35,7 +35,7 @@ export default async function sendMail(receiverMail: string, token: string) {
             <p>Para recuperar sua senha, acesse o link abaixo:</p>
             <a 
                 target="_blank"  
-                href="http://192.168.100.12:3000/auth/password-reset/${token}"
+                href="http://192.168.100.12:3000/auth/recuperar-senha/usuario/${token}"
             >Link para recuperação de senha</a> 
             
             <p>Não foi você? Apenas ignore este email.</p>
