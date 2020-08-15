@@ -44,7 +44,7 @@ export default class AuthenticationController {
                     }
 
                     bcrypt.hash(userId, 5, async (err, hashId) => {
-                        if (err) return res.status(400).json({ error: 'Ocorreu um erro interno do servidor. Tente novamente mais tarde.' })
+                        if (err) return res.status(400).json({ error: 'Ocorreu um erro interno. Por favor, tente novamente mais tarde.' })
 
                         const newUser = {
                             __id: hashId,
@@ -85,7 +85,7 @@ export default class AuthenticationController {
 
                 // Comparing recieved password with stored one
                 bcrypt.compare(password, fetchedPassword, async (err, same) => {
-                    if (err) return res.status(400).json({ error: 'Ocorreu um erro interno no servidor. Tente novamente mais tarde.' })
+                    if (err) return res.status(400).json({ error: 'Ocorreu um erro interno. Por favor, tente novamente mais tarde.' })
                     else if (!same) return res.status(400).json({ error: 'Senha incorreta. Tente novamente' })
                     else {
                         // Passwords are equal, proceeding to signin user
@@ -101,12 +101,13 @@ export default class AuthenticationController {
                 })
             }
         } catch (err) {
-            return res.status(400).json({ error: 'Ocorreu um erro: ' + err })
+            return res.status(400).json({ error: 'Ocorreu um erro interno. Por favor, tente novamente mais tarde.'})
         }
     }
 
     static async resetPassword(req: Request, res: Response) {
         const { email } = req.body
+        
 
         try {
             // Verifying if user exists
@@ -142,9 +143,9 @@ export default class AuthenticationController {
             
             sendMail(email, recoveryToken)
                 .then(() => res.status(200).json({ status: 'OK' }))
-                .catch(err => res.status(400).json({ error: 'Um erro interno ocorreu: ' + err }))
+                .catch(err => res.status(400).json({ error: 'Um erro interno ocorreu. Por favor, tente novamente mais tarde.' }))
         } catch (err) {
-            return res.status(400).json({ error: 'Um erro interno ocorreu: ' + err })
+            return res.status(400).json({ error: 'Um erro interno ocorreu. Por favor, tente novamente mais tarde.' })
         }
     }
 
@@ -161,7 +162,7 @@ export default class AuthenticationController {
                 // Verifying if given token is valid
                 jwt.verify(token, authConfig.secret, async (err: any) => {
                     if (err)
-                        return res.status(401).json({ error: 'Token inválido: ' + err })
+                        return res.status(401).json({ error: 'O token de recuperação de senha expirou.' })
 
                     const user_id = ref_user.user_id
 
@@ -183,9 +184,9 @@ export default class AuthenticationController {
                         return res.status(200).json({ status: 'OK' })
                     })
                 })
-            } else return res.status(400).json({ error: 'Token de recuperação não encontrado.' })
+            } else return res.status(400).json({ error: 'Já foi realizado uma troca de senha com este token, ou o token é inválido.' })
         } catch (err) {
-            return res.status(400).json({ error: 'Um erro interno ocorreu: ' + err })
+            return res.status(400).json({ error: 'Um erro interno ocorreu. Por favor, tente mais tarde.'})
         }
     }
 }
