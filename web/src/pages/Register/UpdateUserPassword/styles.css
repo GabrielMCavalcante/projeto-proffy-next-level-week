@@ -105,6 +105,11 @@
 }
 
 @media (min-width: 1000px) {
+
+    #page-register-update-user-password {
+        max-width: 57%;
+    }
+
     #page-register-update-user-password h2 {
         position: absolute;
         top: -3.5rem;
