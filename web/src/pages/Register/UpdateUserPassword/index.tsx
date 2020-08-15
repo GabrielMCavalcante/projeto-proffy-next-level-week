@@ -70,7 +70,7 @@ function UpdateUserPassword() {
         } else isFormValid = false
 
         if (isFormValid) {
-            const validation = new RegExp('^' + inputIdentifier === 'newPassword' ? newInputValue : fields.newPassword.value + '$', 'i')
+            const validation = new RegExp(`^${inputIdentifier === 'newPassword' ? newInputValue : fields.newPassword.value}$`)
             
             isFormValid = validation.test(inputIdentifier === 'repeatPassword' ? newInputValue : fields.repeatPassword.value)
 
