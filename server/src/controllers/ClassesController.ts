@@ -16,20 +16,24 @@ export default class ClassesController {
         const timeFrom = convertHourToMinutes(String(from))
         const timeTo = convertHourToMinutes(String(to))
 
-        const search = await db("classes")
-            .whereExists(function () {
-                this.select("class_schedule.*")
-                    .from("class_schedule")
-                    .whereRaw("`class_schedule`.`__class_id` = `classes`.`id`")
-                    .where("week_day", "like", week_day ? week_day : "%" as any)
-                    .where("from", ">=", from ? from !== "null" ? timeFrom : 0 : 0)
-                    .where("to", "<=", to ? to !== "null" ? timeTo : 1440 : 1440)
-            })
-            .join("users", "users.__id", "=", "__user_id")
-            .select("*")
-            .where("subject", "like", subject ? subject : "%" as any)
+        try {
+            const search = await db("classes")
+                .whereExists(function () {
+                    this.select("class_schedule.*")
+                        .from("class_schedule")
+                        .whereRaw("`class_schedule`.`__class_id` = `classes`.`id`")
+                        .where("week_day", "like", week_day ? week_day : "%" as any)
+                        .where("from", ">=", from ? from !== "null" ? timeFrom : 0 : 0)
+                        .where("to", "<=", to ? to !== "null" ? timeTo : 1440 : 1440)
+                })
+                .join("users", "users.__id", "=", "__user_id")
+                .select("*")
+                .where("subject", "like", subject ? subject : "%" as any)
 
-        return res.status(200).json({ search })
+            return res.status(200).json({ search })
+        } catch (err) {
+            return commonErrors.internalServerError(res)
+        }
     }
 
     static async create(req: Request, res: Response) {
@@ -64,6 +68,7 @@ export default class ClassesController {
             const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
                 return {
                     __class_id,
+                    __user_id: userID,
                     week_day: scheduleItem.week_day.value,
                     from: convertHourToMinutes(scheduleItem.from),
                     to: convertHourToMinutes(scheduleItem.to)
