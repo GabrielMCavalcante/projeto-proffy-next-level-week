@@ -18,9 +18,11 @@ export default class AuthenticationController {
 
         const parsedName = String(name).concat(" ", String(surname))
 
+        const trx = await db.transaction()
+
         try {
             // Verifying if user email already exists in database
-            const response = await db("users").select("*").where("email", "=", email)
+            const response = await trx("users").select("*").where("email", "=", email)
             if (response.length > 0) {
                 // Email already exists
                 return res.status(400).json({ error: "Este email já foi cadastrado." })
@@ -55,14 +57,21 @@ export default class AuthenticationController {
                         }
 
                         // Register user on database
-                        const registerUser = await db("users").insert(newUser)
+                        const registerUser = await trx("users").insert(newUser)
 
-                        if (registerUser) return res.status(200).json({ status: "OK" })
-                        else return commonErrors.internalServerError(res)
+                        if (registerUser) {
+                            await trx.commit()
+                            return res.status(200).json({ status: "OK" })
+                        }
+                        else {
+                            await trx.rollback()
+                            return commonErrors.internalServerError(res)
+                        }
                     })
                 })
             }
         } catch (err) {
+            await trx.rollback()
             return commonErrors.internalServerError(res)
         }
     }
@@ -70,9 +79,11 @@ export default class AuthenticationController {
     static async signin(req: Request, res: Response) {
         const { email, password } = req.body
 
+        const trx = await db.transaction()
+
         try {
             // Finding user by email
-            const fetchUserPassword: { password: string }[] = await db("users")
+            const fetchUserPassword: { password: string }[] = await trx("users")
                 .select("password").where("email", "=", email)
 
             if (fetchUserPassword.length === 0) {
@@ -86,33 +97,36 @@ export default class AuthenticationController {
 
                 // Comparing recieved password with stored one
                 bcrypt.compare(password, fetchedPassword, async (err, same) => {
-                    if (err) return res.status(400).json({ error: "Ocorreu um erro interno. Por favor, tente novamente mais tarde." })
+                    if (err) return commonErrors.internalServerError(res)
                     else if (!same) return res.status(400).json({ error: "Senha incorreta. Tente novamente" })
                     else {
                         // Passwords are equal, proceeding to signin user
                         const user = await
-                            db("users")
+                            trx("users")
                                 .select("__id", "name", "avatar", "email", "whatsapp", "bio")
                                 .where("email", "=", email).first()
 
                         const token = generateToken(user.__id)
 
+                        await trx.commit()
                         return res.status(200).json({ user, token })
                     }
                 })
             }
         } catch (err) {
-            return res.status(400).json({ error: "Ocorreu um erro interno. Por favor, tente novamente mais tarde."})
+            await trx.rollback()
+            return commonErrors.internalServerError(res)
         }
     }
 
     static async resetPassword(req: Request, res: Response) {
         const { email } = req.body
         
+        const trx = await db.transaction()
 
         try {
             // Verifying if user exists
-            const user_id = await db("users")
+            const user_id = await trx("users")
                 .select("__id").where("email", "=", email).first()
 
             if (!user_id)
@@ -123,38 +137,48 @@ export default class AuthenticationController {
 
             const recoveryToken = generateToken(email, 3600)
 
-            const ref_user = await db("recovery_tokens")
+            const ref_user = await trx("recovery_tokens")
                 .select("user_id")
                 .where("user_id", "=", userId)
                 .first()
 
-            if (ref_user) await db("recovery_tokens")
+            if (ref_user) await trx("recovery_tokens")
                 .update({ token: recoveryToken })
                 .where("user_id", "=", userId)
-            else await db("recovery_tokens")
+            else await trx("recovery_tokens")
                 .insert({ user_id: userId, token: recoveryToken })
 
             if (tokenTimer) clearTimeout(tokenTimer)
 
             tokenTimer = setTimeout(async () =>
-                await db("recovery_tokens")
+                await trx("recovery_tokens")
                     .delete("*")
                     .where("user_id", "=", userId),
                 3600000)
             
             sendMail(email, recoveryToken)
-                .then(() => res.status(200).json({ status: "OK" }))
-                .catch(err => res.status(400).json({ error: "Um erro interno ocorreu. Por favor, tente novamente mais tarde." }))
+                .then(async () => {
+                    await trx.commit()
+                    res.status(200).json({ status: "OK" })
+                })
+                .catch(async () => {
+                    await trx.rollback()
+                    commonErrors.internalServerError(res)
+                })
         } catch (err) {
-            return res.status(400).json({ error: "Um erro interno ocorreu. Por favor, tente novamente mais tarde." })
+            await trx.rollback()
+            return commonErrors.internalServerError(res)
         }
     }
 
     static async updatePassword(req: Request, res: Response) {
         const { token, new_password } = req.body
+
+        const trx = await db.transaction()
+
         try {
             // Verifying if there is a recovery token in database
-            const ref_user = await db("recovery_tokens")
+            const ref_user = await trx("recovery_tokens")
                 .select("*")
                 .where("token", "=", token)
                 .first()
@@ -172,22 +196,27 @@ export default class AuthenticationController {
                         const hashPassword = await bcrypt.hash(new_password, salt)
 
                         // Updating user password
-                        await db("users")
+                        await trx("users")
                             .where("__id", "=", user_id)
                             .update({
                                 password: hashPassword
                             })
 
-                        await db("recovery_tokens")
+                        await trx("recovery_tokens")
                             .delete("*")
                             .where("user_id", "=", user_id)
-
+                        
+                        await trx.commit()
                         return res.status(200).json({ status: "OK" })
                     })
                 })
-            } else return res.status(400).json({ error: "Já foi realizado uma troca de senha com este token, ou o token é inválido." })
+            } else {
+                await trx.rollback()
+                return res.status(400).json({ error: "Já foi realizado uma troca de senha com este token, ou o token é inválido." })
+            }
         } catch (err) {
-            return res.status(400).json({ error: "Um erro interno ocorreu. Por favor, tente mais tarde."})
+            await trx.rollback()
+            return commonErrors.internalServerError(res)
         }
     }
 }
