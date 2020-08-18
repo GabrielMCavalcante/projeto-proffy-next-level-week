@@ -32,9 +32,12 @@ export default class ClassesController {
     }
 
     static async create(req: Request, res: Response) {
+
+        const userID = req.headers.userid as string
+
+        if (!userID) return res.status(400).json({ error: "ID do usuário não recebido." })
+
         const {
-            name,
-            avatar,
             whatsapp,
             bio,
             subject,
@@ -45,41 +48,35 @@ export default class ClassesController {
         const trx = await db.transaction()
 
         try {
-            const insertedUsersIds = await trx("users").insert({
-                name,
-                avatar,
-                whatsapp,
-                bio_header: bio.bio_header,
-                bio_content: bio.bio_content
-            }) // REMOVER DEPOIS
-
-            const __user_id = insertedUsersIds[0]
+            await trx("users")
+                .where("__id", "=", userID)
+                .update({ whatsapp, bio })
 
             const insertedClassesIds = await trx("classes").insert({
                 subject,
                 cost,
-                __user_id
+                __user_id: userID
             })
 
             const __class_id = insertedClassesIds[0]
 
             const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
                 return {
+                    __class_id,
                     week_day: scheduleItem.week_day.value,
                     from: convertHourToMinutes(scheduleItem.from),
-                    to: convertHourToMinutes(scheduleItem.to),
-                    __class_id
+                    to: convertHourToMinutes(scheduleItem.to)
                 }
             })
 
             await trx("class_schedule").insert(classSchedule)
 
             await trx.commit()
-            return res.status(201).json({ message: "Success" })
+            return res.status(201).json({ message: "Aula criada com sucesso." })
 
         } catch (err) {
             await trx.rollback()
-            return res.status(400).json({ message: "Unexpected error occurred while creating class." })
+            return res.status(400).json({ message: "Um erro inexperado ocorreu ao criar a aula. Tente novamente. " })
         }
     }
 }
