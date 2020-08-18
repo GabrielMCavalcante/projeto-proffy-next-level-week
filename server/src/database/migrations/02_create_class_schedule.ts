@@ -13,6 +13,13 @@ export async function up(knex: Knex) {
             .inTable("classes")
             .onUpdate("CASCADE")
             .onDelete("CASCADE")
+        
+        table.string("__user_id")
+            .notNullable()
+            .references("__id")
+            .inTable("users")
+            .onUpdate("CASCADE")
+            .onDelete("CASCADE")
     })
 }
 
