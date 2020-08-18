@@ -23,6 +23,7 @@ routes.put("/auth/password/reset/update", AuthenticationController.updatePasswor
 
 // Profile
 routes.get("/get-profile", AuthMiddleware, ProfileController.index)
+routes.put("/update-profile", AuthMiddleware, ProfileController.update)
 
 // Classes
 routes.get("/classes", AuthMiddleware, ClassesController.index)
