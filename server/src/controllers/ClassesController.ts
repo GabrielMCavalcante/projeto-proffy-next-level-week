@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import db from "../database/connection"
 import convertHourToMinutes from "../utils/convertHourToMinutes"
+import commonErrors from "../utils/commonErrorResponses"
 
 interface ScheduleItem {
     week_day: { value: number },
@@ -76,7 +77,7 @@ export default class ClassesController {
 
         } catch (err) {
             await trx.rollback()
-            return res.status(400).json({ message: "Um erro inexperado ocorreu ao criar a aula. Tente novamente. " })
+            return commonErrors.internalServerError(res)
         }
     }
 }

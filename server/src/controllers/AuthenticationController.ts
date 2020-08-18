@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import db from "../database/connection"
 import authConfig from "../config/auth"
 import sendMail from "../services/mail/sendmail"
+import commonErrors from "../utils/commonErrorResponses"
 
 function generateToken(id: string, expiresIn = 86400) {
     return jwt.sign({ id }, authConfig.secret, { expiresIn })
@@ -57,12 +58,12 @@ export default class AuthenticationController {
                         const registerUser = await db("users").insert(newUser)
 
                         if (registerUser) return res.status(200).json({ status: "OK" })
-                        else return res.status(400).json({ error: "Um erro desconhecido ocorreu ao cadastrar o usuário. Tente novamente mais tarde." })
+                        else return commonErrors.internalServerError(res)
                     })
                 })
             }
         } catch (err) {
-            return res.status(400).json({ error: "Um erro interno ocorreu: " + err })
+            return commonErrors.internalServerError(res)
         }
     }
 
