@@ -1,6 +1,6 @@
-import { Request, Response } from 'express'
-import db from '../database/connection'
-import convertHourToMinutes from '../utils/convertHourToMinutes'
+import { Request, Response } from "express"
+import db from "../database/connection"
+import convertHourToMinutes from "../utils/convertHourToMinutes"
 
 interface ScheduleItem {
     week_day: { value: number },
@@ -15,18 +15,18 @@ export default class ClassesController {
         const timeFrom = convertHourToMinutes(String(from))
         const timeTo = convertHourToMinutes(String(to))
 
-        const search = await db('classes')
+        const search = await db("classes")
             .whereExists(function () {
-                this.select('class_schedule.*')
-                    .from('class_schedule')
-                    .whereRaw('`class_schedule`.`__class_id` = `classes`.`id`')
-                    .where('week_day', 'like', week_day ? week_day : '%' as any)
-                    .where('from', '>=', from ? from !== 'null' ? timeFrom : 0 : 0)
-                    .where('to', '<=', to ? to !== 'null' ? timeTo : 1440 : 1440)
+                this.select("class_schedule.*")
+                    .from("class_schedule")
+                    .whereRaw("`class_schedule`.`__class_id` = `classes`.`id`")
+                    .where("week_day", "like", week_day ? week_day : "%" as any)
+                    .where("from", ">=", from ? from !== "null" ? timeFrom : 0 : 0)
+                    .where("to", "<=", to ? to !== "null" ? timeTo : 1440 : 1440)
             })
-            .join('users', 'users.__id', '=', '__user_id')
-            .select('*')
-            .where('subject', 'like', subject ? subject : '%' as any)
+            .join("users", "users.__id", "=", "__user_id")
+            .select("*")
+            .where("subject", "like", subject ? subject : "%" as any)
 
         return res.status(200).json({ search })
     }
@@ -45,7 +45,7 @@ export default class ClassesController {
         const trx = await db.transaction()
 
         try {
-            const insertedUsersIds = await trx('users').insert({
+            const insertedUsersIds = await trx("users").insert({
                 name,
                 avatar,
                 whatsapp,
@@ -55,7 +55,7 @@ export default class ClassesController {
 
             const __user_id = insertedUsersIds[0]
 
-            const insertedClassesIds = await trx('classes').insert({
+            const insertedClassesIds = await trx("classes").insert({
                 subject,
                 cost,
                 __user_id
@@ -72,14 +72,14 @@ export default class ClassesController {
                 }
             })
 
-            await trx('class_schedule').insert(classSchedule)
+            await trx("class_schedule").insert(classSchedule)
 
             await trx.commit()
-            return res.status(201).json({ message: 'Success' })
+            return res.status(201).json({ message: "Success" })
 
         } catch (err) {
             await trx.rollback()
-            return res.status(400).json({ message: 'Unexpected error occurred while creating class.' })
+            return res.status(400).json({ message: "Unexpected error occurred while creating class." })
         }
     }
 }
