@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios-config'
 
@@ -19,6 +19,9 @@ import closeIcon from '@iconify/icons-mdi/close'
 // CSS styles
 import './styles.css'
 
+// Interfaces
+import { FormFields } from 'interfaces/forms'
+
 interface WeekDay {
     value: string,
     label: string
@@ -30,17 +33,37 @@ interface ScheduleItem {
     to: string
 }
 
-function TeacherForm() {
+const initialFields: FormFields = {
+    whatsapp: {
+        value: '',
+        validation: /^\([0-9]{2}\)\s9{0,1}[0-9]{4}-[0-9]{4}$/,
+        valid: false,
+        info: 'O número de telefone deve estar no formato adequado. Ex.: (92) 8121-0742',
+        showInfo: "initial",
+        touched: false
+    },
+    bio: {
+        value: '',
+        validation: /^[\d\w\sà-ú,.!-]{50,300}$/,
+        valid: false,
+        info: 'A biografia precisa conter de 50 a 300 caracteres.',
+        showInfo: "initial",
+        touched: false
+    },
+    cost: {
+        value: '',
+        validation: /^([0-9]+\.|[1-9])[0-9]*$/,
+        valid: false,
+        info: 'O custo deve estar no formato adequado. Ex.: 10.50',
+        showInfo: "initial",
+        touched: false
+    }
+}
 
+function TeacherForm() {
+    const [fields, setFields] = useState<FormFields>(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [loading, setLoading] = useState(false)
-
-    const [name, setName] = useState('')
-    const [avatar, setAvatar] = useState('')
-    const [whatsapp, setWhatsapp] = useState('')
-    const [bio, setBio] = useState('')
-
-    const [cost, setCost] = useState('')
 
     const [subject, setSubject] = useState<string | null>(null)
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
@@ -124,42 +147,56 @@ function TeacherForm() {
         setScheduleItems(schedules)
     }
 
-    useEffect(() => {
-        const fields = [name, avatar, whatsapp, bio, cost]
+    function onInputValueChange(e: React.ChangeEvent<any>) {
+        const inputIdentifier = e.target.id
+        const newInputValue = e.target.value
 
-        let valid = true
+        const allFields = Object.keys(fields)
 
-        fields.forEach(field => {
-            if (valid) valid = field ? true : false
+        let isFormValid = true
+        const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
+
+        if (isInputValid) {
+            allFields.forEach(field => {
+                if (isFormValid)
+                    if (field !== inputIdentifier)
+                        isFormValid = fields[field].validation.test(fields[field].value)
+            })
+        } else isFormValid = false
+
+        if (isFormValid !== formValid)
+            setFormValid(isFormValid)
+
+        setFields({
+            ...fields,
+            [inputIdentifier]: {
+                ...fields[inputIdentifier],
+                value: newInputValue,
+                touched: true,
+                valid: isInputValid
+            }
         })
-
-        if (valid)
-            valid = (!isNaN(Number(cost)) && Number(cost) >= 10 && Number(cost) <= 9999)
-
-        if (valid !== formValid) setFormValid(valid)
-    }, [name, avatar, whatsapp, bio, cost]) // eslint-disable-line
+    }
 
     function registerClass(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setLoading(true)
         axios.post('/classes', {
-            name,
-            avatar,
-            whatsapp,
-            bio,
+            whatsapp: fields.whatsapp,
+            bio: fields.bio,
             subject,
-            cost,
+            cost: fields.cost,
             schedule: scheduleItems
         })
-        .then(() => {
-            setLoading(false)
-            alert('Cadastro realizado com sucesso!')
-            history.replace('/menu')
-        })
-        .catch(() => {
-            setLoading(false)
-            alert('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
-        })
+            .then(() => {
+                setLoading(false)
+                alert('Cadastro realizado com sucesso!')
+                history.replace('/menu')
+            })
+            .catch(() => {
+                setLoading(false)
+                alert('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
+            })
     }
 
     return (
@@ -174,61 +211,76 @@ function TeacherForm() {
                     <fieldset>
                         <legend>Seus dados</legend>
                         <Input
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            inputId="name"
-                            inputLabel="Nome completo"
-                        />
-                        <Input
-                            value={avatar}
-                            onChange={e => setAvatar(e.target.value)}
-                            inputId="avatar"
-                            inputLabel="Avatar"
-                        />
-                        <Input
-                            value={whatsapp}
-                            onChange={e => setWhatsapp(e.target.value)}
+                            value={fields.whatsapp.value}
+                            onChange={onInputValueChange}
                             inputId="whatsapp"
                             inputLabel="WhatsApp"
+                            placeholder="(00) 91234-5678"
+                            inputType="input"
+                            inputContentType="tel"
+                            fields={fields}
+                            setFields={setFields}
+                            formValid={formValid}
+                            setFormValid={setFormValid}
+                            hasInfo
                         />
-                        <Textarea
-                            value={bio}
-                            onChange={e => setBio(e.target.value)}
+                        <Input
+                            value={fields.bio.value}
+                            onChange={onInputValueChange}
+                            inputId="bio"
+                            inputLabel="Biografia (max 300 caracteres)"
+                            inputType="textarea"
+                            inputContentType="text"
+                            fields={fields}
+                            setFields={setFields}
+                            formValid={formValid}
+                            setFormValid={setFormValid}
+                        />
+                        {/* <Textarea
+                            value={fields.bio.value}
+                            onChange={onInputValueChange}
                             textareaId="bio"
                             textareaLabel="Biografia"
-                        />
+                        /> */}
                     </fieldset>
 
                     <fieldset>
                         <legend>Sobre a aula</legend>
-                        <Select
-                            selectLabel="Matéria"
-                            selected={{ value: "Artes", label: "Artes" }}
-                            items={[
-                                { value: "Artes", label: "Artes" },
-                                { value: "Biologia", label: "Biologia" },
-                                { value: "Educação Física", label: "Educação Física" },
-                                { value: "Espanhol", label: "Espanhol" },
-                                { value: "Física", label: "Física" },
-                                { value: "Geografia", label: "Geografia" },
-                                { value: "História", label: "História" },
-                                { value: "Inglês", label: "Inglês" },
-                                { value: "Literatura", label: "Literatura" },
-                                { value: "Matemática", label: "Matemática" },
-                                { value: "Português", label: "Português" },
-                                { value: "Química", label: "Química" }
-                            ]}
-                            onOptionSelect={selected => setSubject(selected.value)}
-                        />
-                        <Input
-                            value={cost}
-                            onChange={e => setCost(e.target.value)}
-                            inputId="cost"
-                            type="number"
-                            min="10"
-                            max="9999"
-                            inputLabel="Custo da sua aula por hora"
-                        />
+                        <div id="subject-cost">
+                            <Select
+                                selectLabel="Matéria"
+                                selected={{ value: "Artes", label: "Artes" }}
+                                items={[
+                                    { value: "Artes", label: "Artes" },
+                                    { value: "Biologia", label: "Biologia" },
+                                    { value: "Educação Física", label: "Educação Física" },
+                                    { value: "Espanhol", label: "Espanhol" },
+                                    { value: "Física", label: "Física" },
+                                    { value: "Geografia", label: "Geografia" },
+                                    { value: "História", label: "História" },
+                                    { value: "Inglês", label: "Inglês" },
+                                    { value: "Literatura", label: "Literatura" },
+                                    { value: "Matemática", label: "Matemática" },
+                                    { value: "Português", label: "Português" },
+                                    { value: "Química", label: "Química" }
+                                ]}
+                                onOptionSelect={selected => setSubject(selected.value)}
+                            />
+                            <Input
+                                value={fields.cost.value}
+                                onChange={onInputValueChange}
+                                inputId="cost"
+                                inputLabel="Custo da sua aula por hora"
+                                placeholder="50,25"
+                                inputType="input"
+                                inputContentType="tel"
+                                fields={fields}
+                                setFields={setFields}
+                                formValid={formValid}
+                                setFormValid={setFormValid}
+                                hasInfo
+                            />
+                        </div>
                     </fieldset>
 
                     <fieldset>
@@ -261,20 +313,24 @@ function TeacherForm() {
                                     items={availableDays}
                                     onOptionSelect={selected => updateSchedule(index, "week_day", selected)}
                                 />
-                                <Input
-                                    onChange={e => updateSchedule(index, "from", e.target.value)}
-                                    value={scheduleItem.from}
-                                    inputId="from"
-                                    inputLabel="Das"
-                                    type="time"
-                                />
-                                <Input
-                                    onChange={e => updateSchedule(index, "to", e.target.value)}
-                                    value={scheduleItem.to}
-                                    inputId="to"
-                                    inputLabel="Até"
-                                    type="time"
-                                />
+                                <div className="schedule-input-group">
+                                    <label htmlFor="from">Das</label>
+                                    <input
+                                        onChange={e => updateSchedule(index, "from", e.target.value)}
+                                        value={scheduleItem.from}
+                                        id="from"
+                                        type="time"
+                                    />
+                                </div>
+                                <div className="schedule-input-group">
+                                    <label htmlFor="to">Até</label>
+                                    <input
+                                        onChange={e => updateSchedule(index, "to", e.target.value)}
+                                        value={scheduleItem.to}
+                                        id="to"
+                                        type="time"
+                                    />
+                                </div>
                             </div>
                         ))}
                     </fieldset>
