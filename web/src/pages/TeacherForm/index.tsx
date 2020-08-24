@@ -154,7 +154,7 @@ function TeacherForm() {
         .then(() => {
             setLoading(false)
             alert('Cadastro realizado com sucesso!')
-            history.replace('/')
+            history.replace('/menu')
         })
         .catch(() => {
             setLoading(false)
