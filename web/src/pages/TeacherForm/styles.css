@@ -123,6 +123,9 @@
     padding: 1.6rem;
     position: relative;
     border-radius: 0.8rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    column-gap: 1.6rem;
 }
 
 #page-teacher-form main form fieldset .schedule-item + .schedule-item {
@@ -145,6 +148,23 @@
     cursor: pointer;
 }
 
+#page-teacher-form main form fieldset .schedule-item .schedule-input-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#page-teacher-form main form fieldset .schedule-item .schedule-input-group input {
+    width: 100%;
+    height: 5.6rem;
+    background: var(--color-input-background);
+    border: none;
+    border-radius: 0.8rem;
+    outline: 0;
+    padding: 0 1.6rem;
+    font: 1.6rem Archivo;
+}
+
 #page-teacher-form main form footer button .spinner-resizer {
     width: 3.4rem;
     height: 3.4rem;
@@ -161,12 +181,6 @@
 
     #page-teacher-form main form fieldset {
         padding: 0 6.4rem;
-    }
-
-    #page-teacher-form main form fieldset .schedule-item {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        column-gap: 1.6rem;
     }
 
     #page-teacher-form main form fieldset .schedule-item .input-block {
