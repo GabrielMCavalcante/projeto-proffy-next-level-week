@@ -10,10 +10,6 @@
     transition: box-shadow 300ms ease;
 }
 
-.Select label {
-    font-size: 1.4rem;
-}
-
 .Select .SelectContent .SelectSelector {
     display: flex;
     justify-content: space-between;
