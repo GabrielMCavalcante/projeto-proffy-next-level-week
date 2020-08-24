@@ -1,18 +1,156 @@
-import React, { InputHTMLAttributes } from 'react'
+import React, { InputHTMLAttributes, useState } from 'react'
+
+// Components
+import InputInfo from 'components/InputInfo'
+
+// Icons
+import { Icon } from '@iconify/react'
+import showPasswordIcon from '@iconify/icons-mdi/eye'
+import hidePasswordIcon from '@iconify/icons-mdi/eye-off'
+import infoIcon from '@iconify/icons-mdi/information-outline'
 
 // CSS styles
 import './styles.css'
+import { FormFields } from 'interfaces/forms'
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+type InputTextarea = InputHTMLAttributes<HTMLInputElement> & InputHTMLAttributes<HTMLTextAreaElement>
+
+interface InputProps extends InputTextarea {
+    inputType: "input" | "textarea",
+    inputContentType: string,
     inputLabel: string,
-    inputId: string
+    inputId: string,
+    fields: FormFields,
+    setFields: (value: React.SetStateAction<FormFields>) => void,
+    formValid: boolean,
+    setFormValid: (value: React.SetStateAction<boolean>) => void,
+    hasInfo?: boolean,
+    feedback?: string,
+    setFeedback?: (value: React.SetStateAction<string>) => void,
 }
 
-const Input: React.FC<InputProps> = ({ inputLabel, inputId, ...inputProps }) => {
+const Input: React.FC<InputProps> = ({
+    inputType,
+    inputContentType,
+    inputLabel,
+    inputId,
+    fields,
+    setFields,
+    formValid,
+    setFormValid,
+    hasInfo,
+    feedback,
+    setFeedback,
+    ...inputProps
+}) => {
+
+    const [showPassword, setShowPassword] = useState(false)
+
+    function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const inputIdentifier = e.target.id
+        const newInputValue = e.target.value
+
+        const allFields = Object.keys(fields)
+
+        let isFormValid = true
+        const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
+
+        if (isInputValid) {
+            allFields.forEach(field => {
+                if (isFormValid)
+                    if (field !== inputIdentifier)
+                        isFormValid = fields[field].validation.test(fields[field].value)
+            })
+        } else isFormValid = false
+
+        if (isFormValid !== formValid)
+            setFormValid(isFormValid)
+
+        if (feedback) setFeedback!('')
+
+        setFields({
+            ...fields,
+            [inputIdentifier]: {
+                ...fields[inputIdentifier],
+                value: newInputValue,
+                touched: true,
+                valid: isInputValid
+            }
+        })
+    }
+
+    function onInfoHover() {
+        setFields({
+            ...fields,
+            [inputId]: {
+                ...fields[inputId],
+                showInfo: "show"
+            }
+        })
+    }
+
+    function onInfoLeave() {
+        setFields({
+            ...fields,
+            [inputId]: {
+                ...fields[inputId],
+                showInfo: "hide"
+            }
+        })
+    }
+
+    function setInputClasses() {
+        return ["input-group", !fields[inputId].valid && fields[inputId].touched ? 'invalid' : ''].join(' ')
+    }
+
     return (
-        <div className="input-block">
+        <div id="input-wrapper">
             <label htmlFor={inputId}>{inputLabel}</label>
-            <input {...inputProps} id={inputId} />
+            <div className={setInputClasses()}>
+                {
+                    inputType === "input"
+                        ? (
+                            <input
+                                value={fields[inputId].value}
+                                onChange={onInputValueChange}
+                                id={inputId}
+                                type={inputContentType}
+                                {...inputProps}
+                            />
+                        ) : (
+                            <textarea
+                                {...inputProps}
+                                id={inputId}
+                            />
+                        )
+                }
+                {
+                    inputContentType !== "password"
+                        ? hasInfo && (
+                            <div
+                                onMouseEnter={onInfoHover}
+                                onMouseLeave={onInfoLeave}
+                            ><Icon icon={infoIcon} /></div>
+                        ) : (
+                            <div className="icon-group">
+                                <div
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <Icon
+                                        color={showPassword ? '#8257E5' : '#6A6180'}
+                                        icon={showPassword ? hidePasswordIcon : showPasswordIcon}
+                                    />
+                                </div>
+                                <div
+                                    onMouseEnter={onInfoHover}
+                                    onMouseLeave={onInfoLeave}
+                                ><Icon icon={infoIcon} /></div>
+                            </div>
+                        )
+                }
+                {hasInfo && <InputInfo show={fields[inputId].showInfo} info={fields[inputId].info} />}
+            </div>
         </div>
     )
 }
