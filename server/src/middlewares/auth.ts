@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import jwt from "jsonwebtoken"
-import authConfig from "../config/auth"
+import { secret } from "../config/auth"
 
 export = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
@@ -26,8 +26,8 @@ export = (req: Request, res: Response, next: NextFunction) => {
         return res.status(401).json({ error: "Nenhum token informado." })
 
     // Verifying if the given token is valid
-    jwt.verify(token, authConfig.secret, err => {
-        if(err) return res.status(401).json({ error: "Token inválido." })
+    jwt.verify(token, secret, err => {
+        if(err) return res.status(401).json({ error: "Token inválido: " + err })
         
         return next()
     })
