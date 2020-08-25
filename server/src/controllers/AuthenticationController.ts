@@ -107,7 +107,7 @@ export default class AuthenticationController {
                                 .select("__id", "name", "avatar", "email", "whatsapp", "bio")
                                 .where("email", "=", email).first()
 
-                        const token = generateToken(user.__id, !rememberUser, 5)
+                        const token = generateToken(user.__id, !rememberUser)
 
                         await trx.commit()
                         return res.status(200).json({ user, token })
