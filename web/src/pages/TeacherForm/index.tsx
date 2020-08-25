@@ -5,7 +5,6 @@ import axios from 'axios-config'
 // Components
 import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
-import Textarea from 'components/UI/Textarea'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
 
