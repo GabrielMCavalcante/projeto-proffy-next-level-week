@@ -38,12 +38,17 @@ export const AuthProvider: React.FC = ({ children }) => {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        const user = localStorage.getItem('@proffy:user:data')
-        const token = localStorage.getItem('@proffy:user:token')
+        let fetch_user = localStorage.getItem('@proffy:user:data')
+        let fetch_token = localStorage.getItem('@proffy:user:token')
 
-        if (user && token) {
-            setUser(JSON.parse(user))
-            setToken(token)
+        if(!fetch_user || !fetch_token) {
+            fetch_user = sessionStorage.getItem("@proffy:user:data")
+            fetch_token = sessionStorage.getItem("@proffy:user:token")
+        }
+
+        if (fetch_user && fetch_token) {
+            setUser(JSON.parse(fetch_user))
+            setToken(fetch_token)
         }
     }, [])
 
@@ -57,6 +62,9 @@ export const AuthProvider: React.FC = ({ children }) => {
                 if (userAccount.rememberUser) {
                     localStorage.setItem('@proffy:user:data', JSON.stringify(response.data.user))
                     localStorage.setItem('@proffy:user:token', response.data.token)
+                } else {
+                    sessionStorage.setItem('@proffy:user:data', JSON.stringify(response.data.user))
+                    sessionStorage.setItem('@proffy:user:token', response.data.token)
                 }
                 return response
             })
@@ -82,6 +90,8 @@ export const AuthProvider: React.FC = ({ children }) => {
         setToken(null)
         localStorage.removeItem('@proffy:user:data')
         localStorage.removeItem('@proffy:user:token')
+        sessionStorage.removeItem('@proffy:user:data')
+        sessionStorage.removeItem('@proffy:user:token')
     }
 
     async function requestPasswordResetEmail(email: string) {
