@@ -2,12 +2,13 @@ import { Request, Response } from "express"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import db from "../database/connection"
-import authConfig from "../config/auth"
+import { secret } from "../config/auth"
 import sendMail from "../services/mail/sendmail"
 import commonErrors from "../utils/commonErrorResponses"
 
-function generateToken(id: string, expiresIn = 86400) {
-    return jwt.sign({ id }, authConfig.secret, { expiresIn })
+function generateToken(id: string, expires: boolean, expiresIn = 86400) {
+    if(expires) return jwt.sign({ id }, secret, { expiresIn })
+    else return jwt.sign({ id }, secret)
 }
 
 let tokenTimer: NodeJS.Timeout
@@ -77,7 +78,7 @@ export default class AuthenticationController {
     }
 
     static async signin(req: Request, res: Response) {
-        const { email, password } = req.body
+        const { email, password, rememberUser } = req.body
 
         const trx = await db.transaction()
 
@@ -106,7 +107,7 @@ export default class AuthenticationController {
                                 .select("__id", "name", "avatar", "email", "whatsapp", "bio")
                                 .where("email", "=", email).first()
 
-                        const token = generateToken(user.__id)
+                        const token = generateToken(user.__id, !rememberUser, 5)
 
                         await trx.commit()
                         return res.status(200).json({ user, token })
@@ -135,7 +136,7 @@ export default class AuthenticationController {
 
             const userId = user_id.__id
 
-            const recoveryToken = generateToken(email, 3600)
+            const recoveryToken = generateToken(email, true, 3600)
 
             const ref_user = await trx("recovery_tokens")
                 .select("user_id")
@@ -185,7 +186,7 @@ export default class AuthenticationController {
 
             if (ref_user) {
                 // Verifying if given token is valid
-                jwt.verify(token, authConfig.secret, async (err: any) => {
+                jwt.verify(token, secret, async (err: any) => {
                     if (err)
                         return res.status(401).json({ error: "O token de recuperação de senha expirou." })
 
