@@ -20,10 +20,10 @@ interface InputProps extends InputTextarea {
     inputContentType: string,
     inputLabel: string,
     inputId: string,
-    fields: FormFields,
-    setFields: (value: React.SetStateAction<FormFields>) => void,
-    formValid: boolean,
-    setFormValid: (value: React.SetStateAction<boolean>) => void,
+    fields?: FormFields,
+    setFields?: (value: React.SetStateAction<FormFields>) => void,
+    formValid?: boolean,
+    setFormValid?: (value: React.SetStateAction<boolean>) => void,
     hasInfo?: boolean,
     feedback?: string,
     setFeedback?: (value: React.SetStateAction<string>) => void,
@@ -50,28 +50,28 @@ const Input: React.FC<InputProps> = ({
         const inputIdentifier = e.target.id
         const newInputValue = e.target.value
 
-        const allFields = Object.keys(fields)
+        const allFields = Object.keys(fields!)
 
         let isFormValid = true
-        const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
+        const isInputValid = fields![inputIdentifier].validation.test(newInputValue)
 
         if (isInputValid) {
             allFields.forEach(field => {
                 if (isFormValid)
                     if (field !== inputIdentifier)
-                        isFormValid = fields[field].validation.test(fields[field].value)
+                        isFormValid = fields![field].validation.test(fields![field].value)
             })
         } else isFormValid = false
 
         if (isFormValid !== formValid)
-            setFormValid(isFormValid)
+            setFormValid!(isFormValid)
 
         if (feedback) setFeedback!('')
 
-        setFields({
+        setFields!({
             ...fields,
             [inputIdentifier]: {
-                ...fields[inputIdentifier],
+                ...fields![inputIdentifier],
                 value: newInputValue,
                 touched: true,
                 valid: isInputValid
@@ -80,27 +80,32 @@ const Input: React.FC<InputProps> = ({
     }
 
     function onInfoHover() {
-        setFields({
+        setFields!({
             ...fields,
             [inputId]: {
-                ...fields[inputId],
+                ...fields![inputId],
                 showInfo: "show"
             }
         })
     }
 
     function onInfoLeave() {
-        setFields({
+        setFields!({
             ...fields,
             [inputId]: {
-                ...fields[inputId],
+                ...fields![inputId],
                 showInfo: "hide"
             }
         })
     }
 
     function setInputClasses() {
-        return ["input-group", !fields[inputId].valid && fields[inputId].touched ? 'invalid' : ''].join(' ')
+        return [
+            "input-group",
+            fields ?
+                !fields[inputId].valid && fields[inputId].touched ? 'invalid' : ''
+                : ''
+        ].join(' ')
     }
 
     return (
@@ -111,7 +116,7 @@ const Input: React.FC<InputProps> = ({
                     inputType === "input"
                         ? (
                             <input
-                                value={fields[inputId].value}
+                                value={fields ? fields[inputId].value : inputProps.value}
                                 onChange={onInputValueChange}
                                 id={inputId}
                                 type={inputContentType}
@@ -149,7 +154,13 @@ const Input: React.FC<InputProps> = ({
                             </div>
                         )
                 }
-                {hasInfo && <InputInfo show={fields[inputId].showInfo} info={fields[inputId].info} />}
+                {
+                    hasInfo &&
+                    <InputInfo
+                        show={fields![inputId].showInfo}
+                        info={fields![inputId].info}
+                    />
+                }
             </div>
         </div>
     )
