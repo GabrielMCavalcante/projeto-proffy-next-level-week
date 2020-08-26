@@ -1,11 +1,13 @@
 import React, { useContext, createContext, useState, useEffect } from 'react'
 import axios from 'axios-config'
 
+import noAvatarImg from '../assets/images/sem-avatar.svg' 
+
 interface User {
     __id: string,
     name: string,
     email: string,
-    avatar: string | null,
+    avatar: string,
     whatsapp: string | null,
     bio: string | null
 }
@@ -57,13 +59,19 @@ export const AuthProvider: React.FC = ({ children }) => {
         return axios.post('/auth/signin', userAccount)
             .then(response => {
                 setLoading(false)
-                setUser(response.data.user)
+                const signedUser = {
+                    ...response.data.user,
+                    avatar: response.data.user.avatar 
+                        ? response.data.user.avatar
+                        : noAvatarImg
+                }
+                setUser(signedUser)
                 setToken(response.data.token)
                 if (userAccount.rememberUser) {
-                    localStorage.setItem('@proffy:user:data', JSON.stringify(response.data.user))
+                    localStorage.setItem('@proffy:user:data', JSON.stringify(signedUser))
                     localStorage.setItem('@proffy:user:token', response.data.token)
                 } else {
-                    sessionStorage.setItem('@proffy:user:data', JSON.stringify(response.data.user))
+                    sessionStorage.setItem('@proffy:user:data', JSON.stringify(signedUser))
                     sessionStorage.setItem('@proffy:user:token', response.data.token)
                 }
                 return response
