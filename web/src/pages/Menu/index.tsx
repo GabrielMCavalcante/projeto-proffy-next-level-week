@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import axios from 'axios-config'
 
 // Contexts
@@ -20,6 +20,7 @@ function Menu() {
     const [feedback, setFeedback] = useState('Carregando conexões...')
     const [error, setError] = useState(true)
     const authContext = useAuth()
+    const history = useHistory()
 
     useEffect(() => {
         (function fetchConnections() {
@@ -44,7 +45,7 @@ function Menu() {
         <div id="page-menu">
             <div id="page-menu-top">
                 <div id="page-menu-header">
-                    <div id="user-avatar">
+                    <div id="user-avatar" onClick={() => history.replace("/profile")}>
                         <img src={authContext.user!.avatar!} alt="User Avatar" />
                         <p>{authContext.user?.name}</p>
                     </div>
