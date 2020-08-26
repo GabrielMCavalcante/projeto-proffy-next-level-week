@@ -19,18 +19,7 @@ import closeIcon from '@iconify/icons-mdi/close'
 import './styles.css'
 
 // Interfaces
-import { FormFields } from 'interfaces/forms'
-
-interface WeekDay {
-    value: string,
-    label: string
-}
-
-interface ScheduleItem {
-    week_day: WeekDay,
-    from: string,
-    to: string
-}
+import { FormFields, WeekDay, ScheduleItem } from 'interfaces/forms'
 
 const initialFields: FormFields = {
     whatsapp: {
@@ -63,12 +52,10 @@ function TeacherForm() {
     const [fields, setFields] = useState<FormFields>(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [loading, setLoading] = useState(false)
-
     const [subject, setSubject] = useState<string | null>(null)
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
         { week_day: { value: '1', label: 'Segunda-feira' }, from: '08:00', to: '12:00' }
     ])
-
     const [availableDays, setAvailableDays] = useState([
         { value: "0", label: "Domingo" },
         { value: "1", label: "Segunda-feira" },
@@ -78,7 +65,6 @@ function TeacherForm() {
         { value: "5", label: "Sexta-feira" },
         { value: "6", label: "Sábado" }
     ])
-
     const history = useHistory()
 
     function updateSchedule(
@@ -235,12 +221,6 @@ function TeacherForm() {
                             formValid={formValid}
                             setFormValid={setFormValid}
                         />
-                        {/* <Textarea
-                            value={fields.bio.value}
-                            onChange={onInputValueChange}
-                            textareaId="bio"
-                            textareaLabel="Biografia"
-                        /> */}
                     </fieldset>
 
                     <fieldset>
