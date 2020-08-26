@@ -9,4 +9,15 @@ export interface FormField {
 
 export interface FormFields {
     [key: string]: FormField
-} 
+}
+
+export interface WeekDay {
+    value: string,
+    label: string
+}
+
+export interface ScheduleItem {
+    week_day: WeekDay,
+    from: string,
+    to: string
+}
