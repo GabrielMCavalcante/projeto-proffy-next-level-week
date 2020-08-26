@@ -46,9 +46,9 @@ const Input: React.FC<InputProps> = ({
 
     const [showPassword, setShowPassword] = useState(false)
 
-    function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function onInputValueChange(e: React.ChangeEvent<any>) {
         const inputIdentifier = e.target.id
-        const newInputValue = e.target.value
+        const newInputValue: string = e.target.value
 
         const allFields = Object.keys(fields!)
 
@@ -68,15 +68,44 @@ const Input: React.FC<InputProps> = ({
 
         if (feedback) setFeedback!('')
 
-        setFields!({
-            ...fields,
-            [inputIdentifier]: {
-                ...fields![inputIdentifier],
-                value: newInputValue,
-                touched: true,
-                valid: isInputValid
+        if (inputIdentifier === "whatsapp") {
+            let formattedPhone = newInputValue.split('')
+            if (formattedPhone.length > 0 && !formattedPhone[0].match(/^\($/))
+                formattedPhone.unshift("(")
+
+            if (formattedPhone.length >= 4) {
+                if (!formattedPhone[1].match(/^[0-9]$/))
+                    formattedPhone = formattedPhone.filter((_, i) => i !== 1)
+                if (!formattedPhone[2].match(/^[0-9]$/)) 
+                    formattedPhone = formattedPhone.filter((_, i) => i !== 2)
+                if (!formattedPhone[3].match(/^\)$/)) {
+                    formattedPhone.push(' ')
+                    formattedPhone.push('')
+                    formattedPhone[5] = formattedPhone[3]
+                    formattedPhone[3] = ")"
+                }
             }
-        })
+
+            setFields!({
+                ...fields,
+                [inputIdentifier]: {
+                    ...fields![inputIdentifier],
+                    value: formattedPhone.join(''),
+                    touched: true,
+                    valid: isInputValid
+                }
+            })
+        } else {
+            setFields!({
+                ...fields,
+                [inputIdentifier]: {
+                    ...fields![inputIdentifier],
+                    value: newInputValue,
+                    touched: true,
+                    valid: isInputValid
+                }
+            })
+        }
     }
 
     function onInfoHover() {
@@ -124,6 +153,7 @@ const Input: React.FC<InputProps> = ({
                             />
                         ) : (
                             <textarea
+                                onChange={onInputValueChange}
                                 {...inputProps}
                                 id={inputId}
                             />
