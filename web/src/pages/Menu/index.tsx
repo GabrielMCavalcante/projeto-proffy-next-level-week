@@ -41,16 +41,20 @@ function Menu() {
         })()
     }, []) // eslint-disable-line
 
+    useEffect(() => {
+        if(!authContext.signedIn) history.replace("/auth/login")
+    }, [authContext.signedIn]) // eslint-disable-line
+
     return (
         <div id="page-menu">
             <div id="page-menu-top">
                 <div id="page-menu-header">
                     <div id="user-avatar" onClick={() => history.replace("/profile")}>
-                        <img src={authContext.user!.avatar!} alt="User Avatar" />
+                        <img src={authContext.user?.avatar} alt="User Avatar" />
                         <p>{authContext.user?.name}</p>
                     </div>
 
-                    <img id="user-signout" src={signoutIcon} alt="Signout" />
+                    <img id="user-signout" onClick={authContext.signOut} src={signoutIcon} alt="Signout" />
                 </div>
 
                 <div id="page-menu-logo">
