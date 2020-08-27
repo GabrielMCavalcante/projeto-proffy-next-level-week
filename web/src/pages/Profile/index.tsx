@@ -7,7 +7,6 @@ import closeIcon from '@iconify/icons-mdi/close'
 import cameraIcon from '@iconify/icons-mdi/camera'
 
 // Images
-import warningIcon from 'assets/images/icons/warning.svg'
 import noAvatarImg from 'assets/images/sem-avatar.svg'
 
 // Components
@@ -24,11 +23,12 @@ import { FormFields, WeekDay, ScheduleItem } from 'interfaces/forms'
 
 // CSS styles
 import './styles.css'
+import { useHistory } from 'react-router-dom'
 
 const initialFields: FormFields = {
     whatsapp: {
         value: '',
-        validation: /^\([0-9]{2}\)\s9{0,1}[0-9]{4}-[0-9]{4}$/,
+        validation: /^\([0-9]{2}\)\s9?[0-9]{4}-[0-9]{4}$/,
         valid: false,
         info: 'O número de telefone deve estar no formato adequado. Ex.: (92) 8121-0742',
         showInfo: "initial",
@@ -66,6 +66,7 @@ interface ProfileData {
 function Profile() {
 
     const authContext = useAuth()
+    const history = useHistory()
     const [fields, setFields] = useState(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [avatar, setAvatar] = useState<string>('')
@@ -89,28 +90,57 @@ function Profile() {
                 .then(response => {
                     setLoading(false)
                     const profileData: ProfileData = response.data
+                    let whatsapp = ''
+
+                    if (profileData.whatsapp) {
+                        let formattedPhone = String(profileData.whatsapp).split('')
+
+                        formattedPhone.unshift("(")
+
+                        formattedPhone.push('')
+                        formattedPhone.push('')
+                        for (let i = formattedPhone.length - 1; i >= 5; i--) 
+                            formattedPhone[i] = formattedPhone[i-2]
+                        
+                        formattedPhone[3] = ")"
+                        formattedPhone[4] = " "
+
+                        formattedPhone.push('')
+                        if (formattedPhone.length === 14) {
+                            for (let i = formattedPhone.length - 1; i >= 9; i--) 
+                                formattedPhone[i] = formattedPhone[i-1]
+                            formattedPhone[9] = "-"
+                        } else if (formattedPhone.length === 15) {
+                            for (let i = formattedPhone.length - 1; i >= 10; i--) 
+                                formattedPhone[i] = formattedPhone[i-1]
+                            formattedPhone[10] = "-"
+                        }
+
+                        whatsapp = formattedPhone.join('')
+                    }
+
                     setFields({
                         ...fields,
                         whatsapp: {
                             ...fields.whatsapp,
-                            value: profileData.whatsapp ? String(profileData.whatsapp) : '',
-                            validation: !profileData.subject 
-                            ? /^([@]?|\([0-9]{2}\)\s9{0,1}[0-9]{4}-[0-9]{4})$/ 
-                            : fields.bio.validation
+                            value: whatsapp,
+                            validation: !profileData.subject
+                                ? /^([@]?|\([0-9]{2}\)\s9{0,1}[0-9]{4}-[0-9]{4})$/
+                                : fields.bio.validation
                         },
                         bio: {
                             ...fields.bio,
                             value: profileData.bio ? String(profileData.bio) : '',
-                            validation: !profileData.subject 
-                                ? /^[\d\w\sà-ú,.!-]{0,300}$/ 
+                            validation: !profileData.subject
+                                ? /^[\d\w\sà-ú,.!-]{0,300}$/
                                 : fields.bio.validation
                         },
                         cost: {
                             ...fields.cost,
                             value: profileData.cost ? String(profileData.cost) : '',
-                            validation: !profileData.subject 
-                            ? /[0-9]?/ 
-                            : fields.bio.validation
+                            validation: !profileData.subject
+                                ? /[0-9]?/
+                                : fields.bio.validation
                         }
                     })
 
@@ -208,6 +238,56 @@ function Profile() {
         setScheduleItems(schedules)
     }
 
+    function uploadAvatar() {
+        const fileInput = document.getElementById('upload-avatar')! as HTMLInputElement
+        fileInput.click()
+        fileInput.onchange = () => {
+            const file = fileInput.files![0]
+            if (!file.type.match(/^image\/(png|jpeg|jpg)$/))
+                return alert("Apenas arquivos de imagens são aceitos!")
+
+            const fr = new FileReader()
+            fr.onloadend = (e) => {
+                setAvatar(e.target?.result as string)
+                setFormValid(true)
+            }
+            fr.readAsDataURL(file)
+        }
+    }
+
+    function updateProfile(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+
+        const parsedWhatsapp = fields.whatsapp.value.replace(/[)(\s-]/g, "")
+
+        const userData = {
+            avatar,
+            subject,
+            bio: fields.bio.value,
+            cost: fields.cost.value,
+            schedule: [...scheduleItems],
+            whatsapp: parsedWhatsapp
+        }
+
+        axios.put("/update-profile", userData, {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+            .then(res => {
+                alert(res.data.status)
+                authContext.user = {
+                    ...authContext.user!,
+                    avatar,
+                    bio: fields.bio.value,
+                    whatsapp: fields.whatsapp.value
+                }
+                history.replace("/menu")
+            })
+            .catch(err => console.log(err))
+    }
+
     return (
         <div id="proffy-profile">
             <PageHeader
@@ -215,11 +295,19 @@ function Profile() {
             />
 
             <main>
-                <form>
+                <form onSubmit={updateProfile}>
                     <div id="profile-avatar">
                         <div id="profile-avatar-image">
                             <img src={avatar} alt="Profile" />
-                            <Icon icon={cameraIcon} />
+                            <div onClick={uploadAvatar}>
+                                <Icon icon={cameraIcon} />
+                            </div>
+                            <input
+                                id="upload-avatar"
+                                type="file"
+                                accept="image/png, image/jpeg, image/svg"
+                                style={{ display: 'none' }}
+                            />
                         </div>
                         <div id="profile-avatar-description">
                             <p>{name}</p>
@@ -366,16 +454,12 @@ function Profile() {
                     }
 
                     <footer>
-                        <p>
-                            <img src={warningIcon} alt="Aviso importante" />
-                            <span>
-                                Importante! <br />
-                                Preencha todos os dados
-                            </span>
-                        </p>
-
                         <button type="submit" disabled={!formValid || loading}>
-                            {loading ? <div className="spinner-resizer"><Spinner /></div> : "Salvar cadastro"}
+                            {
+                                loading
+                                    ? <div className="spinner-resizer"><Spinner /></div>
+                                    : "Salvar modificações"
+                            }
                         </button>
                     </footer>
                 </form>
