@@ -81,35 +81,37 @@ export default class ProfileController {
                     whatsapp
                 })
 
-            const fetchedClassIds = await trx("classes")
-                .select("id")
-                .where("__user_id", "=", userID)
-                .distinct()
-
-            if (fetchedClassIds.length !== 0 && fetchedClassIds.length === 1) {
-                // Updating class data
-                await trx("classes")
+            if (subject) {
+                const fetchedClassIds = await trx("classes")
+                    .select("id")
                     .where("__user_id", "=", userID)
-                    .update({
-                        cost,
-                        subject
+                    .distinct()
+
+                if (fetchedClassIds.length !== 0 && fetchedClassIds.length === 1) {
+                    // Updating class data
+                    await trx("classes")
+                        .where("__user_id", "=", userID)
+                        .update({
+                            cost,
+                            subject
+                        })
+
+                    const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
+                        return {
+                            __class_id: fetchedClassIds[0].id,
+                            __user_id: userID,
+                            week_day: scheduleItem.week_day.value,
+                            from: convertHourToMinutes(scheduleItem.from),
+                            to: convertHourToMinutes(scheduleItem.to)
+                        }
                     })
 
-                const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
-                    return {
-                        __class_id: fetchedClassIds[0].id,
-                        __user_id: userID,
-                        week_day: scheduleItem.week_day.value,
-                        from: convertHourToMinutes(scheduleItem.from),
-                        to: convertHourToMinutes(scheduleItem.to)
-                    }
-                })
-                
-                // Updating schedule data
-                await trx("class_schedule").where("__user_id", "=", userID).del()
-                await trx("class_schedule").insert(classSchedule)
-                const test = await trx("class_schedule").select("*")
-                console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", test);
+                    // Updating schedule data
+                    await trx("class_schedule").where("__user_id", "=", userID).del()
+                    await trx("class_schedule").insert(classSchedule)
+                    const test = await trx("class_schedule").select("*")
+                    console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", test)
+                }
             }
 
             await trx.commit()
