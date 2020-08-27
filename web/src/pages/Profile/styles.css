@@ -124,13 +124,6 @@
     color: var(--color-text-complement);
 }
 
-#proffy-profile main form footer p {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 #proffy-profile main form footer button {
     width: 100%;
     height: 5.6rem;
@@ -145,7 +138,6 @@
     justify-content: center;
     text-decoration: none;
     transition: background-color 200ms ease;
-    margin-top: 3.2rem;
     outline: 0;
 }
 
