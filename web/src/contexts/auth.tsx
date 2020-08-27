@@ -1,7 +1,7 @@
 import React, { useContext, createContext, useState, useEffect } from 'react'
 import axios from 'axios-config'
 
-import noAvatarImg from '../assets/images/sem-avatar.svg' 
+import noAvatarImg from '../assets/images/sem-avatar.svg'
 
 interface User {
     __id: string,
@@ -23,7 +23,7 @@ interface AuthContextType {
     signedIn: boolean,
     user: User | null,
     token: string | null,
-    signIn(userAccount: { email: string, password: string, rememberUser: boolean}): Promise<any>,
+    signIn(userAccount: { email: string, password: string, rememberUser: boolean }): Promise<any>,
     signUp(userData: UserData): Promise<any>,
     signOut(): void,
     requestPasswordResetEmail(accountEmail: string): Promise<any>,
@@ -43,7 +43,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         let fetch_user = localStorage.getItem('@proffy:user:data')
         let fetch_token = localStorage.getItem('@proffy:user:token')
 
-        if(!fetch_user || !fetch_token) {
+        if (!fetch_user || !fetch_token) {
             fetch_user = sessionStorage.getItem("@proffy:user:data")
             fetch_token = sessionStorage.getItem("@proffy:user:token")
         }
@@ -54,14 +54,15 @@ export const AuthProvider: React.FC = ({ children }) => {
         }
     }, [])
 
-    function signIn(userAccount: { email: string, password: string, rememberUser: boolean}) {
+    function signIn(userAccount: { email: string, password: string, rememberUser: boolean }) {
         setLoading(true)
         return axios.post('/auth/signin', userAccount)
             .then(response => {
                 setLoading(false)
+
                 const signedUser = {
                     ...response.data.user,
-                    avatar: response.data.user.avatar 
+                    avatar: response.data.user.avatar
                         ? response.data.user.avatar
                         : noAvatarImg
                 }
