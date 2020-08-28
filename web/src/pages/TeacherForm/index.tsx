@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios-config'
+
+// Utils
+import { formatFetchedPhone } from 'utils/format'
+import { weekdays, defaultSchedule } from 'utils/shedule'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -15,11 +19,14 @@ import warningIcon from 'assets/images/icons/warning.svg'
 import { Icon } from '@iconify/react'
 import closeIcon from '@iconify/icons-mdi/close'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // CSS styles
 import './styles.css'
 
 // Interfaces
-import { FormFields, WeekDay, ScheduleItem } from 'interfaces/forms'
+import { FormFields, WeekDay, ScheduleItem, ProfileData } from 'interfaces/forms'
 
 const initialFields: FormFields = {
     whatsapp: {
@@ -52,20 +59,40 @@ function TeacherForm() {
     const [fields, setFields] = useState<FormFields>(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [subject, setSubject] = useState<string | null>(null)
-    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
-        { week_day: { value: '1', label: 'Segunda-feira' }, from: '08:00', to: '12:00' }
-    ])
-    const [availableDays, setAvailableDays] = useState([
-        { value: "0", label: "Domingo" },
-        { value: "1", label: "Segunda-feira" },
-        { value: "2", label: "Terça-feira" },
-        { value: "3", label: "Quarta-feira" },
-        { value: "4", label: "Quinta-feira" },
-        { value: "5", label: "Sexta-feira" },
-        { value: "6", label: "Sábado" }
-    ])
+    const [subject, setSubject] = useState<string>("Artes")
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
+    const [availableDays, setAvailableDays] = useState(weekdays)
     const history = useHistory()
+    const authContext = useAuth()
+
+    useEffect(() => {
+        axios.get("/get-profile", {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+            .then(response => {
+                const userData: ProfileData = response.data
+
+                setFields({
+                    ...fields,
+                    whatsapp: {
+                        ...fields.whatsapp,
+                        value: formatFetchedPhone(userData.whatsapp)
+                    },
+                    cost: {
+                        ...fields.cost,
+                        value: userData.cost ? String(userData.cost) : ''
+                    },
+                    bio: {
+                        ...fields.bio,
+                        value: userData.bio
+                    }
+                })
+                
+            }).catch(err => console.log(err))
+    }, []) // eslint-disable-line
 
     function updateSchedule(
         scheduleIndex: number,
@@ -132,46 +159,20 @@ function TeacherForm() {
         setScheduleItems(schedules)
     }
 
-    function onInputValueChange(e: React.ChangeEvent<any>) {
-        const inputIdentifier = e.target.id
-        const newInputValue = e.target.value
-
-        const allFields = Object.keys(fields)
-
-        let isFormValid = true
-        const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
-
-        if (isInputValid) {
-            allFields.forEach(field => {
-                if (isFormValid)
-                    if (field !== inputIdentifier)
-                        isFormValid = fields[field].validation.test(fields[field].value)
-            })
-        } else isFormValid = false
-
-        if (isFormValid !== formValid)
-            setFormValid(isFormValid)
-
-        setFields({
-            ...fields,
-            [inputIdentifier]: {
-                ...fields[inputIdentifier],
-                value: newInputValue,
-                touched: true,
-                valid: isInputValid
-            }
-        })
-    }
-
     function registerClass(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setLoading(true)
         axios.post('/classes', {
-            whatsapp: fields.whatsapp,
-            bio: fields.bio,
+            whatsapp: fields.whatsapp.value.replace(/[)(\s-]/g, ""),
+            bio: fields.bio.value,
             subject,
-            cost: fields.cost,
-            schedule: scheduleItems
+            cost: fields.cost.value,
+            schedule: [...scheduleItems]
+        }, {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
         })
             .then(() => {
                 setLoading(false)
@@ -197,7 +198,6 @@ function TeacherForm() {
                         <legend>Seus dados</legend>
                         <Input
                             value={fields.whatsapp.value}
-                            onChange={onInputValueChange}
                             inputId="whatsapp"
                             inputLabel="WhatsApp"
                             placeholder="(00) 91234-5678"
@@ -211,7 +211,6 @@ function TeacherForm() {
                         />
                         <Input
                             value={fields.bio.value}
-                            onChange={onInputValueChange}
                             inputId="bio"
                             inputLabel="Biografia (max 300 caracteres)"
                             inputType="textarea"
@@ -247,7 +246,6 @@ function TeacherForm() {
                             />
                             <Input
                                 value={fields.cost.value}
-                                onChange={onInputValueChange}
                                 inputId="cost"
                                 inputLabel="Custo da sua aula por hora"
                                 placeholder="50,25"
