@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios-config'
 
+// Utils
+import { formatFetchedPhone } from 'utils/format'
+import { keyDay, weekdays, defaultSchedule } from 'utils/shedule'
+
 // Icons
 import { Icon } from '@iconify/react'
 import closeIcon from '@iconify/icons-mdi/close'
@@ -52,15 +56,15 @@ const initialFields: FormFields = {
     }
 }
 
-interface ProfileData {
-    name: string,
-    email: string,
-    avatar: string,
-    whatsapp: string,
-    bio: string,
-    subject: string,
-    cost: number,
-    schedule: ScheduleItem[]
+function convertToHoursAndMinutesString(mnts: number) {
+    const unparsedHours = String(mnts / 60)
+    const hours = parseInt(unparsedHours)
+    const minutes = parseFloat(String(((parseFloat(unparsedHours) - hours) * 60))).toFixed(0)
+
+    return [
+        String(hours).padStart(2, '0'),
+        String(minutes).padStart(2, '0')
+    ].join(":")
 }
 
 function Profile() {
@@ -74,9 +78,8 @@ function Profile() {
     const [email, setEmail] = useState("")
     const [subject, setSubject] = useState<string>("")
     const [loading, setLoading] = useState(false)
-    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
-        { week_day: { value: '1', label: 'Segunda-feira' }, from: '08:00', to: '12:00' }
-    ])
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
+    const [pageReady, setPageReady] = useState(false)
 
     useEffect(() => {
         (function fetchProfileData() {
@@ -89,35 +92,12 @@ function Profile() {
             })
                 .then(response => {
                     setLoading(false)
-                    const profileData: ProfileData = response.data
+                    console.log(response.data)
+                    const profileData = response.data
                     let whatsapp = ''
 
-                    if (profileData.whatsapp) {
-                        let formattedPhone = String(profileData.whatsapp).split('')
-
-                        formattedPhone.unshift("(")
-
-                        formattedPhone.push('')
-                        formattedPhone.push('')
-                        for (let i = formattedPhone.length - 1; i >= 5; i--) 
-                            formattedPhone[i] = formattedPhone[i-2]
-                        
-                        formattedPhone[3] = ")"
-                        formattedPhone[4] = " "
-
-                        formattedPhone.push('')
-                        if (formattedPhone.length === 14) {
-                            for (let i = formattedPhone.length - 1; i >= 9; i--) 
-                                formattedPhone[i] = formattedPhone[i-1]
-                            formattedPhone[9] = "-"
-                        } else if (formattedPhone.length === 15) {
-                            for (let i = formattedPhone.length - 1; i >= 10; i--) 
-                                formattedPhone[i] = formattedPhone[i-1]
-                            formattedPhone[10] = "-"
-                        }
-
-                        whatsapp = formattedPhone.join('')
-                    }
+                    if (profileData.whatsapp)
+                        whatsapp = formatFetchedPhone(profileData.whatsapp)
 
                     setFields({
                         ...fields,
@@ -126,7 +106,7 @@ function Profile() {
                             value: whatsapp,
                             validation: !profileData.subject
                                 ? /^([@]?|\([0-9]{2}\)\s9{0,1}[0-9]{4}-[0-9]{4})$/
-                                : fields.bio.validation
+                                : fields.whatsapp.validation
                         },
                         bio: {
                             ...fields.bio,
@@ -140,7 +120,7 @@ function Profile() {
                             value: profileData.cost ? String(profileData.cost) : '',
                             validation: !profileData.subject
                                 ? /[0-9]?/
-                                : fields.bio.validation
+                                : fields.cost.validation
                         }
                     })
 
@@ -150,11 +130,23 @@ function Profile() {
                     setName(profileData.name)
                     setEmail(profileData.email)
 
-                    if (profileData.schedule.length > 0)
-                        setScheduleItems(profileData.schedule)
+                    if (profileData.schedule.length > 0) {
+                        const classSchedules = profileData.schedule.map((userSchedule: any) => ({
+                            week_day: {
+                                value: userSchedule.week_day,
+                                label: keyDay[userSchedule.week_day]
+                            },
+                            from: convertToHoursAndMinutesString(parseInt(userSchedule.from)),
+                            to: convertToHoursAndMinutesString(parseInt(userSchedule.to))
+                        }))
+
+                        setScheduleItems(classSchedules)
+                    }
 
                     if (profileData.subject)
                         setSubject(profileData.subject)
+
+                    setPageReady(true)
                 })
                 .catch(err => {
                     setLoading(false)
@@ -163,15 +155,19 @@ function Profile() {
         })()
     }, []) // eslint-disable-line
 
-    const [availableDays, setAvailableDays] = useState([
-        { value: "0", label: "Domingo" },
-        { value: "1", label: "Segunda-feira" },
-        { value: "2", label: "Terça-feira" },
-        { value: "3", label: "Quarta-feira" },
-        { value: "4", label: "Quinta-feira" },
-        { value: "5", label: "Sexta-feira" },
-        { value: "6", label: "Sábado" }
-    ])
+    const [availableDays, setAvailableDays] = useState(weekdays)
+
+    function updateFormStatus() {
+        if (pageReady) {
+            const fieldsNames = Object.keys(fields)
+            let isFormValid = true
+            fieldsNames.forEach(fieldName => {
+                if (isFormValid)
+                    isFormValid = fields[fieldName].validation.test(fields[fieldName].value)
+            })
+            setFormValid(isFormValid)
+        }
+    }
 
     function updateSchedule(
         scheduleIndex: number,
@@ -210,6 +206,7 @@ function Profile() {
         }
 
         setScheduleItems([...schedules])
+        updateFormStatus()
     }
 
     function addSchedule() {
@@ -219,6 +216,7 @@ function Profile() {
         newAvailableDays.shift()
         setAvailableDays(newAvailableDays)
         setScheduleItems(schedules)
+        updateFormStatus()
     }
 
     function removeSchedule(scheduleIndex: number) {
@@ -236,6 +234,7 @@ function Profile() {
 
         setAvailableDays(newAvailableDays)
         setScheduleItems(schedules)
+        updateFormStatus()
     }
 
     function uploadAvatar() {
@@ -249,7 +248,7 @@ function Profile() {
             const fr = new FileReader()
             fr.onloadend = (e) => {
                 setAvatar(e.target?.result as string)
-                setFormValid(true)
+                updateFormStatus()
             }
             fr.readAsDataURL(file)
         }
@@ -290,9 +289,7 @@ function Profile() {
 
     return (
         <div id="proffy-profile">
-            <PageHeader
-                title="Meu perfil"
-            />
+            <PageHeader title="Meu perfil" />
 
             <main>
                 <form onSubmit={updateProfile}>
@@ -380,7 +377,10 @@ function Profile() {
                                                 { value: "Português", label: "Português" },
                                                 { value: "Química", label: "Química" }
                                             ]}
-                                            onOptionSelect={selected => setSubject(selected.value)}
+                                            onOptionSelect={selected => {
+                                                setSubject(selected.value)
+                                                updateFormStatus()
+                                            }}
                                         />
                                         <Input
                                             value={fields.cost.value}
@@ -401,7 +401,7 @@ function Profile() {
                                 <fieldset>
                                     <legend>
                                         Horários disponíveis
-                            <button
+                                        <button
                                             type="button"
                                             onClick={addSchedule}
                                             disabled={availableDays.length === 0}
