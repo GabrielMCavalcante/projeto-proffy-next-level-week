@@ -21,3 +21,14 @@ export interface ScheduleItem {
     from: string,
     to: string
 }
+
+export interface ProfileData {
+    name: string,
+    email: string,
+    avatar: string,
+    whatsapp: string,
+    bio: string,
+    subject: string,
+    cost: number,
+    schedule: ScheduleItem[]
+}
