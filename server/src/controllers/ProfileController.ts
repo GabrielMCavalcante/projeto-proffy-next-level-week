@@ -109,8 +109,6 @@ export default class ProfileController {
                     // Updating schedule data
                     await trx("class_schedule").where("__user_id", "=", userID).del()
                     await trx("class_schedule").insert(classSchedule)
-                    const test = await trx("class_schedule").select("*")
-                    console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", test)
                 }
             }
 
