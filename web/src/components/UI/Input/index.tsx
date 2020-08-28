@@ -1,5 +1,8 @@
 import React, { InputHTMLAttributes, useState } from 'react'
 
+// Utils
+import { formatCurrentPhone } from 'utils/format'
+
 // Components
 import InputInfo from 'components/InputInfo'
 
@@ -11,6 +14,8 @@ import infoIcon from '@iconify/icons-mdi/information-outline'
 
 // CSS styles
 import './styles.css'
+
+// Interfaces
 import { FormFields } from 'interfaces/forms'
 
 type InputTextarea = InputHTMLAttributes<HTMLInputElement> & InputHTMLAttributes<HTMLTextAreaElement>
@@ -50,53 +55,8 @@ const Input: React.FC<InputProps> = ({
         const inputIdentifier = e.target.id
         let newInputValue: string = e.target.value
         
-        if (inputIdentifier === "whatsapp") {
-            // Splits phone number string into char array
-            let formattedPhone = newInputValue.split('')
-
-            // Appends an opening bracket if it not exists on the beginning
-            if (formattedPhone.length > 0 && !formattedPhone[0].match(/^\($/))
-                formattedPhone.unshift("(")
-
-            // Checking for values at least like: (xxx... -> x is a number
-            if (formattedPhone.length >= 4) {
-                // Checks if initial 2 values are numeric and if not, remove them
-                if (!formattedPhone[1].match(/^[0-9]$/))
-                    formattedPhone = formattedPhone.filter((_, i) => i !== 1)
-                if (!formattedPhone[2].match(/^[0-9]$/))
-                    formattedPhone = formattedPhone.filter((_, i) => i !== 2)
-                
-                // Checks if char at index 3 is a closing bracket, if it is not,
-                // moves it to the next position and changes its previous pos. value to
-                // a ')'
-                if (!formattedPhone[3].match(/^\)$/)) {
-                    formattedPhone.push(' ')
-                    formattedPhone.push('')
-                    formattedPhone[5] = formattedPhone[3]
-                    formattedPhone[3] = ")"
-                }
-
-                // Checkings for phones with 8 digits (xxxx-xxxx)
-                if (formattedPhone.length === 10) {
-                    // Adds a '-' in the middle (relative to phone numbers)
-                    if (formattedPhone[9] !== "-") {
-                        formattedPhone.push('')
-                        formattedPhone[10] = formattedPhone[9]
-                        formattedPhone[9] = "-"
-                    }
-                } // Checkings for phones with 9 digits (9xxxx-xxxx) 
-                else if (formattedPhone.length === 15) {
-                    // Adds a '-' in the sixth position (relative to phone numbers)
-                    if (formattedPhone[10] !== "-") {
-                        formattedPhone[9] = formattedPhone[10]
-                        formattedPhone[10] = "-"
-                    }
-                }
-            }
-
-            // Joins array values into single string ((xx) xxxxx-xxxx)
-            newInputValue = formattedPhone.join('')
-        } 
+        if (inputIdentifier === "whatsapp") 
+            newInputValue = formatCurrentPhone(newInputValue)
 
         const allFields = Object.keys(fields!)
 
