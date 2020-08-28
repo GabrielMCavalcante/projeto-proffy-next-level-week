@@ -4,6 +4,7 @@
   @param time The time in hh:mm format to be converted
 */
 export default function convertHourToMinutes(time: string) {
-    return time.split(":")
-    .reduce((acc, el) => (parseInt(String(acc)) * 60) + parseInt(el), 0)
+  const hoursAndMinutes = time.split(":")  
+  return (parseInt(hoursAndMinutes[0]) * 60) + 
+  parseInt(hoursAndMinutes[1])   
 }
