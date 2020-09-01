@@ -12,6 +12,7 @@ interface ScheduleItem {
 export default class ClassesController {
     static async index(req: Request, res: Response) {
         const { subject, week_day, from, to, page = "1" } = req.query
+        const maxResultsPerPage = 10
 
         const convertedFrom = convertHourToMinutes(String(from))
         const convertedTo = convertHourToMinutes(String(to))
@@ -87,8 +88,8 @@ export default class ClassesController {
                 if (returnSearchItem) return s
             })
 
-            const startIndex = (parseInt(String(page)) - 1) * 2
-            const endIndex = parseInt(String(page)) * 2
+            const startIndex = (parseInt(String(page)) - 1) * maxResultsPerPage
+            const endIndex = parseInt(String(page)) * maxResultsPerPage
 
             // Applies pagination slice
             const results = finalParsedSearch.slice(startIndex, endIndex)
