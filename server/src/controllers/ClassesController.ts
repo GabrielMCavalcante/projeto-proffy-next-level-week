@@ -63,7 +63,7 @@ export default class ClassesController {
                 let returnSearchItem = true
 
                 if (subject) returnSearchItem = s.subject === subject
-
+                
                 if (returnSearchItem && week_day) {
                     for (let i = 0; i < s.schedule.length; i++) {
                         returnSearchItem = s.schedule[i].week_day == week_day
@@ -73,15 +73,25 @@ export default class ClassesController {
 
                 if (returnSearchItem && from) {
                     for (let i = 0; i < s.schedule.length; i++) {
-                        returnSearchItem = s.schedule[i].from >= convertedFrom
-                        if (returnSearchItem) break
+                        returnSearchItem = s.schedule[i].from === convertedFrom
+                        if (returnSearchItem) {
+                            if(week_day) {
+                                returnSearchItem = s.schedule[i].week_day === Number(String(week_day))
+                                if(returnSearchItem) break
+                            } else break
+                        }
                     }
                 }
 
                 if (returnSearchItem && to) {
                     for (let i = 0; i < s.schedule.length; i++) {
-                        returnSearchItem = s.schedule[i].to <= convertedTo
-                        if (returnSearchItem) break
+                        returnSearchItem = s.schedule[i].to === convertedTo
+                        if (returnSearchItem) {
+                            if(week_day) {
+                                returnSearchItem = s.schedule[i].week_day === Number(String(week_day))
+                                if(returnSearchItem) break
+                            } else break
+                        }
                     }
                 }
 
