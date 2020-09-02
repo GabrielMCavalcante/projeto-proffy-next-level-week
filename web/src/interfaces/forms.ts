@@ -32,3 +32,9 @@ export interface ProfileData {
     cost: number,
     schedule: ScheduleItem[]
 }
+
+export interface TeacherSchedule {
+    week_day: number,
+    from: number,
+    to: number
+}
