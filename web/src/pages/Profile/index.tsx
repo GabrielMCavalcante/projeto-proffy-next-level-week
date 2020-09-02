@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import axios from 'axios-config'
 
 // Utils
-import { formatFetchedPhone } from 'utils/format'
+import { formatFetchedPhone, formatToHoursAndMinutes } from 'utils/format'
 import { keyDay, weekdays, defaultSchedule } from 'utils/shedule'
 
 // Icons
@@ -27,7 +28,7 @@ import { FormFields, WeekDay, ScheduleItem } from 'interfaces/forms'
 
 // CSS styles
 import './styles.css'
-import { useHistory } from 'react-router-dom'
+
 
 const initialFields: FormFields = {
     whatsapp: {
@@ -54,17 +55,6 @@ const initialFields: FormFields = {
         showInfo: "initial",
         touched: false
     }
-}
-
-function convertToHoursAndMinutesString(mnts: number) {
-    const unparsedHours = String(mnts / 60)
-    const hours = parseInt(unparsedHours)
-    const minutes = parseFloat(String(((parseFloat(unparsedHours) - hours) * 60))).toFixed(0)
-
-    return [
-        String(hours).padStart(2, '0'),
-        String(minutes).padStart(2, '0')
-    ].join(":")
 }
 
 function Profile() {
@@ -136,8 +126,8 @@ function Profile() {
                                 value: userSchedule.week_day,
                                 label: keyDay[userSchedule.week_day]
                             },
-                            from: convertToHoursAndMinutesString(parseInt(userSchedule.from)),
-                            to: convertToHoursAndMinutesString(parseInt(userSchedule.to))
+                            from: formatToHoursAndMinutes(parseInt(userSchedule.from)),
+                            to: formatToHoursAndMinutes(parseInt(userSchedule.to))
                         }))
 
                         setScheduleItems(classSchedules)
