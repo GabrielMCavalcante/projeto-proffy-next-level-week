@@ -9,6 +9,9 @@ import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // Images
 import notFoundIcon from 'assets/images/icons/not-found.svg'
 
@@ -19,6 +22,9 @@ import searchIcon from '@iconify/icons-mdi/magnify'
 // CSS styles
 import './styles.css'
 
+// Interfaces
+import { TeacherSchedule } from 'interfaces/forms'
+
 interface ClassItem {
     id: number,
     subject: string,
@@ -26,14 +32,16 @@ interface ClassItem {
     name: 'string',
     avatar: string,
     whatsapp: number,
-    bio: string
+    bio: string,
+    schedule: TeacherSchedule[]
 }
 
 function TeacherList() {
 
-    const [classes, setClasses] = useState<ClassItem[]>([])
+    const [classList, setClassList] = useState<ClassItem[]>([])
     const [loading, setLoading] = useState(false)
     const [reFetch, setReFetch] = useState(true)
+    const [hasMore, setHasMore] = useState(true)
 
     const [subject, setSubject] = useState<string | null>(null)
     const [weekDay, setWeekDay] = useState<string | null>(null)
@@ -41,16 +49,23 @@ function TeacherList() {
     const [to, setTo] = useState<string | null>(null)
 
     const history = useHistory()
+    const authContext = useAuth()
 
     useEffect(() => {
         (function fetchClasses() {
-            if (reFetch) {
+            if (reFetch && hasMore) {
                 setReFetch(false)
                 setLoading(true)
-                axios.get('/classes')
+                axios.get('/classes', {
+                    headers: {
+                        authorization: 'Bearer ' + authContext.token,
+                        userid: authContext.user?.__id
+                    }
+                })
                     .then(response => {
                         setLoading(false)
-                        setClasses(response.data.search)
+                        setClassList(response.data.resultsInfo.results)
+                        setHasMore(!!response.data.resultsInfo.next)
                     })
                     .catch(() => {
                         setLoading(false)
@@ -64,17 +79,23 @@ function TeacherList() {
     function filterClasses(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setLoading(true)
+        setClassList([])
         axios.get('/classes', {
             params: {
                 subject,
                 week_day: weekDay,
                 from,
                 to
+            },
+            headers: {
+                authorization: 'Bearer ' + authContext.token,
+                userid: authContext.user?.__id
             }
         })
             .then(response => {
                 setLoading(false)
-                setClasses(response.data.search)
+                setClassList([...response.data.resultsInfo.results])
+                setHasMore(!!response.data.resultsInfo.next)
             })
             .catch(() => {
                 setLoading(false)
@@ -126,17 +147,22 @@ function TeacherList() {
                         ]}
                         onOptionSelect={selected => setWeekDay(selected.value)}
                     />
-                    <Input
+                    <Input 
                         inputId="schedule-from"
                         inputLabel="Das"
                         type="time"
-                        onChange={e => setFrom(e.target.value)}
+                        onChange={(e: any) => setFrom(e.target.value)}
+                        inputType="input"
+                        inputContentType="text"
                     />
+                     
                     <Input
                         inputId="schedule-to"
                         inputLabel="Até"
                         type="time"
-                        onChange={e => setTo(e.target.value)}
+                        onChange={(e: any) => setTo(e.target.value)}
+                        inputType="input"
+                        inputContentType="text"
                     />
                     <button type="submit">
                         <Icon icon={searchIcon} />
@@ -149,8 +175,9 @@ function TeacherList() {
                 {
                     loading
                         ? <div className="spinner-resizer"><Spinner /></div>
-                        : classes.length > 0
-                            ? classes.map((currentClass, index) => (
+                        : classList.length > 0
+                            ? classList.map((currentClass, index) => {
+                                return (
                                 <TeacherItem
                                     key={index}
                                     teacherId={currentClass.id}
@@ -160,8 +187,9 @@ function TeacherList() {
                                     teacherBio={currentClass.bio}
                                     teacherPrice={currentClass.cost}
                                     teacherWhatsapp={currentClass.whatsapp}
+                                    teacherSchedule={currentClass.schedule}
                                 />
-                            ))
+                            )})
                             : (
                                 <section className="no-classes-found">
                                     <header>
