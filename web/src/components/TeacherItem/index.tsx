@@ -1,11 +1,18 @@
 import React from 'react'
 import axios from 'axios-config'
 
+// Components
+import TeacherSchedule from './TeacherSchedule'
+
 // Images
 import whatsappIcon from 'assets/images/icons/whatsapp.svg'
+import noAvatarImg from 'assets/images/sem-avatar.svg'
 
 // CSS styles
 import './styles.css'
+
+// Interfaces
+import { TeacherSchedule as TS } from 'interfaces/forms'
 
 interface TeacherItemProps {
     teacherId: number,
@@ -14,10 +21,11 @@ interface TeacherItemProps {
     teacherSubject: string,
     teacherBio: string
     teacherPrice: number,
-    teacherWhatsapp: number
+    teacherWhatsapp: number,
+    teacherSchedule: TS[]
 }
 
-const TeacherItem: React.FC<TeacherItemProps> = props => {
+const TeacherItem: React.FC<TeacherItemProps> = React.memo(props => {
 
     function createConnection() {
         axios.post('/connections', { user_id: props.teacherId })
@@ -26,15 +34,18 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
     return (
         <article className="teacher-item">
             <header>
-                <img src={props.teacherPhotoURL} alt={props.teacherName} />
+                <img src={
+                    props.teacherPhotoURL
+                        ? props.teacherPhotoURL
+                        : noAvatarImg
+                } alt={props.teacherName} />
                 <div>
                     <strong>{props.teacherName}</strong>
                     <span>{props.teacherSubject}</span>
                 </div>
             </header>
-            <p>
-                {props.teacherBio}
-            </p>
+            <p>{props.teacherBio}</p>
+            <TeacherSchedule name={props.teacherName} schedule={[...props.teacherSchedule]} />
             <footer>
                 <p>
                     Preço/hora
@@ -45,9 +56,9 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
                         }).format(props.teacherPrice)
                     }</strong>
                 </p>
-                <a 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                <a
+                    target="_blank"
+                    rel="noopener noreferrer"
                     href={`https://wa.me/${props.teacherWhatsapp}`}
                     onClick={createConnection}
                 >
@@ -57,6 +68,6 @@ const TeacherItem: React.FC<TeacherItemProps> = props => {
             </footer>
         </article>
     )
-}
+})
 
 export default TeacherItem
