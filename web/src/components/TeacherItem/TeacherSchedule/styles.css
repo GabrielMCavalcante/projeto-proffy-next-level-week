@@ -1,0 +1,15 @@
+.teacher-schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 14rem);
+    gap: 0.5rem;
+    width: inherit;
+    margin: 1rem auto;
+    padding: 1rem;
+    position: relative;
+}
+
+@media (min-width: 1000px) {
+    .teacher-schedule {
+        grid-template-columns: repeat(7, 14rem);
+    }
+} 
