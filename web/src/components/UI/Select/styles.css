@@ -1,10 +1,14 @@
+.Select {
+    margin-top: 1.1rem;
+}
+
 .Select .SelectContent {
     width: 100%;
     background: var(--color-input-background);
     box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
     border-radius: 0.8rem;
     padding: 1.2rem 0.8rem;
-    margin: 0.4rem;
+    margin-top: 1rem;
     cursor: pointer;
     position: relative;
     transition: box-shadow 300ms ease;
