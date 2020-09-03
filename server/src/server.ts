@@ -8,7 +8,7 @@ import routes from "./routes"
 const app = express()
 const PORT = 3333
 
-app.use(bodyParser.json({limit: '300kb'}))
+app.use(bodyParser.json({limit: '1000kb'}))
 app.use(routes)
 
 app.listen(PORT, () => console.log("Server started @PORT=" + PORT))
