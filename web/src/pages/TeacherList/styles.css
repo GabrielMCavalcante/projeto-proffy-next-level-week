@@ -49,6 +49,12 @@
     margin: 3.4rem auto;
 }
 
+#page-teacher-list main #all-results {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--color-text-complement);
+}
+
 #page-teacher-list main .no-classes-found {
     height: 100vh;
     display: flex;
