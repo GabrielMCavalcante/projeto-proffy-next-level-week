@@ -19,6 +19,7 @@ import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
+import FeedbackModal from 'components/FeedbackModal'
 
 // Contexts
 import { useAuth } from 'contexts/auth'
@@ -70,6 +71,8 @@ function Profile() {
     const [loading, setLoading] = useState(false)
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
     const [pageReady, setPageReady] = useState(false)
+    const [showModal, setShowModal] = useState(true)
+    const [status, setStatus] = useState("none")
 
     useEffect(() => {
         (function fetchProfileData() {
@@ -82,7 +85,6 @@ function Profile() {
             })
                 .then(response => {
                     setLoading(false)
-                    console.log(response.data)
                     const profileData = response.data
                     let whatsapp = ''
 
@@ -264,197 +266,222 @@ function Profile() {
                 userid: authContext.user?.__id
             }
         })
-            .then(res => {
-                alert(res.data.status)
+            .then(() => {
+                setStatus("success")
+                setShowModal(true)
                 authContext.user = {
                     ...authContext.user!,
                     avatar,
                     bio: fields.bio.value,
                     whatsapp: fields.whatsapp.value
                 }
-                history.replace("/menu")
             })
-            .catch(err => console.log(err))
+            .catch(() => {
+                setStatus("error")
+                setShowModal(true)
+            })
     }
 
     return (
-        <div id="proffy-profile">
-            <PageHeader title="Meu perfil" />
-
-            <main>
-                <form onSubmit={updateProfile}>
-                    <div id="profile-avatar">
-                        <div id="profile-avatar-image">
-                            <img src={avatar} alt="Profile" />
-                            <div onClick={uploadAvatar}>
-                                <Icon icon={cameraIcon} />
-                            </div>
-                            <input
-                                id="upload-avatar"
-                                type="file"
-                                accept="image/png, image/jpeg, image/svg"
-                                style={{ display: 'none' }}
+        <>
+            {
+                showModal && (
+                    status === "success"
+                        ? (
+                            <FeedbackModal
+                                status={status}
+                                message="O perfil foi atualizado com sucesso!"
+                                onCloseModal={() => setShowModal(false)}
                             />
-                        </div>
-                        <div id="profile-avatar-description">
-                            <p>{name}</p>
-                            <p>{subject ? subject : "Estudante"}</p>
-                        </div>
-                    </div>
-                    <fieldset>
-                        <legend>Seus dados</legend>
-                        <Input
-                            value={name}
-                            inputId="name"
-                            inputLabel="Nome"
-                            inputType="input"
-                            inputContentType="text"
-                            disabled
-                        />
-                        <Input
-                            value={email}
-                            inputId="email"
-                            inputLabel="Email"
-                            inputType="input"
-                            inputContentType="email"
-                            disabled
-                        />
-                        <Input
-                            value={fields.whatsapp.value}
-                            inputId="whatsapp"
-                            inputLabel="WhatsApp"
-                            placeholder="(00) 91234-5678"
-                            inputType="input"
-                            inputContentType="tel"
-                            fields={fields}
-                            setFields={setFields}
-                            formValid={formValid}
-                            setFormValid={setFormValid}
-                            hasInfo
-                        />
-                        <Input
-                            value={fields.bio.value}
-                            inputId="bio"
-                            inputLabel="Biografia (max 300 caracteres)"
-                            inputType="textarea"
-                            inputContentType="text"
-                            fields={fields}
-                            setFields={setFields}
-                            formValid={formValid}
-                            setFormValid={setFormValid}
-                        />
-                    </fieldset>
-                    {
-                        subject && (
-                            <>
-                                <fieldset>
-                                    <legend>Sobre a aula</legend>
-                                    <div id="subject-cost">
-                                        <Select
-                                            selectLabel="Matéria"
-                                            selected={{ value: subject, label: subject }}
-                                            items={[
-                                                { value: "Artes", label: "Artes" },
-                                                { value: "Biologia", label: "Biologia" },
-                                                { value: "Educação Física", label: "Educação Física" },
-                                                { value: "Espanhol", label: "Espanhol" },
-                                                { value: "Física", label: "Física" },
-                                                { value: "Geografia", label: "Geografia" },
-                                                { value: "História", label: "História" },
-                                                { value: "Inglês", label: "Inglês" },
-                                                { value: "Literatura", label: "Literatura" },
-                                                { value: "Matemática", label: "Matemática" },
-                                                { value: "Português", label: "Português" },
-                                                { value: "Química", label: "Química" }
-                                            ]}
-                                            onOptionSelect={selected => {
-                                                setSubject(selected.value)
-                                                updateFormStatus()
-                                            }}
-                                        />
-                                        <Input
-                                            value={fields.cost.value}
-                                            inputId="cost"
-                                            inputLabel="Custo da sua aula por hora"
-                                            placeholder="50,25"
-                                            inputType="input"
-                                            inputContentType="tel"
-                                            fields={fields}
-                                            setFields={setFields}
-                                            formValid={formValid}
-                                            setFormValid={setFormValid}
-                                            hasInfo
-                                        />
-                                    </div>
-                                </fieldset>
-
-                                <fieldset>
-                                    <legend>
-                                        Horários disponíveis
-                                        <button
-                                            type="button"
-                                            onClick={addSchedule}
-                                            disabled={availableDays.length === 0}
-                                        >+ Novo Horário</button>
-                                    </legend>
-
-                                    {scheduleItems.map((scheduleItem, index) => (
-                                        <div
-                                            key={scheduleItem.week_day.value}
-                                            className="schedule-item"
-                                        >
-                                            {scheduleItems.length > 1 && <div
-                                                className="remove-schedule"
-                                                onClick={() => removeSchedule(index)}
-                                            >
-                                                <Icon icon={closeIcon} />
-                                            </div>}
-                                            <Select
-                                                selectLabel="Dia da Semana"
-                                                selected={{
-                                                    value: scheduleItem.week_day.value,
-                                                    label: scheduleItem.week_day.label
-                                                }}
-                                                items={availableDays}
-                                                onOptionSelect={selected => updateSchedule(index, "week_day", selected)}
-                                            />
-                                            <div className="schedule-input-group">
-                                                <label htmlFor="from">Das</label>
-                                                <input
-                                                    onChange={e => updateSchedule(index, "from", e.target.value)}
-                                                    value={scheduleItem.from}
-                                                    id="from"
-                                                    type="time"
-                                                />
-                                            </div>
-                                            <div className="schedule-input-group">
-                                                <label htmlFor="to">Até</label>
-                                                <input
-                                                    onChange={e => updateSchedule(index, "to", e.target.value)}
-                                                    value={scheduleItem.to}
-                                                    id="to"
-                                                    type="time"
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </fieldset>
-                            </>
+                        ) :
+                        status === "error" && (
+                            <FeedbackModal
+                                status={status}
+                                message="Ocorreu um erro ao atualizar o perfil. 
+                            Tente novamente mais tarde."
+                                onCloseModal={() => setShowModal(false)}
+                            />
                         )
-                    }
+                )
+            }
+            <div id="proffy-profile">
+                <PageHeader title="Meu perfil" />
 
-                    <footer>
-                        <button type="submit" disabled={!formValid || loading}>
-                            {
-                                loading
-                                    ? <div className="spinner-resizer"><Spinner /></div>
-                                    : "Salvar modificações"
-                            }
-                        </button>
-                    </footer>
-                </form>
-            </main>
-        </div>
+                <main>
+                    <form onSubmit={updateProfile}>
+                        <div id="profile-avatar">
+                            <div id="profile-avatar-image">
+                                <img src={avatar} alt="Profile" />
+                                <div onClick={uploadAvatar}>
+                                    <Icon icon={cameraIcon} />
+                                </div>
+                                <input
+                                    id="upload-avatar"
+                                    type="file"
+                                    accept="image/png, image/jpeg, image/svg"
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+                            <div id="profile-avatar-description">
+                                <p>{name}</p>
+                                <p>{subject ? subject : "Estudante"}</p>
+                            </div>
+                        </div>
+                        <fieldset>
+                            <legend>Seus dados</legend>
+                            <Input
+                                value={name}
+                                inputId="name"
+                                inputLabel="Nome"
+                                inputType="input"
+                                inputContentType="text"
+                                disabled
+                            />
+                            <Input
+                                value={email}
+                                inputId="email"
+                                inputLabel="Email"
+                                inputType="input"
+                                inputContentType="email"
+                                disabled
+                            />
+                            <Input
+                                value={fields.whatsapp.value}
+                                inputId="whatsapp"
+                                inputLabel="WhatsApp"
+                                placeholder="(00) 91234-5678"
+                                inputType="input"
+                                inputContentType="tel"
+                                fields={fields}
+                                setFields={setFields}
+                                formValid={formValid}
+                                setFormValid={setFormValid}
+                                hasInfo
+                            />
+                            <Input
+                                value={fields.bio.value}
+                                inputId="bio"
+                                inputLabel="Biografia (max 300 caracteres)"
+                                inputType="textarea"
+                                inputContentType="text"
+                                fields={fields}
+                                setFields={setFields}
+                                formValid={formValid}
+                                setFormValid={setFormValid}
+                            />
+                        </fieldset>
+                        {
+                            subject && (
+                                <>
+                                    <fieldset>
+                                        <legend>Sobre a aula</legend>
+                                        <div id="subject-cost">
+                                            <Select
+                                                selectLabel="Matéria"
+                                                selected={{ value: subject, label: subject }}
+                                                items={[
+                                                    { value: "Artes", label: "Artes" },
+                                                    { value: "Biologia", label: "Biologia" },
+                                                    { value: "Educação Física", label: "Educação Física" },
+                                                    { value: "Espanhol", label: "Espanhol" },
+                                                    { value: "Física", label: "Física" },
+                                                    { value: "Geografia", label: "Geografia" },
+                                                    { value: "História", label: "História" },
+                                                    { value: "Inglês", label: "Inglês" },
+                                                    { value: "Literatura", label: "Literatura" },
+                                                    { value: "Matemática", label: "Matemática" },
+                                                    { value: "Português", label: "Português" },
+                                                    { value: "Química", label: "Química" }
+                                                ]}
+                                                onOptionSelect={selected => {
+                                                    setSubject(selected.value)
+                                                    updateFormStatus()
+                                                }}
+                                            />
+                                            <Input
+                                                value={fields.cost.value}
+                                                inputId="cost"
+                                                inputLabel="Custo da sua aula por hora"
+                                                placeholder="50,25"
+                                                inputType="input"
+                                                inputContentType="tel"
+                                                fields={fields}
+                                                setFields={setFields}
+                                                formValid={formValid}
+                                                setFormValid={setFormValid}
+                                                hasInfo
+                                            />
+                                        </div>
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>
+                                            Horários disponíveis
+                                        <button
+                                                type="button"
+                                                onClick={addSchedule}
+                                                disabled={availableDays.length === 0}
+                                            >+ Novo Horário</button>
+                                        </legend>
+
+                                        {scheduleItems.map((scheduleItem, index) => (
+                                            <div
+                                                key={scheduleItem.week_day.value}
+                                                className="schedule-item"
+                                            >
+                                                {scheduleItems.length > 1 && <div
+                                                    className="remove-schedule"
+                                                    onClick={() => removeSchedule(index)}
+                                                >
+                                                    <Icon icon={closeIcon} />
+                                                </div>}
+                                                <Select
+                                                    selectLabel="Dia da Semana"
+                                                    selected={{
+                                                        value: scheduleItem.week_day.value,
+                                                        label: scheduleItem.week_day.label
+                                                    }}
+                                                    items={availableDays}
+                                                    onOptionSelect={selected => updateSchedule(index, "week_day", selected)}
+                                                />
+                                                <div className="schedule-input-group">
+                                                    <label htmlFor="from">Das</label>
+                                                    <input
+                                                        onChange={e => updateSchedule(index, "from", e.target.value)}
+                                                        value={scheduleItem.from}
+                                                        id="from"
+                                                        type="time"
+                                                    />
+                                                </div>
+                                                <div className="schedule-input-group">
+                                                    <label htmlFor="to">Até</label>
+                                                    <input
+                                                        onChange={e => updateSchedule(index, "to", e.target.value)}
+                                                        value={scheduleItem.to}
+                                                        id="to"
+                                                        type="time"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </fieldset>
+                                </>
+                            )
+                        }
+
+                        <footer>
+                            <button type="submit" disabled={!formValid || loading}>
+                                {
+                                    loading
+                                        ? <div className="spinner-resizer"><Spinner /></div>
+                                        : "Salvar modificações"
+                                }
+                            </button>
+                        </footer>
+                    </form>
+                </main>
+            </div>
+        </>
     )
 }
 
