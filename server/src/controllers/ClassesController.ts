@@ -104,8 +104,9 @@ export default class ClassesController {
             // Applies pagination slice
             const results = finalParsedSearch.slice(startIndex, endIndex)
 
-            const resultsInfo: { results: any[], next?: number, prev?: number } = {
-                results
+            const resultsInfo: { results: any[], next?: number, prev?: number, total: number } = {
+                results,
+                total: search.length
             }
 
             // Verifies if there is a next / previous page
