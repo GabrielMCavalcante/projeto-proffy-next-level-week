@@ -22,7 +22,8 @@ interface TeacherItemProps {
     teacherBio: string
     teacherPrice: number,
     teacherWhatsapp: number,
-    teacherSchedule: TS[]
+    teacherSchedule: TS[], 
+    teacherRef?: any
 }
 
 const TeacherItem: React.FC<TeacherItemProps> = React.memo(props => {
@@ -32,7 +33,7 @@ const TeacherItem: React.FC<TeacherItemProps> = React.memo(props => {
     }
 
     return (
-        <article className="teacher-item">
+        <article className="teacher-item" ref={props.teacherRef}>
             <header>
                 <img src={
                     props.teacherPhotoURL
