@@ -41,7 +41,7 @@ const initialFields: FormFields = {
     },
     bio: {
         value: '',
-        validation: /^[\d\w\sà-ú,.!-]{50,300}$/,
+        validation: /^[\d\w\sà-úâ-ûã-õ'"´,.!?-]{50,300}$/i,
         valid: false,
         info: 'A biografia precisa conter de 50 a 300 caracteres.',
         showInfo: "initial",
