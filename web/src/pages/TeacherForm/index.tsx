@@ -27,6 +27,7 @@ import './styles.css'
 
 // Interfaces
 import { FormFields, WeekDay, ScheduleItem, ProfileData } from 'interfaces/forms'
+import FeedbackModal from 'components/FeedbackModal'
 
 const initialFields: FormFields = {
     whatsapp: {
@@ -62,6 +63,9 @@ function TeacherForm() {
     const [subject, setSubject] = useState<string>("Artes")
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
     const [availableDays, setAvailableDays] = useState(weekdays)
+    const [hasClass, setHasClass] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+
     const history = useHistory()
     const authContext = useAuth()
 
@@ -74,12 +78,17 @@ function TeacherForm() {
         })
             .then(response => {
                 const userData: ProfileData = response.data
+                if (userData.subject) {
+                    setHasClass(true)
+                    setShowModal(true)
+                    return
+                }
 
                 setFields({
                     ...fields,
                     whatsapp: {
                         ...fields.whatsapp,
-                        value: formatFetchedPhone(userData.whatsapp)
+                        value: userData.whatsapp ? formatFetchedPhone(userData.whatsapp) : ''
                     },
                     cost: {
                         ...fields.cost,
@@ -90,7 +99,7 @@ function TeacherForm() {
                         value: userData.bio
                     }
                 })
-                
+
             }).catch(err => console.log(err))
     }, []) // eslint-disable-line
 
@@ -185,7 +194,24 @@ function TeacherForm() {
             })
     }
 
-    return (
+    const errorModal = (
+        <FeedbackModal
+            status="error"
+            message="Você já cadastrou uma aula!"
+            onCloseModal={() => history.replace("/menu")}
+        />
+    )
+
+    const successModal = (
+        <FeedbackModal
+            status="success"
+            message="Aula cadastrada com sucesso! 
+            Você pode editar informações sobre a aula no seu perfil."
+            onCloseModal={() => history.replace("/menu")}
+        />
+    )
+
+    const mainContent = (
         <div id="page-teacher-form" className="container">
             <PageHeader
                 title="Que incrível que você quer ensinar."
@@ -263,7 +289,7 @@ function TeacherForm() {
                     <fieldset>
                         <legend>
                             Horários disponíveis
-                            <button
+                        <button
                                 type="button"
                                 onClick={addSchedule}
                                 disabled={availableDays.length === 0}
@@ -328,6 +354,18 @@ function TeacherForm() {
                 </form>
             </main>
         </div>
+    )
+
+    return (
+        <>
+            {
+                hasClass
+                    ? showModal && errorModal
+                    : showModal 
+                        ? successModal
+                        : mainContent
+            }
+        </>
     )
 }
 
