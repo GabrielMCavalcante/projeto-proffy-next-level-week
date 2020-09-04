@@ -119,4 +119,20 @@ export default class ProfileController {
             return commonErrors.internalServerError(res)
         }
     }
+
+    static async delete(req: Request, res: Response) {
+        const { userid }  = req.headers
+
+        try {
+            await db("classes")
+                .where("__user_id", "=", userid as string)
+                .del()
+
+            return res.status(200).json({ message: "Classe deletada com sucesso." })
+        } 
+        catch(error) {
+            console.log(error.message)
+            return res.status(500).json({ error })
+        }
+    }
 }
