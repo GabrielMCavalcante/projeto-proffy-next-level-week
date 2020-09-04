@@ -185,8 +185,7 @@ function TeacherForm() {
         })
             .then(() => {
                 setLoading(false)
-                alert('Cadastro realizado com sucesso!')
-                history.replace('/menu')
+                setShowModal(true)
             })
             .catch(() => {
                 setLoading(false)
