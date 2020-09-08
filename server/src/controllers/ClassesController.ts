@@ -1,6 +1,7 @@
-import { Request, Response } from 'express'
-import db from '../database/connection'
-import convertHourToMinutes from '../utils/convertHourToMinutes'
+import { Request, Response } from "express"
+import db from "../database/connection"
+import convertHourToMinutes from "../utils/convertHourToMinutes"
+import commonErrors from "../utils/commonErrorResponses"
 
 interface ScheduleItem {
     week_day: { value: number },
@@ -15,26 +16,33 @@ export default class ClassesController {
         const timeFrom = convertHourToMinutes(String(from))
         const timeTo = convertHourToMinutes(String(to))
 
-        const search = await db('classes')
-            .whereExists(function () {
-                this.select('class_schedule.*')
-                    .from('class_schedule')
-                    .whereRaw('`class_schedule`.`__class_id` = `classes`.`id`')
-                    .where('week_day', 'like', week_day ? week_day : '%' as any)
-                    .where('from', '>=', from ? from !== 'null' ? timeFrom : 0 : 0)
-                    .where('to', '<=', to ? to !== 'null' ? timeTo : 1440 : 1440)
-            })
-            .join('users', 'users.__id', '=', '__user_id')
-            .select('*')
-            .where('subject', 'like', subject ? subject : '%' as any)
+        try {
+            const search = await db("classes")
+                .whereExists(function () {
+                    this.select("class_schedule.*")
+                        .from("class_schedule")
+                        .whereRaw("`class_schedule`.`__class_id` = `classes`.`id`")
+                        .where("week_day", "like", week_day ? week_day : "%" as any)
+                        .where("from", ">=", from ? from !== "null" ? timeFrom : 0 : 0)
+                        .where("to", "<=", to ? to !== "null" ? timeTo : 1440 : 1440)
+                })
+                .join("users", "users.__id", "=", "__user_id")
+                .select("*")
+                .where("subject", "like", subject ? subject : "%" as any)
 
-        return res.status(200).json({ search })
+            return res.status(200).json({ search })
+        } catch (err) {
+            return commonErrors.internalServerError(res)
+        }
     }
 
     static async create(req: Request, res: Response) {
+
+        const userID = req.headers.userid as string
+
+        if (!userID) return res.status(400).json({ error: "ID do usuário não recebido." })
+
         const {
-            name,
-            avatar,
             whatsapp,
             bio,
             subject,
@@ -45,41 +53,36 @@ export default class ClassesController {
         const trx = await db.transaction()
 
         try {
-            const insertedUsersIds = await trx('users').insert({
-                name,
-                avatar,
-                whatsapp,
-                bio_header: bio.bio_header,
-                bio_content: bio.bio_content
-            }) // REMOVER DEPOIS
+            await trx("users")
+                .where("__id", "=", userID)
+                .update({ whatsapp, bio })
 
-            const __user_id = insertedUsersIds[0]
-
-            const insertedClassesIds = await trx('classes').insert({
+            const insertedClassesIds = await trx("classes").insert({
                 subject,
                 cost,
-                __user_id
+                __user_id: userID
             })
 
             const __class_id = insertedClassesIds[0]
 
             const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
                 return {
+                    __class_id,
+                    __user_id: userID,
                     week_day: scheduleItem.week_day.value,
                     from: convertHourToMinutes(scheduleItem.from),
-                    to: convertHourToMinutes(scheduleItem.to),
-                    __class_id
+                    to: convertHourToMinutes(scheduleItem.to)
                 }
             })
 
-            await trx('class_schedule').insert(classSchedule)
+            await trx("class_schedule").insert(classSchedule)
 
             await trx.commit()
-            return res.status(201).json({ message: 'Success' })
+            return res.status(201).json({ message: "Aula criada com sucesso." })
 
         } catch (err) {
             await trx.rollback()
-            return res.status(400).json({ message: 'Unexpected error occurred while creating class.' })
+            return commonErrors.internalServerError(res)
         }
     }
 }

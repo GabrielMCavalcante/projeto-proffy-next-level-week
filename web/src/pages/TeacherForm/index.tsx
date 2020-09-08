@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios-config'
 
+// Utils
+import { formatFetchedPhone } from 'utils/format'
+import { weekdays, defaultSchedule } from 'utils/shedule'
+
 // Components
 import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
-import Textarea from 'components/UI/Textarea'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
 
@@ -16,48 +19,80 @@ import warningIcon from 'assets/images/icons/warning.svg'
 import { Icon } from '@iconify/react'
 import closeIcon from '@iconify/icons-mdi/close'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // CSS styles
 import './styles.css'
 
-interface WeekDay {
-    value: string,
-    label: string
-}
+// Interfaces
+import { FormFields, WeekDay, ScheduleItem, ProfileData } from 'interfaces/forms'
 
-interface ScheduleItem {
-    week_day: WeekDay,
-    from: string,
-    to: string
+const initialFields: FormFields = {
+    whatsapp: {
+        value: '',
+        validation: /^\([0-9]{2}\)\s9{0,1}[0-9]{4}-[0-9]{4}$/,
+        valid: false,
+        info: 'O número de telefone deve estar no formato adequado. Ex.: (92) 8121-0742',
+        showInfo: "initial",
+        touched: false
+    },
+    bio: {
+        value: '',
+        validation: /^[\d\w\sà-ú,.!-]{50,300}$/,
+        valid: false,
+        info: 'A biografia precisa conter de 50 a 300 caracteres.',
+        showInfo: "initial",
+        touched: false
+    },
+    cost: {
+        value: '',
+        validation: /^([0-9]+\.|[1-9])[0-9]*$/,
+        valid: false,
+        info: 'O custo deve estar no formato adequado. Ex.: 10.50',
+        showInfo: "initial",
+        touched: false
+    }
 }
 
 function TeacherForm() {
-
+    const [fields, setFields] = useState<FormFields>(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [loading, setLoading] = useState(false)
-
-    const [name, setName] = useState('')
-    const [avatar, setAvatar] = useState('')
-    const [whatsapp, setWhatsapp] = useState('')
-    const [bio, setBio] = useState('')
-
-    const [cost, setCost] = useState('')
-
-    const [subject, setSubject] = useState<string | null>(null)
-    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
-        { week_day: { value: '1', label: 'Segunda-feira' }, from: '08:00', to: '12:00' }
-    ])
-
-    const [availableDays, setAvailableDays] = useState([
-        { value: "0", label: "Domingo" },
-        { value: "1", label: "Segunda-feira" },
-        { value: "2", label: "Terça-feira" },
-        { value: "3", label: "Quarta-feira" },
-        { value: "4", label: "Quinta-feira" },
-        { value: "5", label: "Sexta-feira" },
-        { value: "6", label: "Sábado" }
-    ])
-
+    const [subject, setSubject] = useState<string>("Artes")
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
+    const [availableDays, setAvailableDays] = useState(weekdays)
     const history = useHistory()
+    const authContext = useAuth()
+
+    useEffect(() => {
+        axios.get("/get-profile", {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+            .then(response => {
+                const userData: ProfileData = response.data
+
+                setFields({
+                    ...fields,
+                    whatsapp: {
+                        ...fields.whatsapp,
+                        value: formatFetchedPhone(userData.whatsapp)
+                    },
+                    cost: {
+                        ...fields.cost,
+                        value: userData.cost ? String(userData.cost) : ''
+                    },
+                    bio: {
+                        ...fields.bio,
+                        value: userData.bio
+                    }
+                })
+                
+            }).catch(err => console.log(err))
+    }, []) // eslint-disable-line
 
     function updateSchedule(
         scheduleIndex: number,
@@ -124,42 +159,30 @@ function TeacherForm() {
         setScheduleItems(schedules)
     }
 
-    useEffect(() => {
-        const fields = [name, avatar, whatsapp, bio, cost]
-
-        let valid = true
-
-        fields.forEach(field => {
-            if (valid) valid = field ? true : false
-        })
-
-        if (valid)
-            valid = (!isNaN(Number(cost)) && Number(cost) >= 10 && Number(cost) <= 9999)
-
-        if (valid !== formValid) setFormValid(valid)
-    }, [name, avatar, whatsapp, bio, cost]) // eslint-disable-line
-
     function registerClass(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setLoading(true)
         axios.post('/classes', {
-            name,
-            avatar,
-            whatsapp,
-            bio,
+            whatsapp: fields.whatsapp.value.replace(/[)(\s-]/g, ""),
+            bio: fields.bio.value,
             subject,
-            cost,
-            schedule: scheduleItems
+            cost: fields.cost.value,
+            schedule: [...scheduleItems]
+        }, {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
         })
-        .then(() => {
-            setLoading(false)
-            alert('Cadastro realizado com sucesso!')
-            history.replace('/')
-        })
-        .catch(() => {
-            setLoading(false)
-            alert('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
-        })
+            .then(() => {
+                setLoading(false)
+                alert('Cadastro realizado com sucesso!')
+                history.replace('/menu')
+            })
+            .catch(() => {
+                setLoading(false)
+                alert('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
+            })
     }
 
     return (
@@ -174,61 +197,67 @@ function TeacherForm() {
                     <fieldset>
                         <legend>Seus dados</legend>
                         <Input
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            inputId="name"
-                            inputLabel="Nome completo"
-                        />
-                        <Input
-                            value={avatar}
-                            onChange={e => setAvatar(e.target.value)}
-                            inputId="avatar"
-                            inputLabel="Avatar"
-                        />
-                        <Input
-                            value={whatsapp}
-                            onChange={e => setWhatsapp(e.target.value)}
+                            value={fields.whatsapp.value}
                             inputId="whatsapp"
                             inputLabel="WhatsApp"
+                            placeholder="(00) 91234-5678"
+                            inputType="input"
+                            inputContentType="tel"
+                            fields={fields}
+                            setFields={setFields}
+                            formValid={formValid}
+                            setFormValid={setFormValid}
+                            hasInfo
                         />
-                        <Textarea
-                            value={bio}
-                            onChange={e => setBio(e.target.value)}
-                            textareaId="bio"
-                            textareaLabel="Biografia"
+                        <Input
+                            value={fields.bio.value}
+                            inputId="bio"
+                            inputLabel="Biografia (max 300 caracteres)"
+                            inputType="textarea"
+                            inputContentType="text"
+                            fields={fields}
+                            setFields={setFields}
+                            formValid={formValid}
+                            setFormValid={setFormValid}
                         />
                     </fieldset>
 
                     <fieldset>
                         <legend>Sobre a aula</legend>
-                        <Select
-                            selectLabel="Matéria"
-                            selected={{ value: "Artes", label: "Artes" }}
-                            items={[
-                                { value: "Artes", label: "Artes" },
-                                { value: "Biologia", label: "Biologia" },
-                                { value: "Educação Física", label: "Educação Física" },
-                                { value: "Espanhol", label: "Espanhol" },
-                                { value: "Física", label: "Física" },
-                                { value: "Geografia", label: "Geografia" },
-                                { value: "História", label: "História" },
-                                { value: "Inglês", label: "Inglês" },
-                                { value: "Literatura", label: "Literatura" },
-                                { value: "Matemática", label: "Matemática" },
-                                { value: "Português", label: "Português" },
-                                { value: "Química", label: "Química" }
-                            ]}
-                            onOptionSelect={selected => setSubject(selected.value)}
-                        />
-                        <Input
-                            value={cost}
-                            onChange={e => setCost(e.target.value)}
-                            inputId="cost"
-                            type="number"
-                            min="10"
-                            max="9999"
-                            inputLabel="Custo da sua aula por hora"
-                        />
+                        <div id="subject-cost">
+                            <Select
+                                selectLabel="Matéria"
+                                selected={{ value: "Artes", label: "Artes" }}
+                                items={[
+                                    { value: "Artes", label: "Artes" },
+                                    { value: "Biologia", label: "Biologia" },
+                                    { value: "Educação Física", label: "Educação Física" },
+                                    { value: "Espanhol", label: "Espanhol" },
+                                    { value: "Física", label: "Física" },
+                                    { value: "Geografia", label: "Geografia" },
+                                    { value: "História", label: "História" },
+                                    { value: "Inglês", label: "Inglês" },
+                                    { value: "Literatura", label: "Literatura" },
+                                    { value: "Matemática", label: "Matemática" },
+                                    { value: "Português", label: "Português" },
+                                    { value: "Química", label: "Química" }
+                                ]}
+                                onOptionSelect={selected => setSubject(selected.value)}
+                            />
+                            <Input
+                                value={fields.cost.value}
+                                inputId="cost"
+                                inputLabel="Custo da sua aula por hora"
+                                placeholder="50,25"
+                                inputType="input"
+                                inputContentType="tel"
+                                fields={fields}
+                                setFields={setFields}
+                                formValid={formValid}
+                                setFormValid={setFormValid}
+                                hasInfo
+                            />
+                        </div>
                     </fieldset>
 
                     <fieldset>
@@ -261,20 +290,24 @@ function TeacherForm() {
                                     items={availableDays}
                                     onOptionSelect={selected => updateSchedule(index, "week_day", selected)}
                                 />
-                                <Input
-                                    onChange={e => updateSchedule(index, "from", e.target.value)}
-                                    value={scheduleItem.from}
-                                    inputId="from"
-                                    inputLabel="Das"
-                                    type="time"
-                                />
-                                <Input
-                                    onChange={e => updateSchedule(index, "to", e.target.value)}
-                                    value={scheduleItem.to}
-                                    inputId="to"
-                                    inputLabel="Até"
-                                    type="time"
-                                />
+                                <div className="schedule-input-group">
+                                    <label htmlFor="from">Das</label>
+                                    <input
+                                        onChange={e => updateSchedule(index, "from", e.target.value)}
+                                        value={scheduleItem.from}
+                                        id="from"
+                                        type="time"
+                                    />
+                                </div>
+                                <div className="schedule-input-group">
+                                    <label htmlFor="to">Até</label>
+                                    <input
+                                        onChange={e => updateSchedule(index, "to", e.target.value)}
+                                        value={scheduleItem.to}
+                                        id="to"
+                                        type="time"
+                                    />
+                                </div>
                             </div>
                         ))}
                     </fieldset>

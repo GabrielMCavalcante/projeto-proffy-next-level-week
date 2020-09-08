@@ -49,7 +49,7 @@ const Select: React.FC<SelectProps> = ({ selectLabel, selected, items, onOptionS
     }
 
     useEffect(() => {
-        onOptionSelect(currentSelected!)
+        onOptionSelect(currentSelected)
     }, [currentSelected]) //eslint-disable-line
 
     return (

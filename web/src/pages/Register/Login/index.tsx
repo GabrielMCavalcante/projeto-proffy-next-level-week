@@ -87,9 +87,10 @@ function Login() {
         if (feedback) setFeedback('')
         const userAccount = {
             email: fields.email.value,
-            password: fields.password.value
+            password: fields.password.value,
+            rememberUser
         }
-        const response = await authContext.signIn(userAccount, rememberUser)
+        const response = await authContext.signIn(userAccount)
         if (typeof response === 'string') setFeedback(response)
     }
 
