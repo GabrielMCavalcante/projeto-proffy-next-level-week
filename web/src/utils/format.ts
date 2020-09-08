@@ -80,4 +80,19 @@ function formatCurrentPhone(phone: string) {
     return formattedPhone.join('')
 }
 
-export { formatFetchedPhone, formatCurrentPhone }
+function formatToHoursAndMinutes(mnts: number) {
+    const unparsedHours = String(mnts / 60)
+    const hours = parseInt(unparsedHours)
+    const minutes = parseFloat(String(((parseFloat(unparsedHours) - hours) * 60))).toFixed(0)
+
+    return [
+        String(hours).padStart(2, '0'),
+        String(minutes).padStart(2, '0')
+    ].join(":")
+}
+
+export { 
+    formatFetchedPhone, 
+    formatCurrentPhone, 
+    formatToHoursAndMinutes 
+}

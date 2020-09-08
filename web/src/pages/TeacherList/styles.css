@@ -21,7 +21,7 @@
     justify-content: center;
     text-decoration: none;
     transition: background-color 200ms ease;
-    margin-top: 2.8rem;
+    margin-top: 4.5rem;
     outline: 0;
 }
 
@@ -49,6 +49,12 @@
     margin: 3.4rem auto;
 }
 
+#page-teacher-list main #all-results {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--color-text-complement);
+}
+
 #page-teacher-list main .no-classes-found {
     height: 100vh;
     display: flex;
@@ -73,8 +79,9 @@
     #search-teachers {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        column-gap: 16px;
+        column-gap: 1.6rem;
         position: absolute;
+        align-items: center;
         bottom: -60px;
         left: 50%;
         transform: translateX(-50%);
@@ -95,7 +102,7 @@
     }
     #page-teacher-list main {
         padding: 3.2rem 0;
-        max-width: 740px;
+        max-width: 105rem;
         margin: 0 auto;
     }
 }

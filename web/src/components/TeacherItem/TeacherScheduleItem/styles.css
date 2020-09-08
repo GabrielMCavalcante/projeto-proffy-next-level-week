@@ -1,0 +1,41 @@
+.teacher-schedule-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.8rem;
+    border: 0.1rem solid var(--color-line-in-white);
+    background: var(--color-input-background);
+    padding: .5rem;
+}
+
+.teacher-schedule-item .day {
+    margin-bottom: .5rem;
+}
+
+.teacher-schedule-item .day p:first-child,
+.teacher-schedule-item .period p:first-child {
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-size: 1.4rem;
+    color: var(--color-text-complement);
+}
+
+.teacher-schedule-item .day p:last-child, 
+.teacher-schedule-item .period p:last-child {
+    font-family: 'Archivo';
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--color-text-base);
+}
+
+.teacher-schedule-item.disabled .day p:first-child, 
+.teacher-schedule-item.disabled .period p:first-child {
+    color: var(--color-line-in-white);
+}
+
+.teacher-schedule-item.disabled .day p:last-child, 
+.teacher-schedule-item.disabled .period p:last-child {
+    color: var(--color-text-in-primary);
+}

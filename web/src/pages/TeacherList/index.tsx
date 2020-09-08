@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios-config'
 import { useHistory } from 'react-router-dom'
 
@@ -8,6 +8,9 @@ import TeacherItem from 'components/TeacherItem'
 import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
+
+// Contexts
+import { useAuth } from 'contexts/auth'
 
 // Images
 import notFoundIcon from 'assets/images/icons/not-found.svg'
@@ -19,6 +22,9 @@ import searchIcon from '@iconify/icons-mdi/magnify'
 // CSS styles
 import './styles.css'
 
+// Interfaces
+import { TeacherSchedule } from 'interfaces/forms'
+
 interface ClassItem {
     id: number,
     subject: string,
@@ -26,14 +32,32 @@ interface ClassItem {
     name: 'string',
     avatar: string,
     whatsapp: number,
-    bio: string
+    bio: string,
+    schedule: TeacherSchedule[]
 }
 
 function TeacherList() {
 
-    const [classes, setClasses] = useState<ClassItem[]>([])
+    const [classList, setClassList] = useState<ClassItem[]>([])
     const [loading, setLoading] = useState(false)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [loadingFeedback, setLoadingFeedback] = useState('')
     const [reFetch, setReFetch] = useState(true)
+    const [totalProffys, setTotalProffys] = useState(0)
+
+    const [pageNumber, setPageNumber] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const observer: any = useRef()
+    const searchMoreNodeRef = useCallback(node => {
+        if (loadingMore) return
+        if (observer.current) observer.current.disconnect()
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPageNumber(pageNumber + 1)
+            }
+        })
+        if (node) observer.current.observe(node)
+    }, [loadingMore, hasMore, classList.length]) //eslint-disable-line
 
     const [subject, setSubject] = useState<string | null>(null)
     const [weekDay, setWeekDay] = useState<string | null>(null)
@@ -41,16 +65,24 @@ function TeacherList() {
     const [to, setTo] = useState<string | null>(null)
 
     const history = useHistory()
+    const authContext = useAuth()
 
     useEffect(() => {
         (function fetchClasses() {
-            if (reFetch) {
+            if (reFetch && hasMore) {
                 setReFetch(false)
                 setLoading(true)
-                axios.get('/classes')
+                axios.get('/classes', {
+                    headers: {
+                        authorization: 'Bearer ' + authContext.token,
+                        userid: authContext.user?.__id
+                    }
+                })
                     .then(response => {
                         setLoading(false)
-                        setClasses(response.data.search)
+                        setClassList(response.data.resultsInfo.results)
+                        setHasMore(!!response.data.resultsInfo.next)
+                        setTotalProffys(response.data.resultsInfo.total)
                     })
                     .catch(() => {
                         setLoading(false)
@@ -61,20 +93,55 @@ function TeacherList() {
         })()
     }, [reFetch]) // eslint-disable-line
 
+    useEffect(() => {
+        setLoadingMore(true)
+        axios.get('/classes', {
+            params: {
+                subject,
+                week_day: weekDay,
+                from,
+                to,
+                page: pageNumber
+            },
+            headers: {
+                authorization: 'Bearer ' + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+            .then(response => {
+                setLoadingMore(false)
+                setClassList([...classList, ...response.data.resultsInfo.results])
+                setHasMore(!!response.data.resultsInfo.next)
+                if(!!!response.data.resultsInfo.next)
+                    setLoadingFeedback('Estes são todos os resultados')
+            })
+            .catch(() => {
+                setLoadingMore(false)
+                setLoadingFeedback('Erro ao buscar mais proffys. Tente novamente mais tarde.')
+            })
+    }, [pageNumber]) // eslint-disable-line
+
     function filterClasses(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setLoading(true)
+        setPageNumber(1)
+        setClassList([])
         axios.get('/classes', {
             params: {
                 subject,
                 week_day: weekDay,
                 from,
                 to
+            },
+            headers: {
+                authorization: 'Bearer ' + authContext.token,
+                userid: authContext.user?.__id
             }
         })
             .then(response => {
                 setLoading(false)
-                setClasses(response.data.search)
+                setClassList([...response.data.resultsInfo.results])
+                setHasMore(!!response.data.resultsInfo.next)
             })
             .catch(() => {
                 setLoading(false)
@@ -89,7 +156,10 @@ function TeacherList() {
 
     return (
         <div id="page-teacher-list" className="container">
-            <PageHeader title="Estes são os proffys disponíveis.">
+            <PageHeader
+                title="Estes são os proffys disponíveis."
+                description={`Temos um total de ${totalProffys} proffys!`}
+            >
                 <form id="search-teachers" onSubmit={filterClasses}>
                     <Select
                         selectLabel="Matéria"
@@ -130,13 +200,18 @@ function TeacherList() {
                         inputId="schedule-from"
                         inputLabel="Das"
                         type="time"
-                        onChange={e => setFrom(e.target.value)}
+                        onChange={(e: any) => setFrom(e.target.value)}
+                        inputType="input"
+                        inputContentType="text"
                     />
+
                     <Input
                         inputId="schedule-to"
                         inputLabel="Até"
                         type="time"
-                        onChange={e => setTo(e.target.value)}
+                        onChange={(e: any) => setTo(e.target.value)}
+                        inputType="input"
+                        inputContentType="text"
                     />
                     <button type="submit">
                         <Icon icon={searchIcon} />
@@ -149,19 +224,46 @@ function TeacherList() {
                 {
                     loading
                         ? <div className="spinner-resizer"><Spinner /></div>
-                        : classes.length > 0
-                            ? classes.map((currentClass, index) => (
-                                <TeacherItem
-                                    key={index}
-                                    teacherId={currentClass.id}
-                                    teacherPhotoURL={currentClass.avatar}
-                                    teacherName={currentClass.name}
-                                    teacherSubject={currentClass.subject}
-                                    teacherBio={currentClass.bio}
-                                    teacherPrice={currentClass.cost}
-                                    teacherWhatsapp={currentClass.whatsapp}
-                                />
-                            ))
+                        : classList.length > 0
+                            ? (
+                                <>
+                                    {classList.map((currentClass, index) => {
+                                        if (index === classList.length - 4)
+                                            return (
+                                                <TeacherItem
+                                                    key={index}
+                                                    teacherRef={searchMoreNodeRef}
+                                                    teacherId={currentClass.id}
+                                                    teacherPhotoURL={currentClass.avatar}
+                                                    teacherName={currentClass.name}
+                                                    teacherSubject={currentClass.subject}
+                                                    teacherBio={currentClass.bio}
+                                                    teacherPrice={currentClass.cost}
+                                                    teacherWhatsapp={currentClass.whatsapp}
+                                                    teacherSchedule={currentClass.schedule}
+                                                />
+                                            )
+                                        return (
+                                            <TeacherItem
+                                                key={index}
+                                                teacherId={currentClass.id}
+                                                teacherPhotoURL={currentClass.avatar}
+                                                teacherName={currentClass.name}
+                                                teacherSubject={currentClass.subject}
+                                                teacherBio={currentClass.bio}
+                                                teacherPrice={currentClass.cost}
+                                                teacherWhatsapp={currentClass.whatsapp}
+                                                teacherSchedule={currentClass.schedule}
+                                            />
+                                        )
+                                    })}
+                                    {
+                                        hasMore
+                                            ? loadingMore && <div className="spinner-resizer"><Spinner /></div>
+                                            : <p id="all-results">{loadingFeedback}</p>
+                                    }
+                                </>
+                            )
                             : (
                                 <section className="no-classes-found">
                                     <header>
@@ -169,7 +271,7 @@ function TeacherList() {
                                         disponível. Tente alterar os filtros.
                                     </header>
 
-                                    <img src={notFoundIcon} alt="Nenhuma classe encontrada"/>
+                                    <img src={notFoundIcon} alt="Nenhuma classe encontrada" />
                                 </section>
                             )
                 }
