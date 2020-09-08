@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import axios from 'axios-config'
 
 // Utils
@@ -19,6 +18,7 @@ import PageHeader from 'components/PageHeader'
 import Input from 'components/UI/Input'
 import Select from 'components/UI/Select'
 import Spinner from 'components/UI/Spinner'
+import FeedbackModal from 'components/FeedbackModal'
 
 // Contexts
 import { useAuth } from 'contexts/auth'
@@ -60,7 +60,7 @@ const initialFields: FormFields = {
 function Profile() {
 
     const authContext = useAuth()
-    const history = useHistory()
+    const [modalType, setModalType] = useState("update-profile")
     const [fields, setFields] = useState(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [avatar, setAvatar] = useState<string>('')
@@ -70,6 +70,8 @@ function Profile() {
     const [loading, setLoading] = useState(false)
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
     const [pageReady, setPageReady] = useState(false)
+    const [showModal, setShowModal] = useState(true)
+    const [status, setStatus] = useState("none")
 
     useEffect(() => {
         (function fetchProfileData() {
@@ -82,7 +84,6 @@ function Profile() {
             })
                 .then(response => {
                     setLoading(false)
-                    console.log(response.data)
                     const profileData = response.data
                     let whatsapp = ''
 
@@ -246,6 +247,7 @@ function Profile() {
 
     function updateProfile(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        setModalType("update-profile")
 
         const parsedWhatsapp = fields.whatsapp.value.replace(/[)(\s-]/g, "")
 
@@ -264,20 +266,81 @@ function Profile() {
                 userid: authContext.user?.__id
             }
         })
-            .then(res => {
-                alert(res.data.status)
+            .then(() => {
+                setStatus("success")
+                setShowModal(true)
                 authContext.user = {
                     ...authContext.user!,
                     avatar,
                     bio: fields.bio.value,
                     whatsapp: fields.whatsapp.value
                 }
-                history.replace("/menu")
             })
-            .catch(err => console.log(err))
+            .catch(() => {
+                setStatus("error")
+                setShowModal(true)
+            })
     }
 
-    return (
+    function removeClass() {
+        setLoading(true)
+        setModalType("remove-class")
+        axios.delete("/remove-class", {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+        .then(() => {
+            setLoading(false)
+            setStatus("success")
+            setShowModal(true)
+        })
+        .catch(() => {
+            setLoading(false)
+            setStatus("error")
+            setShowModal(true)
+        })
+    }
+
+    const updatedModal = (
+        <FeedbackModal
+            status={status as "success" | "error"}
+            message="O perfil foi atualizado com sucesso!"
+            onCloseModal={() => setShowModal(false)}
+        />
+    )
+
+    const updateFailureModal = (
+        <FeedbackModal
+            status={status as "success" | "error"}
+            message="Ocorreu um erro ao atualizar o perfil. 
+            Tente novamente mais tarde."
+            onCloseModal={() => setShowModal(false)}
+        />
+    )
+
+    const removedClassModal = (
+        <FeedbackModal
+            status={status as "success" | "error"}
+            message="Aula removida com sucesso!"
+            onCloseModal={() => {
+                setShowModal(false)
+                setSubject("")
+                setScheduleItems([])
+            }}
+        />
+    )
+
+    const removeClassFailureModal = (
+        <FeedbackModal
+            status={status as "success" | "error"}
+            message="Ocorreu um erro ao remover a aula. Tente novamente mais tarde."
+            onCloseModal={() => setShowModal(false)}
+        />
+    )
+
+    const mainContent = (
         <div id="proffy-profile">
             <PageHeader title="Meu perfil" />
 
@@ -348,7 +411,13 @@ function Profile() {
                         subject && (
                             <>
                                 <fieldset>
-                                    <legend>Sobre a aula</legend>
+                                    <legend>
+                                        Sobre a aula
+                                            <button
+                                                type="button" 
+                                                onClick={removeClass}
+                                            >Remover aula</button>
+                                    </legend>
                                     <div id="subject-cost">
                                         <Select
                                             selectLabel="Matéria"
@@ -455,6 +524,34 @@ function Profile() {
                 </form>
             </main>
         </div>
+    )
+
+    return (
+        <>
+            {
+                modalType === "update-profile" 
+                ? (
+                    showModal && (
+                        status === "success"
+                            ? updatedModal :
+                            status === "error"
+                            && updateFailureModal
+                    )
+                )
+                : (
+                    modalType === "remove-class"
+                    && (
+                        showModal && (
+                            status === "success"
+                                ? removedClassModal :
+                                status === "error"
+                                && removeClassFailureModal
+                        )
+                    )
+                )
+            }
+            { mainContent }
+        </>
     )
 }
 

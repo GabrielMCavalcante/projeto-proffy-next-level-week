@@ -42,7 +42,7 @@ function Menu() {
     }, []) // eslint-disable-line
 
     useEffect(() => {
-        if(!authContext.signedIn) history.replace("/auth/login")
+        if (!authContext.signedIn) history.replace("/auth/login")
     }, [authContext.signedIn]) // eslint-disable-line
 
     return (
