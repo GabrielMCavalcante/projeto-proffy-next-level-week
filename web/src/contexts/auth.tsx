@@ -24,6 +24,8 @@ interface AuthContextType {
     signIn(userAccount: {email: string, password: string}, rememberUser: boolean): Promise<any>,
     signUp(userData: UserData): Promise<any>,
     signOut(): void,
+    requestPasswordResetEmail(accountEmail: string): Promise<any>,
+    updateUserPassword(resetData: {new_password: string, token: string}): Promise<any>
     loading: boolean
 }
 
@@ -82,6 +84,26 @@ export const AuthProvider: React.FC = ({ children }) => {
         localStorage.removeItem('@proffy:user:token')
     }
 
+    async function requestPasswordResetEmail(email: string) {
+        setLoading(true)
+        return axios.post('/auth/password/reset', {email})
+            .then(() => setLoading(false))
+            .catch(res => {
+                setLoading(false)
+                return {...res}.response.data.error
+            })
+    }
+
+    async function updateUserPassword(resetData: {new_password: string, token: string}) {
+        setLoading(true)
+        return axios.put('/auth/password/reset/update', resetData)
+            .then(() => setLoading(false))
+            .catch(res => {
+                setLoading(false)
+                return {...res}.response.data.error
+            })
+    }
+
     return (
         <AuthContext.Provider value={{ 
             signedIn: !!user, 
@@ -89,7 +111,9 @@ export const AuthProvider: React.FC = ({ children }) => {
             token, 
             signIn, 
             signUp, 
-            signOut, 
+            signOut,
+            requestPasswordResetEmail,
+            updateUserPassword, 
             loading
         }}>{ children }</AuthContext.Provider>
     )

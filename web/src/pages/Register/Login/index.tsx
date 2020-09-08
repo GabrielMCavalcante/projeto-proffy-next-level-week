@@ -172,7 +172,7 @@ function Login() {
                     Lembrar-me
                 </label>
 
-                <a id="forgot-password" href="/auth/login">Esqueci minha senha</a>
+                <Link id="forgot-password" to="/auth/recuperar-senha">Esqueci minha senha</Link>
 
                 {feedback && <p id="signin-feedback">{feedback}</p>}
 

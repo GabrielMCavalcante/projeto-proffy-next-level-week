@@ -1,7 +1,7 @@
-#signup-complete {
+#process-finished {
     width: 100vw;
     height: 100%;
-    background: var(--color-primary) url('../../../../assets/images/main-background.svg') center center no-repeat;
+    background: var(--color-primary) url('../../../assets/images/main-background.svg') center center no-repeat;
     background-size: contain;
     display: flex;
     flex-direction: column;
@@ -10,7 +10,7 @@
     position: relative;
 }
 
-#signup-complete h1 {
+#process-finished h1 {
     font-family: 'Archivo', sans-serif;
     font-size: 3.4rem;
     font-weight: 700;
@@ -18,7 +18,7 @@
     text-align: center;
 }
 
-#signup-complete p {
+#process-finished p {
     font-family: 'Poppins', sans-serif;
     font-size: 1.6rem;
     max-width: 35rem;
@@ -29,7 +29,7 @@
     margin-bottom: 1.5rem;
 }
 
-#signup-complete button {
+#process-finished button {
     width: 50%;
     outline: none;
     border: none;
@@ -45,25 +45,25 @@
     user-select: none;
 }
 
-#signup-complete button:hover {
+#process-finished button:hover {
     background-color: var(--color-secundary-dark);
 }
 
 @media (min-width: 700px) {
-    #signup-complete {
-        background-image: url('../../../../assets/images/success-background.svg')
+    #process-finished {
+        background-image: url('../../../assets/images/success-background.svg')
     }
 
-    #signup-complete h1 {
+    #process-finished h1 {
         font-size: 4.5rem;
     }
 
-    #signup-complete p {
+    #process-finished p {
         font-size: 2rem;
         max-width: 50rem;
     }
 
-    #signup-complete button {
+    #process-finished button {
         width: 30%;
     }
 }

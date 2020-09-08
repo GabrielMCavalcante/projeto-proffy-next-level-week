@@ -15,6 +15,7 @@ import goBackImg from 'assets/images/icons/back.svg'
 
 // Contexts
 import { useAuth } from 'contexts/auth'
+import { useProcessFinished } from 'contexts/process-finished'
 
 // CSS styles
 import './styles.css'
@@ -65,6 +66,7 @@ function Signup() {
     const [formValid, setFormValid] = useState(false)
     const [feedback, setFeedback] = useState('')
     const authContext = useAuth()
+    const processFinishedContext = useProcessFinished()
 
     async function signupUser(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -79,7 +81,11 @@ function Signup() {
 
         const response = await authContext.signUp(userData)
         if (typeof response === 'string') setFeedback(response)
-        else history.replace('/auth/cadastro/sucesso')
+        else { 
+            processFinishedContext.defineTitle('Cadastro concluído')
+            processFinishedContext.defineDescription('Agora você faz parte da plataforma da Proffy. Tenha uma ótima experiência.')
+            history.replace('/auth/cadastro/sucesso') 
+        }
     }
 
     function onInputValueChange(e: React.ChangeEvent<HTMLInputElement>) {

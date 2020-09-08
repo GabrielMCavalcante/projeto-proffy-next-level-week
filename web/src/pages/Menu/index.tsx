@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios-config'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // Images
 import logo from 'assets/images/logo.svg'
 import menu from 'assets/images/landing.svg'
@@ -15,10 +18,13 @@ import './styles.css'
 function Menu() {
     const [feedback, setFeedback] = useState('Carregando conexões...')
     const [error, setError] = useState(true)
+    const authContext = useAuth()
 
     useEffect(() => {
         (function fetchConnections() {
-            axios.get('/connections').then(response => {
+            axios.get('/connections', { 
+                headers: { authorization: 'Bearer ' + authContext.token } 
+            }).then(response => {
                 const totalConnections = response.data.total
                 setError(false)
                 setFeedback(`
@@ -31,7 +37,7 @@ function Menu() {
                 setFeedback('Não foi possível recuperar o total de conexões :(')
             })
         })()
-    }, [])
+    }, []) // eslint-disable-line
 
     return (
         <div id="page-menu">

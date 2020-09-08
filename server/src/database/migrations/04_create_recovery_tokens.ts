@@ -1,7 +1,7 @@
 import Knex from 'knex'
 
 export async function up(knex: Knex) {
-    await knex.schema.createTable('connections', table => {
+    await knex.schema.createTable('recovery_tokens', table => {
         table.increments()
         table.integer('user_id')
             .notNullable()
@@ -10,12 +10,10 @@ export async function up(knex: Knex) {
             .onDelete('CASCADE')
             .onUpdate('CASCADE')
             
-        table.timestamp('created_at')
-            .defaultTo(knex.raw('CURRENT_TIMESTAMP'))
-            .notNullable()
+        table.string('token')
     })
 }
 
 export async function down(knex: Knex) {
-    await knex.schema.dropTable('connections')
+    await knex.schema.dropTable('recovery_tokens')
 }

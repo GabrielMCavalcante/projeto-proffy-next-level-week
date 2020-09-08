@@ -4,15 +4,18 @@ import React from 'react'
 import Routes from 'routes'
 
 import { AuthProvider } from 'contexts/auth'
+import { ProcessFinishedContextProvider } from 'contexts/process-finished'
 
 // CSS styles
 import 'assets/styles/global.css'
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes />
-    </AuthProvider>
+    <ProcessFinishedContextProvider>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </ProcessFinishedContextProvider>
   )
 }
 
