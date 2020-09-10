@@ -4,14 +4,16 @@ export default StyleSheet.create({
     signup: {
         flex: 1,
         backgroundColor: '#F0F0F7',
-        padding: 16
+        padding: 30
     },
 
     header: { 
         flexDirection: 'row', 
         width: '100%', 
         justifyContent: 'flex-start', 
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'relative',
+        left: -10
     },
 
     heading: {
