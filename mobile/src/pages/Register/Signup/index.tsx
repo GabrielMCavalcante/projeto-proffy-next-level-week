@@ -12,7 +12,7 @@ import {
 import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
 
 // Images
-import BackImg from 'assets/images/icons/back.png'
+import BackImg from 'assets/images/icons/grey-back.png'
 import showPasswordImg from 'assets/images/icons/see-password.png'
 import hidePasswordImg from 'assets/images/icons/hide-password.png'
 
@@ -102,7 +102,7 @@ function Signup() {
                                     styles.submitSignupBtnText,
                                     styles.submitSignupBtnTextActive
                                 ]}
-                            >Entrar</Text>
+                            >Concluir Cadastro</Text>
                         </RectButton>
 
                     </View>
