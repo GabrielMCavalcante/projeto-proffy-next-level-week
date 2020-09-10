@@ -60,7 +60,10 @@ function Login() {
                                     style={[styles.formField, styles.lastField]}
                                     placeholder="Senha"
                                 />
-                                <BorderlessButton onPress={() => setShowPassword(!showPassword)} style={styles.inputIcon}>
+                                <BorderlessButton 
+                                    onPress={() => setShowPassword(!showPassword)} 
+                                    style={styles.inputIcon}
+                                >
                                     <Image
                                         source={
                                             !showPassword
@@ -84,7 +87,7 @@ function Login() {
                             <BorderlessButton>
                                 <Text style={styles.forgotPasswordBtnText}>
                                     Esqueci minha senha
-                        </Text>
+                                </Text>
                             </BorderlessButton>
                         </View>
 
