@@ -8,7 +8,9 @@ import {
     Platform,
     SafeAreaView
 } from 'react-native'
+import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
 
+// Components
 import Checkbox from 'components/UI/Checkbox'
 
 // Images
@@ -18,7 +20,6 @@ import hidePasswordImg from 'assets/images/icons/hide-password.png'
 
 // CSS styles
 import styles from './styles'
-import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
 
 function Login() {
 
