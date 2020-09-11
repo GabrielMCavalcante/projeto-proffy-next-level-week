@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator()
 function AppTab() {
     return (
         <Tab.Navigator 
-            initialRouteName="Proffys"
+            initialRouteName="proffys"
             tabBarOptions={{
                 style: {
                     elevation: 0,
@@ -41,13 +41,13 @@ function AppTab() {
                 inactiveTintColor: '#C1BCCC'
             }}
         >
-            <Tab.Screen name="Proffys" component={TeacherList} options={{
+            <Tab.Screen name="proffys" component={TeacherList} options={{
                 tabBarLabel: 'Proffys',
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="ios-easel" size={size} color={color}/>
                 )
             }}/>
-            <Tab.Screen name="Favoritos" component={Favourites} options={{
+            <Tab.Screen name="favoritos" component={Favourites} options={{
                 tabBarLabel: 'Favoritos',
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="ios-heart" size={size} color={color}/>
