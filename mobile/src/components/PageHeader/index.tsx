@@ -35,7 +35,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     return (
         <View style={styles.container}>
             <View style={styles.topBar}>
-                <BorderlessButton style={{width: 30, height: 30}} onPress={() => navigate("Landing")}>
+                <BorderlessButton style={{width: 30, height: 30}} onPress={() => navigate("landing")}>
                     <Image style={{width: 30, height: 30}} source={goBackImg} resizeMode="contain" />
                 </BorderlessButton>
 
