@@ -8,7 +8,10 @@
                     "pages": "./src/pages",
                     "assets": "./src/assets",
                     "components": "./src/components",
-                    "routes": "./src/routes"
+                    "routes": "./src/routes",
+                    "interfaces": "./src/interfaces",
+                    "axios-config": "./src/axios-config",
+                    "contexts": "./src/contexts"
                 }
             }
         ]
