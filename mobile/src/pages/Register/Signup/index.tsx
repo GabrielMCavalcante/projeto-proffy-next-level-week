@@ -11,6 +11,9 @@ import {
 } from 'react-native'
 import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
 
+// Navigation
+import { useNavigation } from '@react-navigation/native'
+
 // Images
 import BackImg from 'assets/images/icons/grey-back.png'
 import showPasswordImg from 'assets/images/icons/see-password.png'
@@ -19,16 +22,92 @@ import hidePasswordImg from 'assets/images/icons/hide-password.png'
 // CSS styles
 import styles from './styles'
 
+// Interfaces
+import { Fields } from 'interfaces/index'
+
+const initialFields: Fields = {
+    name: {
+        value: '',
+        validation: /^[a-zà-ú]{3,20}$/i,
+        valid: false,
+        touched: false
+    },
+    surname: {
+        value: '',
+        validation: /^[a-zà-ú]{5,30}$/i,
+        valid: false,
+        touched: false
+    },
+    email: {
+        value: '',
+        validation: /^[a-z-_\d.]{3,}@[a-z]{3,}(\.com|\.br|\.com\.br)$/i,
+        valid: false,
+        touched: false
+    },
+    password: {
+        value: '',
+        validation: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,30}$/,
+        valid: false,
+        touched: false
+    }
+}
+
 function Signup() {
 
+    const [fields, setFields] = useState(initialFields)
+    const [formValid, setFormValid] = useState(false)
+    const [feedback, setFeedback] = useState('')
     const [showPassword, setShowPassword] = useState(false)
-    const fieldRef = useRef<TextInput|null>(null)
+    const fieldRef = useRef<TextInput | null>(null)
+
+    const navigation = useNavigation()
 
     useEffect(() => {
-        if(!fieldRef.current!.isFocused()) {
+        navigation.addListener('focus', () => {
+            setFields(initialFields)
+            setFormValid(false)
+        })
+    }, [navigation])
+
+    useEffect(() => {
+        if (!fieldRef.current!.isFocused()) {
             fieldRef.current!.focus()
         }
     }, [showPassword])
+
+    function onInputValueChange(newInputValue: string, inputIdentifier: string) {
+        const allFields = Object.keys(fields)
+
+        let isFormValid = true
+        const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
+
+        if (isInputValid) {
+            allFields.forEach(field => {
+                if (isFormValid)
+                    if (field !== inputIdentifier)
+                        isFormValid = fields[field].validation.test(fields[field].value)
+            })
+        } else isFormValid = false
+
+        if (isFormValid !== formValid)
+            setFormValid(isFormValid)
+
+        if (feedback) setFeedback('')
+
+        setFields({
+            ...fields,
+            [inputIdentifier]: {
+                ...fields[inputIdentifier],
+                value: newInputValue,
+                touched: true,
+                valid: isInputValid
+            }
+        })
+    }
+
+    function setInputClasses(inputIdentifier: string) {
+        return [styles.formField, !fields[inputIdentifier]?.valid && fields[inputIdentifier]?.touched && styles.invalid]
+    }
 
     return (
         <KeyboardAvoidingView
@@ -41,7 +120,7 @@ function Signup() {
                     style={{ flex: 1 }}
                 >
                     <View style={styles.header}>
-                        <BorderlessButton>
+                        <BorderlessButton onPress={() => navigation.navigate("login")}>
                             <Image source={BackImg} />
                         </BorderlessButton>
                     </View>
@@ -58,8 +137,18 @@ function Signup() {
                         <View style={styles.formGroup}>
                             <Text style={styles.formGroupTitle}>01.  Quem é você?</Text>
                             <View style={styles.formGroupFields}>
-                                <TextInput style={[styles.formField, styles.firstField]} placeholder="Nome" />
-                                <TextInput style={[styles.formField, styles.lastField]} placeholder="Sobrenome" />
+                                <TextInput
+                                    value={fields.name.value}
+                                    onChangeText={text => onInputValueChange(text, "name")}
+                                    style={[...setInputClasses("name"), styles.firstField]}
+                                    placeholder="Nome"
+                                />
+                                <TextInput
+                                    value={fields.surname.value}
+                                    onChangeText={text => onInputValueChange(text, "surname")}
+                                    style={[...setInputClasses("surname"), styles.lastField]}
+                                    placeholder="Sobrenome"
+                                />
                             </View>
                         </View>
 
@@ -67,14 +156,18 @@ function Signup() {
                             <Text style={styles.formGroupTitle}>02.  Email e Senha</Text>
                             <View style={styles.formGroupFields}>
                                 <TextInput
-                                    style={[styles.formField, styles.firstField]}
+                                    value={fields.email.value}
+                                    onChangeText={text => onInputValueChange(text, "email")}
+                                    style={[...setInputClasses("email"), styles.firstField]}
                                     placeholder="E-mail"
                                 />
 
                                 <View style={styles.formFieldGroup}>
                                     <TextInput
+                                        value={fields.password.value}
+                                        onChangeText={text => onInputValueChange(text, "password")}
                                         secureTextEntry={!showPassword}
-                                        style={[styles.formField, styles.lastField]}
+                                        style={[...setInputClasses("password"), styles.lastField]}
                                         placeholder="Senha"
                                         ref={fieldRef}
                                     />
@@ -93,14 +186,22 @@ function Signup() {
                                 </View>
                             </View>
                         </View>
-                        
+
                         <RectButton
-                            style={[styles.submitSignupBtn, styles.submitSignupBtnActive]}
+                            style={[
+                                styles.submitSignupBtn,
+                                formValid
+                                    ? styles.submitSignupBtnActive
+                                    : styles.submitSignupBtnUnactive
+                            ]}
+                            enabled={formValid}
                         >
                             <Text
                                 style={[
                                     styles.submitSignupBtnText,
-                                    styles.submitSignupBtnTextActive
+                                    formValid
+                                        ? styles.submitSignupBtnTextActive
+                                        : styles.submitSignupBtnTextUnactive
                                 ]}
                             >Concluir Cadastro</Text>
                         </RectButton>
