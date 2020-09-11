@@ -2,6 +2,9 @@ import React from 'react'
 import { View, Text, ImageBackground } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+// Navigation
+import { useNavigation } from '@react-navigation/native'
+
 // Images
 import backgroundImg from '../../assets/images/give-classes-background.png'
 
@@ -11,34 +14,35 @@ import { RectButton } from 'react-native-gesture-handler'
 
 // Interfaces
 interface ProcessFinishedProps {
-    title?: string,
-    description?: string,
-    onAction?: () => void
+    title: string,
+    description: string,
+    redirectTo: "login" | "signup" | "forgot-password",
+    actionLabel: string
 }
 
 const ProcessFinished: React.FC<ProcessFinishedProps> = ({
     title,
     description,
-    onAction
+    redirectTo,
+    actionLabel
 }) => {
+
+    const navigation = useNavigation()
+
     return (
         <View style={styles.processFinished}>
-            <ImageBackground 
-                style={styles.main} 
-                resizeMode="contain" 
+            <ImageBackground
+                style={styles.main}
+                resizeMode="contain"
                 source={backgroundImg}
             >
                 <Icon name="check-circle" size={100} color="#04D361" />
-                <Text style={styles.title}>Redefinição enviada!</Text>
-                <Text style={styles.description}>
-                    Boa, agora é só checar o e-mail que foi
-                    enviado para você redefinir sua senha
-                    e aproveitar os estudos.
-                </Text>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.description}>{description}</Text>
             </ImageBackground>
 
-            <RectButton style={styles.button} onPress={onAction}>
-                <Text style={styles.buttonText}>Voltar ao login</Text>
+            <RectButton style={styles.button} onPress={() => navigation.navigate(redirectTo)}>
+                <Text style={styles.buttonText}>{ actionLabel }</Text>
             </RectButton>
         </View>
     )
