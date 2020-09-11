@@ -83,6 +83,10 @@ export default StyleSheet.create({
         borderBottomRightRadius: 10
     },
 
+    invalid: {
+        borderColor: 'crimson'
+    },
+
     inputIcon: {
         position: 'absolute',
         right: 10,

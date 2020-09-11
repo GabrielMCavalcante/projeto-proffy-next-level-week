@@ -60,6 +60,10 @@ export default StyleSheet.create({
         backgroundColor: '#fff'
     },
 
+    invalid: {
+        borderColor: 'crimson'
+    },
+
     submitforgotPasswordBtn: {
         width: '80%',
         height: 60,
