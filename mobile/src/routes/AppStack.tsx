@@ -14,10 +14,10 @@ const Stack = createStackNavigator()
 function AppStack() {
     return (
         <NavigationContainer>
-          <Stack.Navigator headerMode="none" initialRouteName="Landing">
-            <Stack.Screen name="Landing" component={Landing} />
-            <Stack.Screen name="Main" component={AppTab} />
-            <Stack.Screen name="GiveClasses" component={GiveClasses} />
+          <Stack.Navigator headerMode="none" initialRouteName="landing">
+            <Stack.Screen name="landing" component={Landing} />
+            <Stack.Screen name="main" component={AppTab} />
+            <Stack.Screen name="give-classes" component={GiveClasses} />
           </Stack.Navigator>
         </NavigationContainer>
     )
