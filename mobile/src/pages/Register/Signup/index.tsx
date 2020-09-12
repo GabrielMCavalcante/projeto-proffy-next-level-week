@@ -7,12 +7,16 @@ import {
     Image,
     TextInput,
     SafeAreaView,
-    ScrollView,
+    ScrollView, 
+    ActivityIndicator
 } from 'react-native'
 import { BorderlessButton, RectButton } from 'react-native-gesture-handler'
 
 // Navigation
 import { useNavigation } from '@react-navigation/native'
+
+// Contexts
+import { useAuth } from 'contexts/auth'
 
 // Images
 import BackImg from 'assets/images/icons/grey-back.png'
@@ -59,6 +63,8 @@ function Signup() {
     const [feedback, setFeedback] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const fieldRef = useRef<TextInput | null>(null)
+
+    const authContext = useAuth()
 
     const navigation = useNavigation()
 
@@ -109,6 +115,21 @@ function Signup() {
         return [styles.formField, !fields[inputIdentifier]?.valid && fields[inputIdentifier]?.touched && styles.invalid]
     }
 
+    async function signup() {
+        if (feedback) setFeedback('')
+
+        const userData = {
+            name: fields.name.value,
+            surname: fields.surname.value,
+            email: fields.email.value,
+            password: fields.password.value
+        }
+
+        const response = await authContext.signUp(userData)
+        if (typeof response === 'string') setFeedback(response)
+        else navigation.navigate("signup-complete")
+    }
+
     return (
         <KeyboardAvoidingView
             style={styles.signup}
@@ -120,7 +141,10 @@ function Signup() {
                     style={{ flex: 1 }}
                 >
                     <View style={styles.header}>
-                        <BorderlessButton onPress={() => navigation.navigate("login")}>
+                        <BorderlessButton onPress={() => {
+                            if(!authContext.loading)
+                                navigation.navigate("login")
+                        }}>
                             <Image source={BackImg} />
                         </BorderlessButton>
                     </View>
@@ -186,26 +210,36 @@ function Signup() {
                                 </View>
                             </View>
                         </View>
+                        
+                        <Text style={styles.feedbackText}>
+                            {feedback}
+                        </Text>
 
                         <RectButton
                             style={[
                                 styles.submitSignupBtn,
-                                formValid
+                                formValid && !authContext.loading
                                     ? styles.submitSignupBtnActive
                                     : styles.submitSignupBtnUnactive
                             ]}
-                            enabled={formValid}
+                            enabled={formValid && !authContext.loading}
+                            onPress={signup}
                         >
-                            <Text
-                                style={[
-                                    styles.submitSignupBtnText,
-                                    formValid
-                                        ? styles.submitSignupBtnTextActive
-                                        : styles.submitSignupBtnTextUnactive
-                                ]}
-                            >Concluir Cadastro</Text>
+                            {
+                                !authContext.loading
+                                    ? (
+                                        <Text
+                                            style={[
+                                                styles.submitSignupBtnText,
+                                                formValid
+                                                    ? styles.submitSignupBtnTextActive
+                                                    : styles.submitSignupBtnTextUnactive
+                                            ]}
+                                        >Concluir Cadastro</Text>
+                                    )
+                                    : <ActivityIndicator />
+                            }
                         </RectButton>
-
                     </View>
                 </ScrollView>
             </SafeAreaView>
