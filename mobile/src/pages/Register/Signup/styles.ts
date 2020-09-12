@@ -93,6 +93,14 @@ export default StyleSheet.create({
         top: '30%'
     },
 
+    feedbackText: {
+        color: 'crimson',
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 12,
+        marginTop: 26,
+        textAlign: 'center'
+    },
+
     submitSignupBtn: {
         width: '100%',
         height: 60,

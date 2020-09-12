@@ -2,7 +2,8 @@ import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
     login: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#F0F0F0'
     },
 
     inner: {
@@ -64,7 +65,8 @@ export default StyleSheet.create({
         height: '100%',
         borderColor: '#E6E6F0',
         borderWidth: 2,
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
+        backgroundColor: '#fff'
     },
 
     firstField: {
@@ -110,13 +112,20 @@ export default StyleSheet.create({
         color: '#9C98A6'
     },
 
+    feedbackText: {
+        color: 'crimson',
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 12,
+        marginTop: 26,
+        textAlign: 'center'
+    },
+
     submitLoginBtn: {
         width: '80%',
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 8,
-        marginTop: 26,
         marginBottom: 26
     },
 

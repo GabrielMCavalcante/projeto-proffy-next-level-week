@@ -64,13 +64,20 @@ export default StyleSheet.create({
         borderColor: 'crimson'
     },
 
+    feedbackText: {
+        color: 'crimson',
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 12,
+        marginTop: 26,
+        textAlign: 'center'
+    },
+
     submitforgotPasswordBtn: {
         width: '80%',
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 8,
-        marginTop: 26,
         marginBottom: 26
     },
 
