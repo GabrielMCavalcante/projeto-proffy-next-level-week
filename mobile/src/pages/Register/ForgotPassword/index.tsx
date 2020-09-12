@@ -6,11 +6,15 @@ import {
     Image,
     TextInput,
     Platform,
-    SafeAreaView
+    SafeAreaView, 
+    ActivityIndicator
 } from 'react-native'
 
 // Navigation
 import { useNavigation } from '@react-navigation/native'
+
+// Contexts
+import { useAuth } from 'contexts/auth'
 
 // Images
 import backgroundImg from 'assets/images/login-background.png'
@@ -37,6 +41,9 @@ function ForgotPassword() {
     const [fields, setFields] = useState(initialFields)
     const [formValid, setFormValid] = useState(false)
     const [feedback, setFeedback] = useState('')
+
+    const authContext = useAuth()
+
     const navigation = useNavigation()
 
     useEffect(() => {
@@ -80,6 +87,14 @@ function ForgotPassword() {
         return [styles.formField, !fields[inputIdentifier].valid && fields[inputIdentifier].touched && styles.invalid]
     }
 
+    async function sendPasswordResetEmail() {
+        if (feedback) setFeedback('')
+
+        const response = await authContext.requestPasswordResetEmail(fields.email.value)
+        if (typeof response === 'string') setFeedback(response)
+        else navigation.navigate("password-recovery-email-sent")
+    }
+
     return (
         <KeyboardAvoidingView
             style={styles.forgotPassword}
@@ -98,7 +113,10 @@ function ForgotPassword() {
                         paddingHorizontal: 25,
                         paddingTop: 8
                     }} >
-                        <BorderlessButton onPress={() => navigation.navigate("login")}>
+                        <BorderlessButton onPress={() => {
+                            if(!authContext.loading)
+                                navigation.navigate("login")
+                        }}>
                             <Image source={GoBackImg} />
                         </BorderlessButton>
                     </View>
@@ -117,23 +135,34 @@ function ForgotPassword() {
                             onChangeText={text => onInputValueChange(text, "email")}
                         />
 
+                        <Text style={styles.feedbackText}>
+                            {feedback}
+                        </Text>
+
                         <RectButton
                             style={[
                                 styles.submitforgotPasswordBtn,
-                                formValid
+                                formValid && !authContext.loading
                                     ? styles.submitforgotPasswordBtnActive
                                     : styles.submitforgotPasswordBtnUnactive
                             ]}
-                            enabled={formValid}
+                            enabled={formValid && !authContext.loading}
+                            onPress={sendPasswordResetEmail}
                         >
-                            <Text
-                                style={[
-                                    styles.submitforgotPasswordBtnText,
-                                    formValid
-                                        ? styles.submitforgotPasswordBtnTextActive
-                                        : styles.submitforgotPasswordBtnTextUnactive
-                                ]}
-                            >Enviar</Text>
+                            {
+                                !authContext.loading
+                                    ? (
+                                        <Text
+                                            style={[
+                                                styles.submitforgotPasswordBtnText,
+                                                formValid
+                                                    ? styles.submitforgotPasswordBtnTextActive
+                                                    : styles.submitforgotPasswordBtnTextUnactive
+                                            ]}
+                                        >Enviar</Text>
+                                    )
+                                    : <ActivityIndicator />
+                            }
                         </RectButton>
                     </View>
                 </View>
