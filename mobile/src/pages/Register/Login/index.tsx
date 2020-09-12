@@ -66,11 +66,6 @@ function Login() {
         })
     }, [navigation])
 
-    // useEffect(() => {
-    //     if(authContext.signedIn)
-    //         navigation.navigate("landing")
-    // }, [authContext.signedIn])
-
     function onInputValueChange(newInputValue: string, inputIdentifier: string) {
         const allFields = Object.keys(fields)
 
@@ -132,7 +127,10 @@ function Login() {
                     <View style={styles.loginForm}>
                         <View style={styles.formHeader}>
                             <Text style={styles.formHeaderTitle}>Fazer login</Text>
-                            <BorderlessButton onPress={() => navigation.navigate("signup")}>
+                            <BorderlessButton onPress={() => {
+                                if(!authContext.loading)
+                                    navigation.navigate("signup")
+                            }}>
                                 <Text style={styles.createAccountBtnText}>
                                     Criar uma conta
                                 </Text>
@@ -181,12 +179,19 @@ function Login() {
                                 <Text style={styles.rememberUserText}>Lembrar-me</Text>
                             </View>
 
-                            <BorderlessButton onPress={() => navigation.navigate("forgot-password")}>
+                            <BorderlessButton onPress={() => {
+                                if(!authContext.loading)
+                                    navigation.navigate("forgot-password")
+                            }}>
                                 <Text style={styles.forgotPasswordBtnText}>
                                     Esqueci minha senha
                                 </Text>
                             </BorderlessButton>
                         </View>
+
+                        <Text style={styles.feedbackText}>
+                            {feedback}
+                        </Text>
 
                         <RectButton
                             style={[
@@ -195,7 +200,7 @@ function Login() {
                                     ? styles.submitLoginBtnActive
                                     : styles.submitLoginBtnUnactive
                             ]}
-                            enabled={formValid}
+                            enabled={formValid && !authContext.loading}
                             onPress={login}
                         >
                             {
