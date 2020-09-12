@@ -74,7 +74,7 @@ export const AuthProvider: React.FC = ({ children }) => {
             return response
         } catch (res) {
             setLoading(false)
-            return "Erro ao fazer login"
+            return { ...res }.response.data.error
         }
     }
 
