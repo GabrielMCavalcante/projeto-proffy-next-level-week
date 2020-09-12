@@ -36,9 +36,9 @@ function Register() {
                         () => (
                             <ProcessFinished 
                                 title="Redefinição enviada!"
-                                description={`Boa, agora é só checar o e-mail que foi
+                                description="Boa, agora é só checar o e-mail que foi
                                 enviado para você redefinir sua senha
-                                e aproveitar os estudos.`}
+                                e aproveitar os estudos."
                                 redirectTo="login"
                                 actionLabel="Voltar ao login"
                             />
