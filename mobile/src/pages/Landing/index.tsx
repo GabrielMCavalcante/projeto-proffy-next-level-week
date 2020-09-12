@@ -7,6 +7,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 // Navigation
 import { useNavigation } from '@react-navigation/native'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // Images
 import landingImg from 'assets/images/landing.png'
 import studyImg from 'assets/images/icons/study.png'
@@ -21,6 +24,8 @@ function Landing() {
     const { navigate } = useNavigation()
 
     const [feedback, setFeedback] = useState('Carregando conexões...')
+
+    const authContext = useAuth()
 
     useEffect(() => {
         (function fetchConnections() {
@@ -49,10 +54,23 @@ function Landing() {
                 </Text>
             </Text>
 
+            <RectButton onPress={async () => {
+                await AsyncStorage.removeItem('proffy:app:alreadyopened')
+            }}>
+                <Text>
+                    Reset Storage
+                </Text>
+            </RectButton>
+            <RectButton onPress={authContext.signOut}>
+                <Text>
+                    Logout
+                </Text>
+            </RectButton>
+
             <View style={styles.buttonsContainer}>
                 <RectButton
                     style={[styles.button, styles.buttonPrimary]}
-                    onPress={() => navigate("Main")}
+                    onPress={() => navigate("main")}
                 >
                     <Image source={studyImg} />
                     <Text style={styles.buttonText}>Estudar</Text>
@@ -60,7 +78,7 @@ function Landing() {
 
                 <RectButton
                     style={[styles.button, styles.buttonSecondary]}
-                    onPress={() => navigate("GiveClasses")}
+                    onPress={() => navigate("give-classes")}
                 >
                     <Image source={teachImg} />
                     <Text style={styles.buttonText}>Ensinar</Text>
