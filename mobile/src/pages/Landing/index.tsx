@@ -15,9 +15,12 @@ import landingImg from 'assets/images/landing.png'
 import studyImg from 'assets/images/icons/study.png'
 import teachImg from 'assets/images/icons/give-classes.png'
 import heartImg from 'assets/images/icons/heart.png'
+import noAvatarImg from 'assets/images/sem-avatar.svg'
+import logoutImg from 'assets/images/icons/logout.png'
 
 // Styles
 import styles from './styles'
+import { SvgUri } from 'react-native-svg'
 
 function Landing() {
 
@@ -35,7 +38,11 @@ function Landing() {
                         AsyncStorage.setItem('favourites', JSON.stringify({ teachers: [] }))
                 })
 
-            axios.get('/connections').then(response => {
+            axios.get('/connections', {
+                headers: {
+                    authorization: "Bearer " + authContext.token
+                }
+            }).then(response => {
                 const totalConnections = response.data.total
                 setFeedback(`Total de ${totalConnections} ${totalConnections === 1 ? "conexão" : "conexões"} já ${totalConnections === 1 ? "realizada" : "realizadas"}`)
             }).catch(() => {
@@ -46,48 +53,63 @@ function Landing() {
 
     return (
         <View style={styles.container}>
-            <Image style={styles.banner} source={landingImg} />
-            <Text style={styles.title}>
-                Seja bem-vindo, {"\n"}
-                <Text style={styles.titleBold}>
-                    O que deseja fazer?
-                </Text>
-            </Text>
+            <View style={styles.header}>
+                <View style={styles.headerTop}>
+                    <View style={styles.profileCard}>
+                        <Image style={styles.profileCardImg} source={noAvatarImg}/>
+                        <Text style={styles.profileCardText}>Tiago Luchtenberg</Text>
+                    </View>
 
-            <RectButton onPress={async () => {
-                await AsyncStorage.removeItem('proffy:app:alreadyopened')
-            }}>
-                <Text>
-                    Reset Storage
-                </Text>
-            </RectButton>
-            <RectButton onPress={authContext.signOut}>
-                <Text>
-                    Logout
-                </Text>
-            </RectButton>
-
-            <View style={styles.buttonsContainer}>
-                <RectButton
-                    style={[styles.button, styles.buttonPrimary]}
-                    onPress={() => navigate("main")}
-                >
-                    <Image source={studyImg} />
-                    <Text style={styles.buttonText}>Estudar</Text>
-                </RectButton>
-
-                <RectButton
-                    style={[styles.button, styles.buttonSecondary]}
-                    onPress={() => navigate("give-classes")}
-                >
-                    <Image source={teachImg} />
-                    <Text style={styles.buttonText}>Ensinar</Text>
-                </RectButton>
+                    <RectButton style={styles.logout}>
+                        <Image style={styles.logoutImg} source={logoutImg}/>
+                    </RectButton>
+                </View>
+                <Image style={styles.banner} source={landingImg} />
             </View>
 
-            <Text style={styles.totalConnections}>
-                {feedback} <Image source={heartImg} />
-            </Text>
+            <View style={styles.content}>
+                <Text style={styles.title}>
+                    Seja bem-vindo, {"\n"}
+                    <Text style={styles.titleBold}>
+                        O que deseja fazer?
+                </Text>
+                </Text>
+
+                {/* <RectButton onPress={async () => {
+                    await AsyncStorage.removeItem('proffy:app:alreadyopened')
+                }}>
+                    <Text>
+                        Reset Storage
+                </Text>
+                </RectButton>
+                <RectButton onPress={authContext.signOut}>
+                    <Text>
+                        Logout
+                </Text>
+                </RectButton> */}
+
+                <View style={styles.buttonsContainer}>
+                    <RectButton
+                        style={[styles.button, styles.buttonPrimary]}
+                        onPress={() => navigate("main")}
+                    >
+                        <Image source={studyImg} />
+                        <Text style={styles.buttonText}>Estudar</Text>
+                    </RectButton>
+
+                    <RectButton
+                        style={[styles.button, styles.buttonSecondary]}
+                        onPress={() => navigate("give-classes")}
+                    >
+                        <Image source={teachImg} />
+                        <Text style={styles.buttonText}>Ensinar</Text>
+                    </RectButton>
+                </View>
+
+                <Text style={styles.totalConnections}>
+                    {feedback} <Image source={heartImg} />
+                </Text>
+            </View>
         </View>
     )
 }
