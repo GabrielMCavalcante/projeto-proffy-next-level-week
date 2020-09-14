@@ -3,9 +3,61 @@ import { StyleSheet } from 'react-native'
 export default StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center'
+    },
+
+    header: {
         backgroundColor: '#8257E5',
+        flex: 1,
+        padding: 20
+    },
+
+    headerTop: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+
+    profileCard: {
+        flexDirection: 'row',
         justifyContent: 'center',
-        padding: 40
+        alignItems: 'center',
+        paddingHorizontal: 10
+    },
+
+    profileCardImg: {
+        backgroundColor: '#ccc',
+        width: 35,
+        height: 35,
+        borderRadius: 30
+    },
+
+    profileCardText: {
+        marginLeft: 10,
+        marginTop: 3,
+        color: '#D4C2FF',
+        fontSize: 15,
+        fontFamily: 'Poppins_600SemiBold'
+    },
+
+    logout: {
+        backgroundColor: '#774DD6',
+        width: 35,
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 8
+    },
+
+    logoutImg: {
+        width: '100%',
+        resizeMode: 'contain'
+    },
+
+    content: {
+        backgroundColor: '#F0F0F0',
+        flex: 1.25,
+        padding: 30
     },
 
     banner: {
@@ -14,10 +66,9 @@ export default StyleSheet.create({
     },
 
     title: {
-        color: '#fff',
+        color: '#6A6180',
         fontSize: 20,
-        lineHeight: 30,
-        marginTop: 30,
+        lineHeight: 25,
         fontFamily: 'Archivo_400Regular'
     },
 
@@ -28,7 +79,7 @@ export default StyleSheet.create({
     buttonsContainer: {
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 40
+        marginTop: 20
     },
 
     button: {
@@ -63,6 +114,6 @@ export default StyleSheet.create({
         color: '#D4C2FF',
         fontSize: 12,
         lineHeight: 20,
-        marginTop: 20
+        marginTop: 10
     }
 })
