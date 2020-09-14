@@ -74,7 +74,7 @@ export const AuthProvider: React.FC = ({ children }) => {
             return response
         } catch (res) {
             setLoading(false)
-            return { ...res }.response.data.error
+            return 'Erro ao fazer login. Verifique se o email e senha estão corretos e tente novamente.'
         }
     }
 
