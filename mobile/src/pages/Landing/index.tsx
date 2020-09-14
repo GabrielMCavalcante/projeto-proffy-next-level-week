@@ -20,7 +20,6 @@ import logoutImg from 'assets/images/icons/logout.png'
 
 // Styles
 import styles from './styles'
-import { SvgUri } from 'react-native-svg'
 
 function Landing() {
 
@@ -60,7 +59,7 @@ function Landing() {
                         <Text style={styles.profileCardText}>Tiago Luchtenberg</Text>
                     </View>
 
-                    <RectButton style={styles.logout}>
+                    <RectButton style={styles.logout} onPress={authContext.signOut}>
                         <Image style={styles.logoutImg} source={logoutImg}/>
                     </RectButton>
                 </View>
@@ -99,7 +98,7 @@ function Landing() {
 
                     <RectButton
                         style={[styles.button, styles.buttonSecondary]}
-                        onPress={() => navigate("give-classes")}
+                        onPress={() => navigate("teacher-form")}
                     >
                         <Image source={teachImg} />
                         <Text style={styles.buttonText}>Ensinar</Text>
