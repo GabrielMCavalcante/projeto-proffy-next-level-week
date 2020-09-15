@@ -17,3 +17,25 @@ export interface ScheduleItem {
     from: string,
     to: string
 }
+
+export interface FormField {
+    value: string,
+    validation: RegExp,
+    valid: boolean,
+    touched: boolean
+}
+
+export interface FormFields {
+    [key: string]: FormField
+}
+
+export interface ProfileData {
+    name: string,
+    email: string,
+    avatar: string,
+    whatsapp: string,
+    bio: string,
+    subject: string,
+    cost: number,
+    schedule: ScheduleItem[]
+}
