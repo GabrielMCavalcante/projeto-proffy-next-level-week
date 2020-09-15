@@ -19,8 +19,7 @@ const weekdays = [
 ]
 
 const defaultSchedule = [
-    { week_day: { value: '1', label: 'Segunda-feira' }, from: '08:00', to: '12:00' },
-    { week_day: { value: '2', label: 'Terça-feira' }, from: '10:00', to: '14:30' },
+    { week_day: { value: '1', label: 'Segunda-feira' }, from: '08:00', to: '12:00' }
 ]
 
 export { keyDay, weekdays, defaultSchedule }
