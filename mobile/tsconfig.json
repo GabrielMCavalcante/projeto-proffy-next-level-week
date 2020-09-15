@@ -16,7 +16,8 @@
       "routes/*": ["./src/routes/*"],
       "interfaces/*": ["./src/interfaces/*"],
       "axios-config": ["./src/axios-config"],
-      "contexts/*": ["./src/contexts/*"]
+      "contexts/*": ["./src/contexts/*"],
+      "utils/*": ["./src/utils/*"]
     }
   }
 }
