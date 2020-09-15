@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
     container: {
-        padding: 40,
-        backgroundColor: '#8257E5'
+        padding: 20,
+        backgroundColor: '#6842C2'
     },
 
     topBar: {
@@ -13,43 +13,14 @@ export default StyleSheet.create({
     },
 
     title: {
-        fontFamily: 'Archivo_700Bold',
+        fontFamily: 'Archivo_400Regular',
         color: '#fff',
-        fontSize: 24,
-        marginVertical: 30
+        fontSize: 15,
     },
 
-    filtersContainer: {
-        alignItems: 'center',
-        marginBottom: 16
-    },
-
-    toggleFiltersButtonWrapper: {
-        width: '100%',
-        height: 50,
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        borderRadius: 8,
-        borderColor: 'rgba(0,0,0,0.15)',
-        borderWidth: 1.5,
-        borderStyle: 'dashed'
-    },
-
-    toggleFiltersButton: {
-        height: '100%',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        flexDirection: 'row'
-    },
-
-    toggleFiltersButtonText: {
-        color: '#F0F0F4'
-    },
-
-    filtersInput: {
-        width: '100%',
-        flexDirection: 'row'
+    logo: {
+        position: 'relative',
+        top: 2.5,
+        transform: [{ scale: 1.5 }]
     }
 })
