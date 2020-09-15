@@ -11,6 +11,9 @@ import {
 import { RectButton, TextInput } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 
+// Components
+import PageHeader from 'components/PageHeader'
+
 // Images
 import warningImg from 'assets/images/icons/warning.png'
 
@@ -48,6 +51,7 @@ function TeacherForm() {
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             <SafeAreaView style={{ flex: 1 }}>
+                <PageHeader title="Dar aulas" returnTo="landing"/>
                 <ScrollView
                     contentContainerStyle={{ justifyContent: 'flex-end' }}
                     style={{ flex: 1 }}
