@@ -110,7 +110,6 @@ function Login() {
 
         const response = await authContext.signIn(userAccount)
         if (typeof response === 'string') setFeedback(response)
-        console.log("[0]: Usuario logado?", authContext.signedIn)
     }
 
     return (
