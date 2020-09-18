@@ -2,8 +2,6 @@ import React, { useContext, createContext, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-community/async-storage'
 import axios from 'axios-config'
 
-import noAvatarImg from 'assets/images/sem-avatar.svg'
-
 interface User {
     __id: string,
     name: string,
@@ -62,7 +60,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 ...response.data.user,
                 avatar: response.data.user.avatar
                     ? response.data.user.avatar
-                    : noAvatarImg
+                    : null
             }
             setUser(signedUser)
             setToken(response.data.token)
