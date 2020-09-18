@@ -6,7 +6,7 @@ import axios from '../../axios-config'
 import AsyncStorage from '@react-native-community/async-storage'
 
 // Utils
-import { fullHours, fullMinutes } from '../../utils/getHoursMinutes'
+import { fullHours, fullMinutes } from 'utils/getHoursMinutes'
 
 // Icons
 import { Ionicons } from '@expo/vector-icons'
