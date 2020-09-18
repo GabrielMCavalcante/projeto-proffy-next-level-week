@@ -94,5 +94,5 @@ function formatToHoursAndMinutes(mnts: number) {
 export { 
     formatFetchedPhone, 
     formatCurrentPhone, 
-    formatToHoursAndMinutes 
+    formatToHoursAndMinutes
 }
