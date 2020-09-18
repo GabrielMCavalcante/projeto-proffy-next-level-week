@@ -13,7 +13,7 @@ export interface WeekDay {
 }
 
 export interface ScheduleItem {
-    week_day: WeekDay,
+    week_day: WeekDay | null,
     from: string,
     to: string
 }
