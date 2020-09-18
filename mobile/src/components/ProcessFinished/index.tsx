@@ -16,7 +16,7 @@ import { RectButton } from 'react-native-gesture-handler'
 interface ProcessFinishedProps {
     title: string,
     description: string,
-    redirectTo: "login" | "signup" | "forgot-password",
+    redirectTo: string,
     actionLabel: string
 }
 
