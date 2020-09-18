@@ -15,7 +15,7 @@ import landingImg from 'assets/images/landing.png'
 import studyImg from 'assets/images/icons/study.png'
 import teachImg from 'assets/images/icons/give-classes.png'
 import heartImg from 'assets/images/icons/heart.png'
-import noAvatarImg from 'assets/images/sem-avatar.svg'
+import noAvatarImg from 'assets/images/no-avatar.png'
 import logoutImg from 'assets/images/icons/logout.png'
 
 // Styles
@@ -55,12 +55,19 @@ function Landing() {
             <View style={styles.header}>
                 <View style={styles.headerTop}>
                     <View style={styles.profileCard}>
-                        <Image style={styles.profileCardImg} source={noAvatarImg}/>
-                        <Text style={styles.profileCardText}>Tiago Luchtenberg</Text>
+                        <Image
+                            style={styles.profileCardImg}
+                            source={
+                                authContext.user?.avatar !== null
+                                    ? { uri: String(authContext.user?.avatar) }
+                                    : noAvatarImg
+                            }
+                        />
+                        <Text style={styles.profileCardText}>{authContext.user?.name}</Text>
                     </View>
 
                     <RectButton style={styles.logout} onPress={authContext.signOut}>
-                        <Image style={styles.logoutImg} source={logoutImg}/>
+                        <Image style={styles.logoutImg} source={logoutImg} />
                     </RectButton>
                 </View>
                 <Image style={styles.banner} source={landingImg} />
