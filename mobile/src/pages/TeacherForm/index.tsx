@@ -11,6 +11,7 @@ import {
 import { RectButton, TextInput } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 import axios from 'axios-config'
+import { useNavigation } from '@react-navigation/native'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -22,29 +23,15 @@ import { useAuth } from 'contexts/auth'
 import warningImg from 'assets/images/icons/warning.png'
 
 // Utils
-import { formatFetchedPhone } from 'utils/format'
+import { formatFetchedPhone, formatCurrentPhone } from 'utils/format'
 import { weekdays, defaultSchedule } from 'utils/schedule'
+import { subjects } from 'utils/subjects'
 
 // CSS styles
 import styles from './styles'
 
 // Interfaces
-import { ScheduleItem, FormFields, ProfileData } from '../../interfaces'
-
-const availableSubjects = [
-    { value: "Artes", label: "Artes" },
-    { value: "Biologia", label: "Biologia" },
-    { value: "Educação Física", label: "Educação Física" },
-    { value: "Espanhol", label: "Espanhol" },
-    { value: "Física", label: "Física" },
-    { value: "Geografia", label: "Geografia" },
-    { value: "História", label: "História" },
-    { value: "Inglês", label: "Inglês" },
-    { value: "Literatura", label: "Literatura" },
-    { value: "Matemática", label: "Matemática" },
-    { value: "Português", label: "Português" },
-    { value: "Química", label: "Química" }
-]
+import { ScheduleItem, FormFields, ProfileData, WeekDay } from '../../interfaces'
 
 const initialFields: FormFields = {
     whatsapp: {
@@ -74,9 +61,10 @@ function TeacherForm() {
     const [loading, setLoading] = useState(false)
     const [subject, setSubject] = useState<string>("Artes")
     const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(defaultSchedule)
-    const [availableDays, setAvailableDays] = useState(weekdays)
+    const [feedback, setFeedback] = useState('')
 
     const authContext = useAuth()
+    const navigation = useNavigation()
 
     useEffect(() => {
         setLoadingData(true)
@@ -101,10 +89,6 @@ function TeacherForm() {
                         ...fields.whatsapp,
                         value: userData.whatsapp ? formatFetchedPhone(userData.whatsapp) : ''
                     },
-                    cost: {
-                        ...fields.cost,
-                        value: userData.cost ? String(userData.cost) : ''
-                    },
                     bio: {
                         ...fields.bio,
                         value: userData.bio ? String(userData.bio) : ''
@@ -116,6 +100,154 @@ function TeacherForm() {
                 console.log(err)
             })
     }, []) // eslint-disable-line
+
+    useEffect(() => {
+        setFormValid(verifyIfFormIsValid()[0])
+    }, [scheduleItems])
+
+    function verifyIfFormIsValid(inputIdentifier?: string, newInputValue?: string) {
+        const allFields = Object.keys(fields)
+        let isFormValid = true
+        const isInputValid = (inputIdentifier && newInputValue )
+            ? fields[inputIdentifier].validation.test(newInputValue)
+            : true
+
+        if (isInputValid) {
+            allFields.forEach(field => {
+                if (isFormValid)
+                    if (!inputIdentifier || field !== inputIdentifier)
+                        isFormValid = fields[field].validation.test(fields[field].value)
+            })
+        } else isFormValid = false
+
+        if(isFormValid) {
+            scheduleItems.forEach(scheduleItem => {
+                isFormValid = scheduleItem.week_day !== null
+            })
+
+            if(isFormValid) {
+                for(let c = 0; c < scheduleItems.length; c++) {
+                    const currDay = scheduleItems[c].week_day!.value
+                    for(let C = 0; C < scheduleItems.length; C++) {
+                        isFormValid = !(scheduleItems[C].week_day!.value === currDay && C !== c)
+                        if(!isFormValid) break
+                    }
+                    if(!isFormValid) break
+                }
+            }
+        }
+
+        return [isFormValid, isInputValid]
+    }
+
+    function onInputValueChange(inputIdentifier: string, newText: string) {
+        let newInputValue = newText
+
+        if (inputIdentifier === "whatsapp")
+            newInputValue = formatCurrentPhone(newInputValue)
+
+        const [isFormValid, isInputValid] = verifyIfFormIsValid(inputIdentifier, newInputValue)
+
+        // const allFields = Object.keys(fields)
+
+        // let isFormValid = true
+        // const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
+
+        // if (isInputValid) {
+        //     allFields.forEach(field => {
+        //         if (isFormValid)
+        //             if (field !== inputIdentifier)
+        //                 isFormValid = fields[field].validation.test(fields[field].value)
+        //     })
+        // } else isFormValid = false
+
+        // if(isFormValid) {
+        //     scheduleItems.forEach(scheduleItem => {
+        //         isFormValid = scheduleItem.week_day !== null
+        //     })
+        // }
+
+        if (isFormValid !== formValid)
+            setFormValid(isFormValid)
+
+        if (feedback) setFeedback('')
+
+        setFields({
+            ...fields,
+            [inputIdentifier]: {
+                ...fields[inputIdentifier],
+                value: newInputValue,
+                touched: true,
+                valid: isInputValid
+            }
+        })
+    }
+
+    function updateSchedule(
+        scheduleIndex: number,
+        identifier: "week_day" | "from" | "to",
+        newValue: string | WeekDay
+    ) {
+        const schedules = scheduleItems.map((scheduleItem, index) => {
+            if (index !== scheduleIndex) return scheduleItem
+            else {
+                return {
+                    ...scheduleItem,
+                    [identifier]: newValue
+                }
+            }
+        })
+        
+        setScheduleItems([...schedules])
+    }
+
+    function addSchedule() {
+        if (scheduleItems.length < 7) {
+            const schedules = [...scheduleItems]
+            schedules.push({ week_day: null, from: '08:00', to: '12:00' })
+            setScheduleItems(schedules)
+            setFormValid(false)
+        }
+    }
+
+    function removeSchedule(scheduleIndex: number) {
+        const schedules = [...scheduleItems].filter((_, index) => index !== scheduleIndex)
+        setScheduleItems([...schedules])
+        setFormValid(verifyIfFormIsValid()[0])
+    }
+
+    function registerClass() {
+        setLoading(true)
+        axios.post('/classes', {
+            whatsapp: fields.whatsapp.value.replace(/[)(\s-]/g, ""),
+            bio: fields.bio.value,
+            subject,
+            cost: fields.cost.value,
+            schedule: [...scheduleItems]
+        }, {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+            .then(() => {
+                setLoading(false)
+                navigation.navigate("class-registered")
+            })
+            .catch(() => {
+                setLoading(false)
+                console.log('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
+            })
+    }
+
+    function getFieldInputStyles(inputIdentifier: string) {
+        return [
+            styles.fieldInput,
+            !fields[inputIdentifier].valid
+            && fields[inputIdentifier].touched
+            && styles.invalidFieldInput
+        ]
+    }
 
     const header = (
         <View style={styles.header}>
@@ -141,9 +273,10 @@ function TeacherForm() {
                     Whatsapp
                 </Text>
                 <TextInput
-                    style={styles.fieldInput}
+                    style={getFieldInputStyles("whatsapp")}
                     placeholder="(12) 93456-7890"
                     value={fields.whatsapp.value}
+                    onChangeText={text => onInputValueChange("whatsapp", text)}
                 />
             </View>
 
@@ -153,12 +286,13 @@ function TeacherForm() {
                 </Text>
                 <TextInput
                     multiline
-                    style={[styles.fieldInput, styles.fieldTextarea]}
+                    style={[...getFieldInputStyles("bio"), styles.fieldTextarea]}
                     placeholder="Escreva sobre você e sua aula!"
                     underlineColorAndroid="transparent"
                     numberOfLines={10}
                     maxLength={300}
                     value={fields.bio.value}
+                    onChangeText={text => onInputValueChange("bio", text)}
                 />
             </View>
         </View>
@@ -177,7 +311,7 @@ function TeacherForm() {
                     Matéria
                 </Text>
                 <DropDownPicker
-                    items={availableSubjects}
+                    items={subjects}
                     containerStyle={{ height: 40 }}
                     style={styles.dropdown}
                     itemStyle={styles.dropdownItem}
@@ -187,7 +321,7 @@ function TeacherForm() {
                     placeholder="Selecione uma matéria"
                     defaultValue={subject}
                     dropDownStyle={styles.dropdownList}
-                // onChangeItem={item => setSubject(item.value)}
+                    onChangeItem={item => setSubject(item.value)}
                 />
             </View>
 
@@ -196,10 +330,11 @@ function TeacherForm() {
                     Custo da sua hora por aula
                 </Text>
                 <TextInput
-                    style={styles.fieldInput}
-                    placeholder="R$ 49,99"
+                    style={getFieldInputStyles("cost")}
+                    placeholder="R$ 49.99"
                     keyboardType="number-pad"
                     value={fields.cost.value}
+                    onChangeText={text => onInputValueChange("cost", text)}
                 />
             </View>
         </View>
@@ -212,31 +347,39 @@ function TeacherForm() {
                     Horários disponíveis
                 </Text>
 
-                <RectButton style={styles.addScheduleBtn}>
-                    <Text style={styles.addScheduleBtnText}>
+                <RectButton
+                    enabled={scheduleItems.length < 7}
+                    onPress={addSchedule}
+                    style={styles.addScheduleBtn}
+                >
+                    <Text style={[
+                        styles.addScheduleBtnText,
+                        scheduleItems.length >= 7 && styles.addScheduleBtnTextDisabled
+                    ]}>
                         + Novo
                     </Text>
                 </RectButton>
             </View>
 
-            {scheduleItems.map((scheduleItem, i) => (
-                <View key={i} >
+            {scheduleItems.map((scheduleItem, index) => (
+                <View key={index} >
                     <View>
                         <View style={styles.field}>
                             <Text style={styles.fieldLabel}>
                                 Dia da Semana
                             </Text>
                             <DropDownPicker
-                                items={availableDays}
+                                items={weekdays}
                                 containerStyle={{ height: 40 }}
                                 style={styles.dropdown}
                                 itemStyle={styles.dropdownItem}
                                 activeItemStyle={styles.dropdownActiveItem}
                                 labelStyle={{ fontFamily: 'Poppins_400Regular' }}
+                                defaultValue={scheduleItem.week_day?.value}
                                 activeLabelStyle={{ fontFamily: 'Poppins_600SemiBold' }}
                                 placeholder="Selecione um dia da semana"
-                                defaultValue={scheduleItem.week_day.value}
                                 dropDownStyle={styles.dropdownList}
+                                onChangeItem={item => updateSchedule(index, "week_day", item)}
                             />
                         </View>
 
@@ -249,7 +392,7 @@ function TeacherForm() {
                                     style={styles.fieldInput}
                                     placeholder="08:00"
                                     value={scheduleItem.from}
-                                    keyboardType="number-pad"
+                                    onChangeText={text => updateSchedule(index, "from", text)}
                                 />
                             </View>
 
@@ -260,8 +403,8 @@ function TeacherForm() {
                                 <TextInput
                                     style={styles.fieldInput}
                                     placeholder="12:00"
-                                    value="12:00"
-                                    keyboardType="number-pad"
+                                    value={scheduleItem.to}
+                                    onChangeText={text => updateSchedule(index, "to", text)}
                                 />
                             </View>
                         </View>
@@ -275,7 +418,7 @@ function TeacherForm() {
 
                             <RectButton
                                 style={styles.removeScheduleBtn}
-                            // onClick={() => removeSchedule(index)}
+                                onPress={() => removeSchedule(index)}
                             >
                                 <Text
                                     style={styles.removeScheduleBtnText}
@@ -293,6 +436,7 @@ function TeacherForm() {
     const formBottomContent = (
         <>
             <RectButton
+                onPress={registerClass}
                 enabled={formValid && !loading}
                 style={[
                     styles.formSubmitButton,
@@ -318,7 +462,7 @@ function TeacherForm() {
                 <Image source={warningImg} />
                 <View style={styles.formWarningText}>
                     <Text style={styles.formWarningTitle}>Importante!</Text>
-                    <Text 
+                    <Text
                         style={styles.formWarningSubtitle}
                     >Preencha todos os dados</Text>
                 </View>
@@ -356,7 +500,7 @@ function TeacherForm() {
                                         </View>
 
                                         <View style={styles.bottomFormContent}>
-                                            { formBottomContent }
+                                            {formBottomContent}
                                         </View>
                                     </View>
                                 </View>
