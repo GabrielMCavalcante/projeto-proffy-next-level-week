@@ -94,6 +94,10 @@ export default StyleSheet.create({
         padding: 10
     },
 
+    invalidFieldInput: {
+        borderColor: '#E33D3D'
+    },
+
     fieldTextarea: {
         height: 150,
         textAlignVertical: "top"
@@ -107,6 +111,7 @@ export default StyleSheet.create({
 
     dropdown: {
         backgroundColor: '#F8F8FC',
+        height: '100%',
     },
 
     dropdownItem: {
@@ -140,6 +145,10 @@ export default StyleSheet.create({
         fontSize: 14
     },
 
+    addScheduleBtnTextDisabled: {
+        color: 'grey'
+    },
+
     removeScheduleBtn: {
         marginHorizontal: 10
     },
@@ -170,7 +179,8 @@ export default StyleSheet.create({
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         padding: 15,
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: -1
     },
 
     formSubmitButton: {
@@ -182,7 +192,6 @@ export default StyleSheet.create({
         marginBottom: 26
     },
 
-    
     formSubmitButtonUnactive: {
         backgroundColor: '#DCDCE5'
     },
@@ -202,8 +211,6 @@ export default StyleSheet.create({
     formSubmitButtonTextActive: {
         color: '#fff'
     },
-
-
 
     formWarning: {
         width: '100%',
