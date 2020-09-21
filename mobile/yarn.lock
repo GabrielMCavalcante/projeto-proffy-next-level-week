@@ -2578,6 +2578,13 @@ expo-constants@~9.1.1:
     fbjs "1.0.0"
     uuid "^3.3.2"
 
+expo-document-picker@~8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-8.2.1.tgz#8363078274b5f86b25812ae3ecc2677ee42b3cfb"
+  integrity sha512-U7bow5hPpiiwppil7LFwdAW/bf0DIf5GX781gRReWLbizULq1p6njcMdMxYC5p8osDhYal+DAhzT7VB5i1ucsA==
+  dependencies:
+    uuid "^3.3.2"
+
 expo-error-recovery@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/expo-error-recovery/-/expo-error-recovery-1.2.1.tgz#a8fd68950235d4f22b30d901bfc90f7732720b93"
