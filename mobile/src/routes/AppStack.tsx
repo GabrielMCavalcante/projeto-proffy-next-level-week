@@ -61,6 +61,20 @@ function AppStack() {
             )
           }
         </Stack.Screen>
+        <Stack.Screen name="has-class">
+          {
+            () => (
+              <ProcessFinished
+                title="Oops!"
+                description="Você já possui uma aula cadastrada no Proffy! Se quiser cadastrar
+                uma nova aula, vá em seu perfil e remova a aula existente na seção 'Sobre a aula'."
+                redirectTo="landing"
+                actionLabel="Entendi"
+                status="error"
+              />
+            )
+          }
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   )
