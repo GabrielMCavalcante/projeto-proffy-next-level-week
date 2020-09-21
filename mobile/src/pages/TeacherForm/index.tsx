@@ -77,11 +77,9 @@ function TeacherForm() {
             .then(response => {
                 setLoadingData(false)
                 const userData: ProfileData = response.data
-                // if (userData.subject) {
-                //     setHasClass(true)
-                //     setShowModal(true)
-                //     return
-                // }
+                if (userData.subject) {
+                    return navigation.navigate("has-class")
+                }
 
                 setFields({
                     ...fields,
