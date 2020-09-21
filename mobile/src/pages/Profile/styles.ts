@@ -14,15 +14,55 @@ export default StyleSheet.create({
         justifyContent: "center"
     },
 
-    headerTitle: {
-        fontFamily: 'Archivo_700Bold',
-        color: '#fff',
-        fontSize: 22
+    headerProfile: {
+        flex: 1, 
+        width: '100%',
+        height: '100%' 
     },
 
-    headerDescription: {
-        fontFamily: 'Poppins_400Regular',
+    profileImgWrapper: {
+        position: 'relative',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    profileImg: {
+        borderRadius: 100,
+        height: 150,
+        width: 150
+    },
+
+    changeImgBtn: {
+        borderRadius: 20,
+        width: 40, 
+        height: 40,
+        backgroundColor: '#04D361',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        bottom: 0,
+        right: 90
+    },
+
+    changeImgBtnIcon: {
+        height: 24,
+        width: 24
+    },
+
+    profileUser: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    profileName: {
+        fontFamily: 'Archivo_700Bold',
         color: '#fff',
+        fontSize: 24
+    },
+
+    profileSubject: {
+        fontFamily: 'Poppins_400Regular',
+        color: '#D4C2FF',
         fontSize: 16
     },
 
@@ -130,6 +170,19 @@ export default StyleSheet.create({
     dropdownList: { 
         backgroundColor: '#F8F8FC', 
         paddingHorizontal: 0
+    },
+
+    removeClassBtn: {
+        width: 100,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    removeClassBtnText: {
+        color: '#E33D3D',
+        fontFamily: 'Archivo_700Bold',
+        fontSize: 14
     },
 
     addScheduleBtn: {
