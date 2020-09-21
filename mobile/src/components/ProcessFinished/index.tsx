@@ -17,14 +17,16 @@ interface ProcessFinishedProps {
     title: string,
     description: string,
     redirectTo: string,
-    actionLabel: string
+    actionLabel: string,
+    status?: "success" | "error"
 }
 
 const ProcessFinished: React.FC<ProcessFinishedProps> = ({
     title,
     description,
     redirectTo,
-    actionLabel
+    actionLabel,
+    status
 }) => {
 
     const navigation = useNavigation()
@@ -36,13 +38,31 @@ const ProcessFinished: React.FC<ProcessFinishedProps> = ({
                 resizeMode="contain"
                 source={backgroundImg}
             >
-                <Icon name="check-circle" size={100} color="#04D361" />
+                <Icon
+                    name={
+                        status
+                            ? (
+                                status === "success"
+                                    ? "check-circle"
+                                    : "times-circle"
+                            ) : "check-circle"
+                    }
+                    size={100}
+                    color={
+                        status
+                            ? (
+                                status === "success"
+                                    ? "#04D361"
+                                    : "#E33D3D"
+                            ) : "#04D361"
+                    }
+                />
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.description}>{description}</Text>
             </ImageBackground>
 
             <RectButton style={styles.button} onPress={() => navigation.navigate(redirectTo)}>
-                <Text style={styles.buttonText}>{ actionLabel }</Text>
+                <Text style={styles.buttonText}>{actionLabel}</Text>
             </RectButton>
         </View>
     )
