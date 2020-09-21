@@ -47,6 +47,20 @@ function AppStack() {
             )
           }
         </Stack.Screen>
+        <Stack.Screen name="class-removed">
+          {
+            () => (
+              <ProcessFinished
+                title="Aula removida!"
+                description="Aula removida com sucesso! Agora você se tornou um estudante
+                do Proffy. Se mudar de ideia, cadastre uma nova aula no formulário 
+                de cadastro de Proffys e aproveite!"
+                redirectTo="landing"
+                actionLabel="Entendi"
+              />
+            )
+          }
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   )
