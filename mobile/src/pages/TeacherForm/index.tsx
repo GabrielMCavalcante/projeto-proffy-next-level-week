@@ -148,25 +148,6 @@ function TeacherForm() {
 
         const [isFormValid, isInputValid] = verifyIfFormIsValid(inputIdentifier, newInputValue)
 
-        // const allFields = Object.keys(fields)
-
-        // let isFormValid = true
-        // const isInputValid = fields[inputIdentifier].validation.test(newInputValue)
-
-        // if (isInputValid) {
-        //     allFields.forEach(field => {
-        //         if (isFormValid)
-        //             if (field !== inputIdentifier)
-        //                 isFormValid = fields[field].validation.test(fields[field].value)
-        //     })
-        // } else isFormValid = false
-
-        // if(isFormValid) {
-        //     scheduleItems.forEach(scheduleItem => {
-        //         isFormValid = scheduleItem.week_day !== null
-        //     })
-        // }
-
         if (isFormValid !== formValid)
             setFormValid(isFormValid)
 
@@ -236,7 +217,7 @@ function TeacherForm() {
             })
             .catch(() => {
                 setLoading(false)
-                console.log('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
+                setFeedback('Erro ao realizar cadastro. Por favor tente novamente mais tarde.')
             })
     }
 
