@@ -6,12 +6,18 @@ import {
     Platform,
     SafeAreaView,
     ScrollView,
-    Image, ActivityIndicator
+    Image, ActivityIndicator, ImageBackground
 } from 'react-native'
 import { RectButton, TextInput } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 import axios from 'axios-config'
 import { useNavigation } from '@react-navigation/native'
+import * as DocumentPicker from 'expo-document-picker'
+
+// Images
+import headerBackgroundImg from "assets/images/profile-background.png"
+import cameraImg from 'assets/images/icons/camera.png'
+import noAvatarImg from 'assets/images/no-avatar.png'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -119,7 +125,7 @@ function Profile() {
 
     useEffect(() => {
         setFormValid(verifyIfFormIsValid()[0])
-    }, [scheduleItems])
+    }, [scheduleItems, avatar])
 
     function verifyIfFormIsValid(inputIdentifier?: string, newInputValue?: string) {
         const allFields = Object.keys(fields)
@@ -230,12 +236,36 @@ function Profile() {
         })
             .then(() => {
                 setLoading(false)
+                authContext.updateUser({
+                    ...authContext.user!,
+                    avatar,
+                    bio: fields.bio.value,
+                    whatsapp: fields.whatsapp.value
+                })
                 navigation.navigate("profile-updated")
             })
             .catch(() => {
                 setLoading(false)
                 setFeedback('Erro ao atualizar perfil. Por favor tente novamente mais tarde.')
             })
+    }
+
+    function removeClass() {
+        setLoading(true)
+        axios.delete("/remove-class", {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id
+            }
+        })
+        .then(() => {
+            setLoading(false)
+            navigation.navigate("class-removed")
+        })
+        .catch(() => {
+            setLoading(false)
+            setFeedback('Ocorreu um erro ao remover a aula. Tente novamente mais tarde.')
+        })
     }
 
     function getFieldInputStyles(inputIdentifier: string) {
@@ -247,14 +277,37 @@ function Profile() {
         ]
     }
 
+    async function changeProfileImage() {
+        try {
+            const res = await DocumentPicker.getDocumentAsync({
+                type: "image/jpeg"
+            })
+            
+            if(res.type === 'success') 
+                setAvatar(res.uri)
+
+        } catch (err) {
+            setFeedback('Ocorreu um erro:' + err)
+        }
+    }
+
     const header = (
         <View style={styles.header}>
-            <Text style={styles.headerTitle}>
-                Que incrível que você quer dar aulas!
-                                    </Text>
-            <Text style={styles.headerDescription}>
-                O primeiro passo é preencher este formulário de inscrição.
-                                    </Text>
+            <ImageBackground resizeMode='contain' style={styles.headerProfile} source={headerBackgroundImg}>
+                <View style={styles.profileImgWrapper}>
+                    <Image style={styles.profileImg} source={avatar ? { uri: avatar } : noAvatarImg} />
+                    <RectButton style={styles.changeImgBtn} onPress={changeProfileImage}>
+                        <Image
+                            style={styles.changeImgBtnIcon}
+                            source={cameraImg}
+                        />
+                    </RectButton>
+                </View>
+                <View style={styles.profileUser}>
+                    <Text style={styles.profileName}>{authContext.user?.name}</Text>
+                    <Text style={styles.profileSubject}>{subject ? subject : 'Estudante'}</Text>
+                </View>
+            </ImageBackground>
         </View>
     )
 
@@ -335,6 +388,15 @@ function Profile() {
                 <Text style={styles.fieldsetHeaderTitle}>
                     Sobre a aula
                 </Text>
+
+                <RectButton
+                    onPress={removeClass}
+                    style={styles.removeClassBtn}
+                >
+                    <Text style={styles.removeClassBtnText}>
+                        Remover aula
+                    </Text>
+                </RectButton>
             </View>
 
             <View style={styles.field}>
