@@ -54,7 +54,7 @@ function Landing() {
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.headerTop}>
-                    <View style={styles.profileCard}>
+                    <RectButton style={styles.profileCard} onPress={() => navigate("profile")}>
                         <Image
                             style={styles.profileCardImg}
                             source={
@@ -64,7 +64,7 @@ function Landing() {
                             }
                         />
                         <Text style={styles.profileCardText}>{authContext.user?.name}</Text>
-                    </View>
+                    </RectButton>
 
                     <RectButton style={styles.logout} onPress={authContext.signOut}>
                         <Image style={styles.logoutImg} source={logoutImg} />
