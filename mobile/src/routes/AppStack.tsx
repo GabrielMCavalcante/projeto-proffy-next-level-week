@@ -9,6 +9,7 @@ import Landing from 'pages/Landing'
 import TeacherForm from 'pages/TeacherForm'
 import AppTab from './AppTab'
 import ProcessFinished from 'components/ProcessFinished'
+import Profile from 'pages/Profile'
 
 const Stack = createStackNavigator()
 
@@ -27,6 +28,19 @@ function AppStack() {
                 description="Tudo certo, seu cadastro está
                 na nossa lista de professores. Agora é
                 só ficar de olho no seu WhatsApp."
+                redirectTo="landing"
+                actionLabel="Entendi"
+              />
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="profile" component={Profile} />
+        <Stack.Screen name="profile-updated">
+          {
+            () => (
+              <ProcessFinished
+                title="Perfil atualizado!"
+                description="Seu perfil foi atualizado com sucesso!"
                 redirectTo="landing"
                 actionLabel="Entendi"
               />
