@@ -19,6 +19,7 @@ interface UserData {
 }
 
 interface AuthContextType {
+    updateUser(newUser: User): void,
     signedIn: boolean,
     user: User | null,
     token: string | null,
@@ -49,6 +50,10 @@ export const AuthProvider: React.FC = ({ children }) => {
             }
         })()
     }, [])
+
+    function updateUser(newUser: User) {
+        setUser(newUser)
+    }
 
     async function signIn(userAccount: { email: string, password: string, rememberUser: boolean }) {
         setLoading(true)
@@ -116,6 +121,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{
+            updateUser,
             signedIn: !!user,
             user,
             token,
