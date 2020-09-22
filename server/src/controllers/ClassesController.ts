@@ -18,7 +18,9 @@ export default class ClassesController {
         const convertedTo = convertHourToMinutes(String(to))
 
         try {
-            const sql = `select users.name,
+            const sql = `select 
+            users.__id AS id,
+            users.name,
             users.bio,
             users.avatar,
             classes.subject,
