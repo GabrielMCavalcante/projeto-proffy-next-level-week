@@ -31,7 +31,7 @@ function Favourites(props: { navigation: any }) {
 
     return (
         <View style={styles.container}>
-            <PageHeader title="Meus Proffys Favoritos" filters={false}/>
+            <PageHeader title="Meus Proffys Favoritos" returnTo="landing"/>
 
             <ScrollView
                 style={styles.favourites}
