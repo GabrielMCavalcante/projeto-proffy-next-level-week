@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Picker, ActivityIndicator } from 'react-native'
-import { ScrollView, RectButton } from 'react-native-gesture-handler'
+import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native'
+import { RectButton, TextInput } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 import axios from '../../axios-config'
 import AsyncStorage from '@react-native-community/async-storage'
 
+// Contexts
+import { useAuth } from 'contexts/auth'
+
 // Icons
 import { Ionicons } from '@expo/vector-icons'
+import proffyEmojiImg from 'assets/images/icons/proffy-emoji.png'
+import filterIconImg from 'assets/images/icons/filter-icon.png'
 
 // Components
 import PageHeader from 'components/PageHeader'
 import TeacherItem from 'components/TeacherItem'
+
+// Utils
+import { weekdays } from 'utils/schedule'
+import { subjects } from 'utils/subjects'
 
 // Styles
 import styles from './styles'
@@ -19,7 +28,7 @@ interface Teacher {
     id: number,
     subject: string,
     cost: number,
-    name: 'string',
+    name: string,
     avatar: string,
     whatsapp: number,
     bio: string
@@ -33,19 +42,24 @@ function TeacherList(props: { navigation: any }) {
     const [showFilters, setShowFilters] = useState(false)
     const [subject, setSubject] = useState<string | null>(null)
     const [weekDay, setWeekDay] = useState<string | null>(null)
-    const [from, setFrom] = useState<{ hours: string, minutes: string } | null>(null)
-    const [to, setTo] = useState<{ hours: string, minutes: string } | null>(null)
+    const [from, setFrom] = useState<string>('')
+    const [to, setTo] = useState<string>('')
     const [loading, setLoading] = useState(true)
+    const authContext = useAuth()
 
     useEffect(() => {
         (function fetchClasses() {
             if (reFetch) {
                 setReFetch(false)
                 setLoading(true)
-                axios.get('/classes')
+                axios.get("/classes", {
+                    headers: {
+                        authorization: "Bearer " + authContext.token,
+                    }
+                })
                     .then(response => {
                         setLoading(false)
-                        setTeachers(response.data.search)
+                        setTeachers([...teachers, ...response.data.resultsInfo.results])
                     })
                     .catch(() => {
                         setLoading(false)
@@ -75,14 +89,11 @@ function TeacherList(props: { navigation: any }) {
     function applyFilters() {
         setShowFilters(false)
         setLoading(true)
-        const fromParam = from ? `${from.hours}:${from.minutes}` : null
-        const toParam = to ? `${to.hours}:${to.minutes}` : null
         axios.get('/classes', {
             params: {
                 subject,
                 week_day: weekDay,
-                from: fromParam,
-                to: toParam
+                from, to
             }
         })
             .then(response => {
@@ -93,147 +104,118 @@ function TeacherList(props: { navigation: any }) {
                 setLoading(false)
                 setSubject(null)
                 setWeekDay(null)
-                setFrom(null)
-                setTo(null)
+                setFrom('')
+                setTo('')
                 setReFetch(true)
             })
+    }
+
+    function renderTeacherCard({ item }: any) {
+        return (
+            <TeacherItem
+                key={item.id}
+                teacherId={item.id}
+                teacherPhotoURL={item.avatar}
+                teacherName={item.name}
+                teacherSubject={item.subject}
+                teacherBio={item.bio}
+                teacherPrice={item.cost}
+                teacherWhatsapp={item.whatsapp}
+                isFavourited={favourites.includes(item.id)}
+            />
+        )
     }
 
     return (
         <View style={styles.container}>
             <PageHeader
-                onToggleFilters={() => setShowFilters(!showFilters)}
-                showingFilters={showFilters}
-                title="Proffys Disponíveis"
-                filters
-            >
-                <ScrollView style={[styles.searchForm, !showFilters && { display: 'none' }]}>
-                    <Text style={styles.label}>Matéria</Text>
-                    <DropDownPicker
-                        items={[
-                            { label: 'Todas as Matérias', value: null },
-                            { value: "Artes", label: "Artes" },
-                            { value: "Biologia", label: "Biologia" },
-                            { value: "Educação Física", label: "Educação Física" },
-                            { value: "Espanhol", label: "Espanhol" },
-                            { value: "Física", label: "Física" },
-                            { value: "Geografia", label: "Geografia" },
-                            { value: "História", label: "História" },
-                            { value: "Inglês", label: "Inglês" },
-                            { value: "Literatura", label: "Literatura" },
-                            { value: "Matemática", label: "Matemática" },
-                            { value: "Português", label: "Português" },
-                            { value: "Química", label: "Química" }
-                        ]}
-                        containerStyle={{ height: 40 }}
-                        style={{ backgroundColor: '#fafafa' }}
-                        itemStyle={{
-                            justifyContent: 'flex-start'
-                        }}
-                        dropDownStyle={{ backgroundColor: '#fafafa' }}
-                        onChangeItem={item => setSubject(item.value)}
-                    />
+                title="Estudar"
+                returnTo="landing"
+            />
+            <View style={styles.header}>
+                <View style={styles.headerContent}>
+                    <View>
+                        <Text style={styles.headerContentTextContent}>Proffys</Text>
+                        <Text style={styles.headerContentTextContent}>Disponíveis</Text>
+                    </View>
 
-                    <Text style={styles.label}>Dia da Semana</Text>
-                    <DropDownPicker
-                        items={[
-                            { label: 'Todos os Dias', value: null },
-                            { value: "1", label: "Segunda-feira" },
-                            { value: "2", label: "Terça-feira" },
-                            { value: "3", label: "Quarta-feira" },
-                            { value: "4", label: "Quinta-feira" },
-                            { value: "5", label: "Sexta-feira" },
-                            { value: "6", label: "Sábado" },
-                            { value: "0", label: "Domingo" }
-                        ]}
-                        containerStyle={{ height: 40 }}
-                        style={{ backgroundColor: '#fafafa' }}
-                        itemStyle={{
-                            justifyContent: 'flex-start'
-                        }}
-                        dropDownStyle={{ backgroundColor: '#fafafa' }}
-                        onChangeItem={item => setWeekDay(item.value)}
-                    />
+                    <View style={styles.proffyFoundWrapper}>
+                        <Image style={styles.proffyEmoji} source={proffyEmojiImg} />
+                        <Text style={styles.proffyFoundText}>
+                            {teachers.length} proffys
+                        </Text>
+                    </View>
+                </View>
 
-                    <View style={styles.inputGroup}>
-                        <View style={styles.inputBlock}>
-                            <Text style={styles.label}>Das</Text>
-                            <View style={styles.timeContainer}>
-                                <Picker
-                                    selectedValue={from ? from.hours : '01'}
-                                    prompt="Selecione as horas"
-                                    style={styles.timeDisplay}
-                                    onValueChange={itemValue =>
-                                        setFrom({ ...from, hours: itemValue } as any)
-                                    }
-                                >
-                                    {
-                                        fullHours.map(h => (
-                                            <Picker.Item
-                                                key={h.value}
-                                                label={h.label}
-                                                value={h.value}
-                                            />
-                                        ))
-                                    }
-                                </Picker>
-                                <Picker
-                                    selectedValue={from ? from.minutes : '00'}
-                                    prompt="Selecione os minutos"
-                                    style={styles.timeDisplay}
-                                    onValueChange={itemValue => setFrom({ ...from, minutes: itemValue } as any)}
-                                >
-                                    {
-                                        fullMinutes.map(m => (
-                                            <Picker.Item
-                                                key={m.value}
-                                                label={m.label}
-                                                value={m.value}
-                                            />
-                                        ))
-                                    }
-                                </Picker>
-                            </View>
+                <RectButton onPress={() => setShowFilters(!showFilters)} style={styles.filterBtn}>
+                    <Image source={filterIconImg}/>
+                    <Text style={styles.filterBtnText}>
+                        Filtrar por dia, hora e matéria
+                    </Text>
+                </RectButton>
+
+                <View style={[styles.searchForm, !showFilters && { display: 'none' }]}>
+                    <View style={styles.field}>
+                        <Text style={styles.fieldLabel}>
+                            Matéria
+                        </Text>
+                        <DropDownPicker
+                            items={subjects}
+                            containerStyle={{ height: 40 }}
+                            style={styles.dropdown}
+                            itemStyle={styles.dropdownItem}
+                            activeItemStyle={styles.dropdownActiveItem}
+                            labelStyle={{ fontFamily: 'Poppins_400Regular' }}
+                            activeLabelStyle={{ fontFamily: 'Poppins_600SemiBold' }}
+                            placeholder="Selecione uma matéria"
+                            defaultValue={subject}
+                            dropDownStyle={styles.dropdownList}
+                            onChangeItem={item => setSubject(item.value)}
+                        />
+                    </View>
+
+                    <View style={styles.field}>
+                        <Text style={styles.fieldLabel}>
+                            Dia da Semana
+                        </Text>
+                        <DropDownPicker
+                            items={weekdays}
+                            containerStyle={{ height: 40 }}
+                            style={styles.dropdown}
+                            itemStyle={styles.dropdownItem}
+                            activeItemStyle={styles.dropdownActiveItem}
+                            labelStyle={{ fontFamily: 'Poppins_400Regular' }}
+                            defaultValue={null}
+                            activeLabelStyle={{ fontFamily: 'Poppins_600SemiBold' }}
+                            placeholder="Selecione um dia da semana"
+                            dropDownStyle={styles.dropdownList}
+                            onChangeItem={item => setWeekDay(item.value)}
+                        />
+                    </View>
+
+                    <View style={styles.fieldGroup}>
+                        <View style={[styles.field, styles.spacedField]}>
+                            <Text style={styles.fieldLabel}>
+                                Das
+                            </Text>
+                            <TextInput
+                                style={styles.fieldInput}
+                                placeholder="08:00"
+                                value={from}
+                                onChangeText={text => setFrom(text)}
+                            />
                         </View>
 
-                        <View style={styles.inputBlock}>
-                            <Text style={styles.label}>Até</Text>
-                            <View style={styles.timeContainer}>
-                                <Picker
-                                    selectedValue={to ? to.hours : '23'}
-                                    prompt="Selecione as horas"
-                                    style={styles.timeDisplay}
-                                    onValueChange={itemValue =>
-                                        setTo({ ...to, hours: itemValue } as any)
-                                    }
-                                >
-                                    {
-                                        fullHours.map(h => (
-                                            <Picker.Item
-                                                key={h.value}
-                                                label={h.label}
-                                                value={h.value}
-                                            />
-                                        ))
-                                    }
-                                </Picker>
-                                <Picker
-                                    selectedValue={to ? to.minutes : '59'}
-                                    prompt="Selecione os minutos"
-                                    style={styles.timeDisplay}
-                                    onValueChange={itemValue => setTo({ ...to, minutes: itemValue } as any)}
-                                >
-                                    {
-                                        fullMinutes.map(h => (
-                                            <Picker.Item
-                                                key={h.value}
-                                                label={h.label}
-                                                value={h.value}
-                                            />
-                                        ))
-                                    }
-                                </Picker>
-                            </View>
+                        <View style={styles.field}>
+                            <Text style={styles.fieldLabel}>
+                                Até
+                            </Text>
+                            <TextInput
+                                style={styles.fieldInput}
+                                placeholder="12:00"
+                                value={to}
+                                onChangeText={text => setTo(text)}
+                            />
                         </View>
                     </View>
 
@@ -241,35 +223,23 @@ function TeacherList(props: { navigation: any }) {
                         <Ionicons style={styles.filterButtonIcon} name="ios-search" />
                         <Text style={styles.filterButtonText}>Buscar</Text>
                     </RectButton>
-                </ScrollView>
-            </PageHeader>
+                </View>
+            </View>
+
             {
                 loading
-                    ? <ActivityIndicator size="large" style={styles.spinner} color="#8257E5" />
+                    ? <ActivityIndicator
+                        size="large"
+                        style={styles.spinner}
+                        color="#8257E5"
+                    />
                     : (
-                        <ScrollView
+                        <FlatList
                             style={styles.teacherList}
-                            contentContainerStyle={{
-                                paddingHorizontal: 16,
-                                paddingBottom: 16
-                            }}
-                        >
-                            {
-                                teachers.map(teacher => (
-                                    <TeacherItem
-                                        key={Math.random()}
-                                        teacherId={teacher.id}
-                                        teacherPhotoURL={teacher.avatar}
-                                        teacherName={teacher.name}
-                                        teacherSubject={teacher.subject}
-                                        teacherBio={teacher.bio}
-                                        teacherPrice={teacher.cost}
-                                        teacherWhatsapp={teacher.whatsapp}
-                                        isFavourited={favourites.includes(teacher.id)}
-                                    />
-                                ))
-                            }
-                        </ScrollView>
+                            data={teachers}
+                            renderItem={renderTeacherCard}
+                            keyExtractor={item => String(item.id)}
+                        />
                     )
             }
         </View>
