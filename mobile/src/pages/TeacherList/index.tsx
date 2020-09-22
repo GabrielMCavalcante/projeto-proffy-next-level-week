@@ -118,6 +118,7 @@ function TeacherList(props: { navigation: any }) {
                 teacherPhotoURL={item.avatar}
                 teacherName={item.name}
                 teacherSubject={item.subject}
+                teacherSchedule={item.schedule}
                 teacherBio={item.bio}
                 teacherPrice={item.cost}
                 teacherWhatsapp={item.whatsapp}
