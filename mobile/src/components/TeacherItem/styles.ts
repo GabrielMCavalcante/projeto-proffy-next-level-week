@@ -12,7 +12,9 @@ export default StyleSheet.create({
 
     profile: {
         alignItems: 'flex-start',
-        padding: 20
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E6E6F0'
     },
 
     profileHeader: {
@@ -27,7 +29,7 @@ export default StyleSheet.create({
     },
 
     profileInfo: {
-        marginLeft: 16
+        marginLeft: 16,
     },
 
     name: {
@@ -45,11 +47,12 @@ export default StyleSheet.create({
 
     bio: {
         marginHorizontal: 10,
-        marginTop: 0,
+        marginTop: 10,
         fontFamily: 'Poppins_400Regular',
         fontSize: 14,
         lineHeight: 24,
-        color: '#6A6180'
+        color: '#6A6180',
+        textAlign: 'justify'
     },
 
     footer: {
