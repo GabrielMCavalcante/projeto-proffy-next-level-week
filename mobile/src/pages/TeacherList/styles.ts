@@ -6,53 +6,141 @@ export default StyleSheet.create({
         backgroundColor: '#f0f0f7'
     },
 
+    header: {
+        backgroundColor: '#8257E5',
+        minHeight: 180
+    },
+
+    headerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingTop: 16,
+    },
+
+    headerContentTextContent: {
+        fontFamily: 'Archivo_700Bold',
+        fontSize: 24,
+        color: '#fff'
+    },
+
+    proffyFoundWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+
+    proffyEmoji: {
+        width: 25,
+        height: 25,
+        resizeMode: 'contain'
+    },
+
+    proffyFoundText: {
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 12,
+        color: '#fff',
+        marginLeft: 10,
+        marginTop: 3
+    },
+
+    filterBtn: {
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: 'red',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+        width: 250,
+        alignSelf: 'center',
+        marginTop: 5,
+        marginBottom: -5
+    },
+
+    filterBtnText: {
+        marginLeft: 10,
+        fontFamily: 'Archivo_400Regular',
+        fontSize: 16,
+        color: '#fff'
+    },
+
     teacherList: {
-        marginTop: -40
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+        zIndex: 100,
+        top: -25
     },
 
     searchForm: {
         marginTop: 10,
         marginBottom: 24,
         width: '100%',
-        height: 250
+        paddingHorizontal: 20
     },
 
-    label: {
-        marginTop: 12,
-        color: '#D4C2FF',
-        fontFamily: 'Poppins_400Regular'
-    },
-
-    input: {
-        height: 54,
-        backgroundColor: '#FFF',
-        borderRadius: 8,
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-        marginTop: 4,
-        marginBottom: 16
-    },
-
-    inputGroup: {
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-
-    inputBlock: {
-        width: '100%',
-    },
-
-    timeContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        flexDirection: 'row'
-    },
-
-    timeDisplay: {
-        flexDirection: 'row',
-        alignItems: 'center',
+    field: {
         flex: 1,
-        height: 50
+        marginBottom: 70
+    },
+
+    spacedField: {
+        marginRight: 10
+    },
+
+    fieldLabel: {
+        color: '#D4C2FF',
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 14
+    },
+
+    fieldInput: {
+        width: '100%',
+        height: 50,
+        backgroundColor: '#FAFAFC',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#E6E6F0',
+        padding: 10
+    },
+
+    invalidFieldInput: {
+        borderColor: '#E33D3D'
+    },
+
+    fieldTextarea: {
+        height: 150,
+        textAlignVertical: "top"
+    },
+
+    fieldGroup: {
+        flexDirection: 'row', 
+        width: '100%',
+        justifyContent: 'space-between'
+    },
+
+    dropdown: {
+        backgroundColor: '#F8F8FC',
+        height: '100%',
+    },
+
+    dropdownItem: {
+        justifyContent: 'flex-start',
+        height: 40,
+        width: '100%',
+        padding: 10
+    },
+
+    dropdownActiveItem: {
+        backgroundColor: '#EBEBF5',
+        borderLeftColor: '#8257E5',
+        borderLeftWidth: 2
+    },
+
+    dropdownList: { 
+        backgroundColor: '#F8F8FC', 
+        paddingHorizontal: 0
     },
 
     filterButton: {
@@ -62,7 +150,8 @@ export default StyleSheet.create({
         height: 50,
         backgroundColor: '#04D361',
         borderRadius: 8,
-        marginTop: 15
+        marginTop: -55,
+        marginBottom: 10
     },
 
     filterButtonIcon: {
