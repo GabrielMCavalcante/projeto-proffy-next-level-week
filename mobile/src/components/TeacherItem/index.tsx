@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Image, Linking } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
-import { SvgUri } from 'react-native-svg'
 import AsyncStorage from '@react-native-community/async-storage'
 import axios from '../../axios-config'
 
@@ -78,21 +77,10 @@ const TeacherItem: React.FC<Teacher> = props => {
         <View style={styles.container}>
             <View style={styles.profile}>
                 <View style={styles.profileHeader}>
-                    {
-                        teacherPhotoURL.endsWith('.png')
-                            ? (
-                                <Image
-                                    style={styles.avatar}
-                                    source={{ uri: teacherPhotoURL }}
-                                />
-                            )
-                            : (
-                                <SvgUri
-                                    style={styles.avatar}
-                                    uri={teacherPhotoURL}
-                                />
-                            )
-                    }
+                    <Image
+                        style={styles.avatar}
+                        source={{ uri: teacherPhotoURL }}
+                    />
 
                     <View style={styles.profileInfo}>
                         <Text style={styles.name}>{teacherName}</Text>
