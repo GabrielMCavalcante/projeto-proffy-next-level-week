@@ -39,3 +39,21 @@ export interface ProfileData {
     cost: number,
     schedule: ScheduleItem[]
 }
+
+export interface Teacher {
+    teacherId: number,
+    teacherPhotoURL: string,
+    teacherName: string,
+    teacherSubject: string,
+    teacherBio: string
+    teacherPrice: number,
+    teacherWhatsapp: number,
+    teacherSchedule: TeacherSchedule[],
+    isFavourited: boolean
+}
+
+export interface TeacherSchedule {
+    week_day: number,
+    from: number,
+    to: number
+}
