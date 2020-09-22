@@ -9,19 +9,14 @@ import favouriteHeartImg from 'assets/images/icons/heart-outline.png'
 import unfavouriteHeartImg from 'assets/images/icons/unfavorite.png'
 import whatsappImg from 'assets/images/icons/whatsapp.png'
 
+// Components
+import TeacherScheduleContainer from 'components/TeacherItem/TeacherScheduleContainer'
+
 // Styles
 import styles from './styles'
 
-export interface Teacher {
-    teacherId: number,
-    teacherPhotoURL: string,
-    teacherName: string,
-    teacherSubject: string,
-    teacherBio: string
-    teacherPrice: number,
-    teacherWhatsapp: number,
-    isFavourited: boolean
-}
+// Interfaces
+import { Teacher } from 'interfaces/index'
 
 const TeacherItem: React.FC<Teacher> = props => {
 
@@ -30,11 +25,13 @@ const TeacherItem: React.FC<Teacher> = props => {
         teacherName,
         teacherSubject,
         teacherPhotoURL,
+        teacherSchedule,
         teacherBio,
         teacherWhatsapp,
         teacherPrice
     } = props
 
+    
     const [isFavourited, setIsFavourited] = useState(props.isFavourited)
 
     useEffect(() => {
@@ -61,6 +58,7 @@ const TeacherItem: React.FC<Teacher> = props => {
                             teacherName,
                             teacherSubject,
                             teacherPhotoURL,
+                            teacherSchedule,
                             teacherBio,
                             teacherWhatsapp,
                             teacherPrice,
@@ -91,9 +89,11 @@ const TeacherItem: React.FC<Teacher> = props => {
                 <Text style={styles.bio}>{teacherBio}</Text>
             </View>
 
+            <TeacherScheduleContainer schedule={teacherSchedule}/>
+
             <View style={styles.footer}>
                 <Text style={styles.price}>
-                    Preço/hora {'   '}
+                    Preço da minha hora: {'   '}
                     <Text style={styles.priceValue}>R$ {
                         teacherPrice.toFixed(2).replace('.', ',')
                     }</Text>
