@@ -3,18 +3,17 @@ import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native'
 import { RectButton, TextInput } from 'react-native-gesture-handler'
 import DropDownPicker from 'react-native-dropdown-picker'
 import axios from '../../axios-config'
-import AsyncStorage from '@react-native-community/async-storage'
 
 // Contexts
 import { useAuth } from 'contexts/auth'
 
 // Images
 import notFoundIcon from 'assets/images/icons/not-found.png'
+import proffyEmojiImg from 'assets/images/icons/proffy-emoji.png'
+import filterIconImg from 'assets/images/icons/filter-icon.png'
 
 // Icons
 import { Ionicons } from '@expo/vector-icons'
-import proffyEmojiImg from 'assets/images/icons/proffy-emoji.png'
-import filterIconImg from 'assets/images/icons/filter-icon.png'
 
 // Components
 import PageHeader from 'components/PageHeader'
@@ -27,7 +26,7 @@ import { subjects } from 'utils/subjects'
 // Styles
 import styles from './styles'
 
-interface Teacher {
+export interface Teacher {
     id: number,
     subject: string,
     cost: number,
@@ -110,19 +109,22 @@ function TeacherList(props: { navigation: any }) {
 
     useEffect(() => {
         return props.navigation.addListener('focus', () => {
-            AsyncStorage.getItem('favourites')
-                .then(response => {
-                    if (response) {
-                        const fetchedFavourites: { teacherId: number }[] =
-                            JSON.parse(response).teachers
-
-                        setFavourites([
-                            ...fetchedFavourites.map(
-                                fetchedFavourite => fetchedFavourite.teacherId
-                            )
-                        ])
-                    }
-                })
+            axios.get("/classes/favourites", {
+                headers: {
+                    authorization: "Bearer " + authContext.token,
+                    userid: authContext.user?.__id
+                },
+                params: {
+                    getAll: true
+                }
+            }).then((response: any) => {
+                const fetchedFavourites: Teacher[] = response.data.resultsInfo.results
+                setFavourites([
+                    ...fetchedFavourites.map(
+                        fetchedFavourite => fetchedFavourite.id
+                    )
+                ])
+            })
         })
     }, [props.navigation])
 
