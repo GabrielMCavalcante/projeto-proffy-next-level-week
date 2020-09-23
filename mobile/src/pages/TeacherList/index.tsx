@@ -45,11 +45,16 @@ function TeacherList(props: { navigation: any }) {
     const [from, setFrom] = useState<string>('')
     const [to, setTo] = useState<string>('')
     const [loading, setLoading] = useState(true)
+    const [pageNumber, setPageNumber] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [loadingFeedback, setLoadingFeedback] = useState('')
+    const [totalProffys, setTotalProffys] = useState(0)
     const authContext = useAuth()
 
     useEffect(() => {
         (function fetchClasses() {
-            if (reFetch) {
+            if (reFetch && hasMore) {
                 setReFetch(false)
                 setLoading(true)
                 axios.get("/classes", {
@@ -59,7 +64,9 @@ function TeacherList(props: { navigation: any }) {
                 })
                     .then(response => {
                         setLoading(false)
+                        setHasMore(!!response.data.resultsInfo.next)
                         setTeachers([...teachers, ...response.data.resultsInfo.results])
+                        setTotalProffys(response.data.resultsInfo.total)
                     })
                     .catch(() => {
                         setLoading(false)
@@ -67,6 +74,36 @@ function TeacherList(props: { navigation: any }) {
             }
         })()
     }, [reFetch]) // eslint-disable-line
+
+    useEffect(() => {
+        if (!loadingMore) {
+            setLoadingMore(true)
+            axios.get('/classes', {
+                params: {
+                    subject,
+                    week_day: weekDay,
+                    from,
+                    to,
+                    page: pageNumber
+                },
+                headers: {
+                    authorization: 'Bearer ' + authContext.token
+                }
+            })
+                .then(response => {
+                    setLoadingMore(false)
+                    setTeachers([...teachers, ...response.data.resultsInfo.results])
+                    setHasMore(!!response.data.resultsInfo.next)
+                    setTotalProffys(response.data.resultsInfo.total)
+                    if (!!!response.data.resultsInfo.next)
+                        setLoadingFeedback('Estes são todos os resultados')
+                })
+                .catch(() => {
+                    setLoadingMore(false)
+                    setLoadingFeedback('Erro ao buscar mais proffys. Tente novamente mais tarde.')
+                })
+        }
+    }, [pageNumber])
 
     useEffect(() => {
         return props.navigation.addListener('focus', () => {
@@ -89,16 +126,22 @@ function TeacherList(props: { navigation: any }) {
     function applyFilters() {
         setShowFilters(false)
         setLoading(true)
+        setTeachers([])
+        setPageNumber(1)
         axios.get('/classes', {
             params: {
                 subject,
                 week_day: weekDay,
                 from, to
+            },
+            headers: {
+                authorization: "Bearer " + authContext.token
             }
         })
             .then(response => {
                 setLoading(false)
-                setTeachers(response.data.search)
+                setTeachers([...response.data.resultsInfo.results])
+                setTotalProffys(response.data.resultsInfo.total)
             })
             .catch(() => {
                 setLoading(false)
@@ -127,6 +170,12 @@ function TeacherList(props: { navigation: any }) {
         )
     }
 
+    function renderFooterComponent() {
+        return hasMore
+            ? (loadingMore ? <ActivityIndicator /> : null)
+            : <Text style={styles.allResults}>{loadingFeedback}</Text>
+    }
+
     return (
         <View style={styles.container}>
             <PageHeader
@@ -143,13 +192,13 @@ function TeacherList(props: { navigation: any }) {
                     <View style={styles.proffyFoundWrapper}>
                         <Image style={styles.proffyEmoji} source={proffyEmojiImg} />
                         <Text style={styles.proffyFoundText}>
-                            {teachers.length} proffys
+                            {totalProffys} proffys
                         </Text>
                     </View>
                 </View>
 
                 <RectButton onPress={() => setShowFilters(!showFilters)} style={styles.filterBtn}>
-                    <Image source={filterIconImg}/>
+                    <Image source={filterIconImg} />
                     <Text style={styles.filterBtnText}>
                         Filtrar por dia, hora e matéria
                     </Text>
@@ -161,7 +210,7 @@ function TeacherList(props: { navigation: any }) {
                             Matéria
                         </Text>
                         <DropDownPicker
-                            items={subjects}
+                            items={[{ label: 'Todas as matérias', value: null }, ...subjects]}
                             containerStyle={{ height: 40 }}
                             style={styles.dropdown}
                             itemStyle={styles.dropdownItem}
@@ -169,7 +218,7 @@ function TeacherList(props: { navigation: any }) {
                             labelStyle={{ fontFamily: 'Poppins_400Regular' }}
                             activeLabelStyle={{ fontFamily: 'Poppins_600SemiBold' }}
                             placeholder="Selecione uma matéria"
-                            defaultValue={subject}
+                            defaultValue={null}
                             dropDownStyle={styles.dropdownList}
                             onChangeItem={item => setSubject(item.value)}
                         />
@@ -236,10 +285,16 @@ function TeacherList(props: { navigation: any }) {
                     />
                     : (
                         <FlatList
+                            onEndReachedThreshold={0.5}
+                            onEndReached={() => {
+                                if(!loadingMore)
+                                    setPageNumber(pageNumber + 1)
+                            }}
                             style={styles.teacherList}
                             data={teachers}
                             renderItem={renderTeacherCard}
                             keyExtractor={item => String(item.id)}
+                            ListFooterComponent={renderFooterComponent}
                         />
                     )
             }
