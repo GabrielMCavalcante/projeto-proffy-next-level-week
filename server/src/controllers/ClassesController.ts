@@ -176,7 +176,7 @@ export default class ClassesController {
     }
 
     static async indexFavourites(req: Request, res: Response) {
-        const { page = "1" } = req.query
+        const { page = "1", getAll = false } = req.query
         const userid = req.headers.userid
 
         const sql = `select 
@@ -225,8 +225,12 @@ export default class ClassesController {
                 })
             }))
 
-            const startIndex = (parseInt(String(page)) - 1) * MAX_RESULTS_PER_PAGE
-            const endIndex = parseInt(String(page)) * MAX_RESULTS_PER_PAGE
+            const startIndex = !getAll 
+                ? (parseInt(String(page)) - 1) * MAX_RESULTS_PER_PAGE
+                : 0
+            const endIndex = !getAll 
+                ? parseInt(String(page)) * MAX_RESULTS_PER_PAGE
+                : finalParsedSearch.length
 
             // Applies pagination slice
             const results = finalParsedSearch.slice(startIndex, endIndex)
