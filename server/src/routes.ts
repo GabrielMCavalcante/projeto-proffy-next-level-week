@@ -29,6 +29,9 @@ routes.delete("/remove-class", AuthMiddleware, ProfileController.delete)
 // Classes
 routes.get("/classes", AuthMiddleware, ClassesController.index)
 routes.post("/classes", AuthMiddleware, ClassesController.create)
+routes.get("/classes/favourites", AuthMiddleware, ClassesController.indexFavourites)
+routes.post("/classes/favourites", AuthMiddleware, ClassesController.createFavourite)
+routes.delete("/classes/favourites", AuthMiddleware, ClassesController.deleteFavourite)
 
 // Connections
 routes.get("/connections", AuthMiddleware, ConnectionsController.index)
