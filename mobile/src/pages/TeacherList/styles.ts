@@ -115,7 +115,7 @@ export default StyleSheet.create({
     },
 
     fieldGroup: {
-        flexDirection: 'row', 
+        flexDirection: 'row',
         width: '100%',
         justifyContent: 'space-between'
     },
@@ -138,8 +138,8 @@ export default StyleSheet.create({
         borderLeftWidth: 2
     },
 
-    dropdownList: { 
-        backgroundColor: '#F8F8FC', 
+    dropdownList: {
+        backgroundColor: '#F8F8FC',
         paddingHorizontal: 0
     },
 
@@ -168,5 +168,12 @@ export default StyleSheet.create({
     spinner: {
         transform: [{ scale: 2 }],
         flex: 1
+    },
+
+    allResults: {
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 12,
+        color: '#6A6180',
+        alignSelf: 'center'
     }
 })
