@@ -175,5 +175,24 @@ export default StyleSheet.create({
         fontSize: 12,
         color: '#6A6180',
         alignSelf: 'center'
+    },
+
+    noResultsFound: {
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        width: '100%',
+        height: 330
+    },
+
+    noResultsFoundText: {
+        textAlign: 'center',
+        fontFamily: 'Archivo_700Bold',
+        fontSize: 18,
+        color: '#32264D'
+    },
+
+    noResultsFoundIcon: {
+        resizeMode: 'contain',
+        tintColor: '#6842C2'
     }
 })
