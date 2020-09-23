@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Image, Linking } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
-import AsyncStorage from '@react-native-community/async-storage'
 import axios from '../../axios-config'
+
+// Contexts
+import { useAuth } from 'contexts/auth'
 
 // Images
 import favouriteHeartImg from 'assets/images/icons/heart-outline.png'
@@ -31,8 +33,10 @@ const TeacherItem: React.FC<Teacher> = props => {
         teacherPrice
     } = props
 
-    
+
     const [isFavourited, setIsFavourited] = useState(props.isFavourited)
+
+    const authContext = useAuth()
 
     useEffect(() => {
         setIsFavourited(props.isFavourited)
@@ -44,31 +48,21 @@ const TeacherItem: React.FC<Teacher> = props => {
     }
 
     function toggleFavourite() {
-        AsyncStorage.getItem('favourites')
-            .then(response => {
-                if (response) {
-                    const favouritedTeachers: Teacher[] = JSON.parse(response).teachers
-                    let parsedTeachers: Teacher[] = []
-                    if (isFavourited) {
-                        parsedTeachers = favouritedTeachers
-                            .filter(teacher => teacher.teacherId !== teacherId)
-                    } else {
-                        parsedTeachers = [...favouritedTeachers, {
-                            teacherId,
-                            teacherName,
-                            teacherSubject,
-                            teacherPhotoURL,
-                            teacherSchedule,
-                            teacherBio,
-                            teacherWhatsapp,
-                            teacherPrice,
-                            isFavourited: true
-                        }]
-                    }
-                    AsyncStorage.setItem('favourites', JSON.stringify({ teachers: parsedTeachers }))
-                        .then(() => setIsFavourited(!isFavourited))
-                }
-            })
+        const config = {
+            headers: {
+                authorization: "Bearer " + authContext.token,
+                userid: authContext.user?.__id,
+                teacherid: teacherId
+            }
+        }
+
+        if (isFavourited) {
+            axios.delete("/classes/favourites", config)
+                .then(() => setIsFavourited(!isFavourited))
+        } else {
+            axios.post("/classes/favourites", null, config)
+                .then(() => setIsFavourited(!isFavourited))
+        }
     }
 
     return (
@@ -89,7 +83,7 @@ const TeacherItem: React.FC<Teacher> = props => {
                 <Text style={styles.bio}>{teacherBio}</Text>
             </View>
 
-            <TeacherScheduleContainer schedule={teacherSchedule}/>
+            <TeacherScheduleContainer schedule={teacherSchedule} />
 
             <View style={styles.footer}>
                 <Text style={styles.price}>
