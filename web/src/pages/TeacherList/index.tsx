@@ -74,8 +74,7 @@ function TeacherList() {
                 setLoading(true)
                 axios.get('/classes', {
                     headers: {
-                        authorization: 'Bearer ' + authContext.token,
-                        userid: authContext.user?.__id
+                        authorization: 'Bearer ' + authContext.token
                     }
                 })
                     .then(response => {
