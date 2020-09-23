@@ -131,7 +131,6 @@ export default class ProfileController {
             return res.status(200).json({ message: "Classe deletada com sucesso." })
         } 
         catch(error) {
-            console.log(error.message)
             return res.status(500).json({ error })
         }
     }
