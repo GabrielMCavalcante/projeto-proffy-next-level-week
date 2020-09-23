@@ -117,9 +117,8 @@ function Profile() {
                     email: userData.email
                 })
 
-            }).catch(err => {
+            }).catch(() => {
                 setLoadingData(false)
-                console.log(err)
             })
     }, []) // eslint-disable-line
 

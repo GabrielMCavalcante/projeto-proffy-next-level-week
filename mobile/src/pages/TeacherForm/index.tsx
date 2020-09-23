@@ -93,9 +93,8 @@ function TeacherForm() {
                     }
                 })
 
-            }).catch(err => {
+            }).catch(() => {
                 setLoadingData(false)
-                console.log(err)
             })
     }, []) // eslint-disable-line
 
