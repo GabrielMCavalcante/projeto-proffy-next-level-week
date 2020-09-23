@@ -8,6 +8,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 // Contexts
 import { useAuth } from 'contexts/auth'
 
+// Images
+import notFoundIcon from 'assets/images/icons/not-found.png'
+
 // Icons
 import { Ionicons } from '@expo/vector-icons'
 import proffyEmojiImg from 'assets/images/icons/proffy-emoji.png'
@@ -210,7 +213,7 @@ function TeacherList(props: { navigation: any }) {
                             Matéria
                         </Text>
                         <DropDownPicker
-                            items={[{ label: 'Todas as matérias', value: null }, ...subjects]}
+                            items={[{ label: 'Todas as matérias', value: -1 }, ...subjects]}
                             containerStyle={{ height: 40 }}
                             style={styles.dropdown}
                             itemStyle={styles.dropdownItem}
@@ -218,9 +221,9 @@ function TeacherList(props: { navigation: any }) {
                             labelStyle={{ fontFamily: 'Poppins_400Regular' }}
                             activeLabelStyle={{ fontFamily: 'Poppins_600SemiBold' }}
                             placeholder="Selecione uma matéria"
-                            defaultValue={null}
+                            defaultValue={-1}
                             dropDownStyle={styles.dropdownList}
-                            onChangeItem={item => setSubject(item.value)}
+                            onChangeItem={item => setSubject(item.value !== -1 ? item.value : null)}
                         />
                     </View>
 
@@ -229,17 +232,17 @@ function TeacherList(props: { navigation: any }) {
                             Dia da Semana
                         </Text>
                         <DropDownPicker
-                            items={weekdays}
+                            items={[{label: 'Qualquer dia', value: -1}, ...weekdays]}
                             containerStyle={{ height: 40 }}
                             style={styles.dropdown}
                             itemStyle={styles.dropdownItem}
                             activeItemStyle={styles.dropdownActiveItem}
                             labelStyle={{ fontFamily: 'Poppins_400Regular' }}
-                            defaultValue={null}
+                            defaultValue={-1}
                             activeLabelStyle={{ fontFamily: 'Poppins_600SemiBold' }}
                             placeholder="Selecione um dia da semana"
                             dropDownStyle={styles.dropdownList}
-                            onChangeItem={item => setWeekDay(item.value)}
+                            onChangeItem={item => setWeekDay(item.value !== -1 ? item.value : null)}
                         />
                     </View>
 
@@ -284,18 +287,34 @@ function TeacherList(props: { navigation: any }) {
                         color="#8257E5"
                     />
                     : (
-                        <FlatList
-                            onEndReachedThreshold={0.5}
-                            onEndReached={() => {
-                                if(!loadingMore)
-                                    setPageNumber(pageNumber + 1)
-                            }}
-                            style={styles.teacherList}
-                            data={teachers}
-                            renderItem={renderTeacherCard}
-                            keyExtractor={item => String(item.id)}
-                            ListFooterComponent={renderFooterComponent}
-                        />
+                        teachers.length > 0
+                            ? (
+                                <FlatList
+                                    onEndReachedThreshold={0.5}
+                                    onEndReached={() => {
+                                        if (!loadingMore)
+                                            setPageNumber(pageNumber + 1)
+                                    }}
+                                    style={styles.teacherList}
+                                    data={teachers}
+                                    renderItem={renderTeacherCard}
+                                    keyExtractor={item => String(item.id)}
+                                    ListFooterComponent={renderFooterComponent}
+                                />
+                            )
+                            : (
+                                <View style={styles.noResultsFound}>
+                                    <Text style={styles.noResultsFoundText}>
+                                        Oops! Parece que não foi encontrada nenhuma classe
+                                        disponível. Tente alterar os filtros.
+                                    </Text>
+
+                                    <Image 
+                                        style={styles.noResultsFoundIcon} 
+                                        source={notFoundIcon}
+                                    /> 
+                                </View>
+                            )
                     )
             }
         </View>
