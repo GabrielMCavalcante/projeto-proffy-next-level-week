@@ -1,6 +1,6 @@
 <p align="center"><img src="github/icon.png" width="100" height=100 alt="App Logo"/></p>
 
-# Projeto Proffy
+# Projeto Proffy 2.0
 
 ![Imagem principal - Proffy](github/Web/menu.png)
 
