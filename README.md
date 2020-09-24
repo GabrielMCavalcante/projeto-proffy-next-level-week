@@ -1,8 +1,8 @@
-<p align="center"><img src="github/proffy-icon.png" width="100" height=100 alt="App Logo"/></p>
+<p align="center"><img src="github/icon.png" width="100" height=100 alt="App Logo"/></p>
 
 # Projeto Proffy
 
-![Imagem principal - Proffy](github/web-landingpage.png)
+![Imagem principal - Proffy](github/Web/menu.png)
 
 ## Objetivo
 
@@ -78,41 +78,76 @@ Para fazer isso, siga os passos a seguir:
 
 ### Versão Web
 
-#### Página da home
-  <img src="github/web-landingpage.png" alt="Página da home" />
-
-
+#### Página de login
+  <img src="github/Web/login.png" alt="Página de login" />
+  
+  
 #### Página de cadastro
-  <img src="github/web-teacherform.png" alt="Página de cadastro" />
+  <img src="github/Web/cadastro.png" alt="Página de cadastro" />
+
+
+#### Página de 'Esqueci a Senha'
+  <img src="github/Web/esqueceu-senha.png" alt="Página de Esqueci a Senha" />
+
+
+#### Página da home
+  <img src="github/Web/menu.png" alt="Página da home" />
+
+
+#### Página de cadastro de aula
+  <img src="github/Web/dar-aulas.png" alt="Página de cadastro de aula" />
 
 
 #### Página de listagem de proffys
-  <img src="github/web-list.png" alt="Página de listagem de proffys" />
+  <img src="github/Web/estudar.png" alt="Página de listagem de proffys" />
 
 
 #### Cartão proffy
-  <img src="github/web-card.png" alt="Cartão proffy" />
+  <img src="github/Web/cartao-proffy.png" alt="Cartão proffy" />
+  
+  
+#### Página do perfil
+  <img src="github/Web/perfil.png" alt="Página do perfil" />
 
 ### Versão Mobile
 
+#### Telas de onboarding
+  <img src="github/Mobile/onboarding1.jpeg" alt="Onboarding #1" width=300/> <img src="github/Mobile/onboarding2.jpeg" alt="Onboarding #2" width=300/>
+
+
+#### Tela de login
+  <img src="github/Mobile/login.jpeg" alt="Página de login" width=300/>
+  
+  
+#### Tela de cadastro
+  <img src="github/Mobile/cadastro.jpeg" alt="Página de cadastro" width=300/>
+  
+
+#### Tela de 'Esqueci a Senha'
+  <img src="github/Mobile/esqueceu-senha.jpeg" alt="Página de esqueci a senha" width=300/>
+
+
 #### Tela da home
-  <img src="github/mobile-landingpage.jpeg" alt="Tela da home" width=300/>
+  <img src="github/Mobile/menu.jpeg" alt="Tela da home" width=300/>
 
 
-#### Tela para proffys
-  <img src="github/mobile-teachpage.jpeg" alt="Tela para proffys" width=300/>
+#### Tela de cadastro de aula
+  <img src="github/Mobile/dar-aulas.jpeg" alt="Tela de cadastro de aula" width=300/>
 
 
 #### Tela de listagem de proffys
-  <img src="github/mobile-teacherslist.jpeg" alt="Tela de listagem de proffys" width=300/>
+  <img src="github/Mobile/estudar.jpeg" alt="Tela de listagem de proffys" width=300/>
 
 
 #### Tela de listagem de proffys favoritos
-  <img src="github/mobile-favourites.jpeg" alt="Tela de listagem de proffys favoritos" width=300/>
+  <img src="github/Mobile/favoritos.jpeg" alt="Tela de listagem de proffys favoritos" width=300/>
 
 
 #### Cartão proffy
-  <img src="github/mobile-card.jpeg" alt="Cartão proffy" width=300/>
+  <img src="github/Mobile/cartao-proffy.jpeg" alt="Cartão proffy" width=300/>
+  
+#### Tela do perfil
+  <img src="github/Mobile/perfil.jpeg" alt="Tela do perfil" width=300/>
 
 [Voltar ao sumário](#sumário) <br/>
 [Voltar ao topo](#projeto-proffy)
