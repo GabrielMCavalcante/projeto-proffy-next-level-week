@@ -13,6 +13,32 @@
 <p>Este projeto faz parte da Next Level Week 2.0 da Rocketseat, que consiste em uma série de 5 vídeo-aulas ensinando a como trabalhar com as tecnologias mais utilizadas no mercado, tudo na prática. Neste repositório estão os arquivos tanto do frontend quanto do backend da aplicação, assim como a versão mobile.
 <p>A aplicação consiste em um sistema para estudantes e professores interagirem entre si, onde os estudantes podem visualizar o que cada professor cadastrado ensina, assim como saber um pouco mais sobre ele.</p>
 
+## Atualização
+<p>O projeto sofreu uma atualização por conta dos desafios propostos ao final do evento da Next Level Week 2.0, sendo adicionadas as seguintes funcionalidades:</p>
+
+> Layout
+- Refeito layout da versão web
+- Refeito layout da versão mobile
+
+> Autenticação de usuários
+- Login
+- Cadastro
+- Recuperação de senha
+- Lembrar usuário no próximo acesso
+
+> Perfil de usuário
+- Possibilidade de editar informações como a biografia e o número de telefone
+- Possibilidade de remover aula cadastrada e se tornar estudante
+- Possibilidade de alterar a foto do perfil
+
+> Listagem de Proffys
+- Agora os horários de cada Proffy aparece em seu cartão proffy
+- Melhorias na filtragem de Proffys
+- Adicionado paginação e rolagem infinita para melhor performance e experiência de usuário
+
+> Proffys favoritos (apenas mobile)
+- Agora os favoritos são salvos no banco de dados e não mais no AsyncStorage do dispositivo móvel
+
 ### Tecnologias utilizadas
 
 - React
