@@ -27,6 +27,6 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.2",
     "nodemailer": "^6.4.11",
-    "sqlite3": "^5.0.0"
+    "sqlite3": "^5.0.3"
   }
 }
